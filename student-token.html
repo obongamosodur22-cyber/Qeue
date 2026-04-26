@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Queue Token – Makerere University</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+  background:linear-gradient(160deg,#1a3c2c 0%,#2a5a3a 60%,#1a3c2c 100%);
+  min-height:100vh;
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:20px 16px 60px;
+}
+
+.container{width:100%;max-width:640px;}
+
+/* HEADER */
+.header{text-align:center;margin-bottom:24px;color:white;}
+.header h1{font-size:19px;font-weight:700;letter-spacing:2.5px;}
+.header p{font-size:12px;color:rgba(255,255,255,0.55);margin-top:3px;letter-spacing:1px;}
+
+/* CARD */
+.card{
+  background:white;border-radius:28px;
+  padding:32px 30px;
+  box-shadow:0 32px 72px rgba(0,0,0,0.28);
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(26,60,44,0.04) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+/* STEP INDICATOR */
+.step-indicator{display:flex;align-items:center;margin-bottom:28px;}
+.step-item{display:flex;align-items:center;gap:7px;flex:1;}
+.step-item:last-child{flex:none;}
+.step-dot{
+  width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;
+  background:#f0f0f0;color:#bbb;flex-shrink:0;
+  transition:all 0.4s cubic-bezier(.34,1.56,.64,1);
+}
+.step-dot.active{
+  background:#1a3c2c;color:white;
+  box-shadow:0 0 0 4px rgba(26,60,44,0.15);
+  transform:scale(1.08);
+}
+.step-dot.done{background:#00c853;color:white;}
+.step-label{font-size:11.5px;color:#bbb;font-weight:500;transition:color 0.3s;white-space:nowrap;}
+.step-label.active{color:#1a3c2c;font-weight:700;}
+.step-line{flex:1;height:2px;background:#f0f0f0;margin:0 6px;border-radius:2px;transition:background 0.5s;}
+.step-line.done{background:#00c853;}
+
+/* ERROR */
+.error-bar{
+  background:#fff0f0;border:1px solid #ffc9c9;
+  color:#c62828;padding:11px 14px;border-radius:12px;
+  font-size:13px;margin-bottom:18px;display:none;
+  animation:slideDown 0.2s ease;
+}
+@keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+
+/* AI PANEL */
+.ai-panel{
+  background:linear-gradient(135deg,#f4faf6 0%,#edf7f1 100%);
+  border:1.5px solid #c3e6cb;border-radius:18px;
+  padding:18px 20px;margin-bottom:26px;
+  position:relative;overflow:hidden;
+}
+.ai-panel::after{
+  content:'';position:absolute;bottom:-20px;right:-20px;
+  width:80px;height:80px;border-radius:50%;
+  background:rgba(26,60,44,0.04);pointer-events:none;
+}
+.ai-avatar{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.ai-dot{
+  width:34px;height:34px;border-radius:50%;
+  background:#1a3c2c;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;position:relative;
+}
+.ai-dot::after{
+  content:'';position:absolute;top:0;right:0;
+  width:9px;height:9px;border-radius:50%;
+  background:#00c853;border:2px solid white;
+}
+.ai-dot svg{width:17px;height:17px;fill:#ffd700;}
+.ai-name{font-size:12px;font-weight:700;color:#1a3c2c;letter-spacing:0.3px;}
+.ai-name span{font-weight:400;color:#999;margin-left:4px;}
+.ai-bubble{
+  background:white;border-radius:4px 16px 16px 16px;
+  padding:13px 16px;border:1px solid #ddeee4;
+  font-size:13.5px;color:#222;line-height:1.65;
+  min-height:46px;position:relative;
+}
+.ai-bubble::before{
+  content:'';position:absolute;top:0;left:-9px;
+  border-width:0 9px 9px 0;border-style:solid;
+  border-color:transparent #ddeee4 transparent transparent;
+}
+.ai-cursor{
+  display:inline-block;width:2px;height:1em;
+  background:#1a3c2c;vertical-align:text-bottom;
+  animation:blink 0.85s step-end infinite;margin-left:1px;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.ai-typing{display:flex;align-items:center;gap:5px;padding:4px 0;}
+.ai-typing span{
+  width:7px;height:7px;border-radius:50%;
+  background:#1a3c2c;opacity:0.3;
+  animation:bounce 1.2s ease-in-out infinite;
+}
+.ai-typing span:nth-child(2){animation-delay:0.2s;}
+.ai-typing span:nth-child(3){animation-delay:0.4s;}
+@keyframes bounce{0%,80%,100%{transform:translateY(0);opacity:0.3}40%{transform:translateY(-6px);opacity:1}}
+
+/* STEP PAGES */
+.step-content{display:none;}
+.step-content.active{display:block;animation:fadeUp 0.35s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* SECTION TITLE */
+.section-title{font-size:14px;font-weight:700;color:#1a3c2c;margin-bottom:14px;letter-spacing:0.3px;}
+
+/* CENTERED LAUNCH */
+.launch-center{
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;padding:10px 0 24px;
+}
+.launch-icon{
+  width:72px;height:72px;border-radius:20px;
+  background:linear-gradient(135deg,#1a3c2c,#2a5a3a);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:18px;
+  box-shadow:0 12px 32px rgba(26,60,44,0.22);
+}
+.launch-icon svg{width:34px;height:34px;fill:#ffd700;}
+.launch-title{font-size:22px;font-weight:800;color:#1a3c2c;margin-bottom:6px;}
+.launch-sub{font-size:13px;color:#888;margin-bottom:28px;line-height:1.55;max-width:320px;}
+.btn-launch{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:15px 38px;
+  background:#1a3c2c;color:white;
+  border:none;border-radius:50px;
+  font-size:15px;font-weight:700;cursor:pointer;
+  letter-spacing:0.3px;
+  transition:all 0.25s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 8px 24px rgba(26,60,44,0.28);
+}
+.btn-launch:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(26,60,44,0.35);}
+.btn-launch:active{transform:scale(0.97);}
+.btn-launch svg{width:18px;height:18px;fill:white;}
+
+/* OFFICE / SERVICE GRID */
+.select-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(155px,1fr));
+  gap:11px;margin-bottom:22px;
+}
+.select-card{
+  border:1.5px solid #e8e8e8;border-radius:14px;
+  padding:15px 13px;cursor:pointer;
+  transition:all 0.22s cubic-bezier(.34,1.56,.64,1);
+  background:#fafafa;
+  animation:popIn 0.3s ease backwards;
+}
+@keyframes popIn{from{opacity:0;transform:scale(0.88)}to{opacity:1;transform:scale(1)}}
+.select-card:hover{border-color:#2a5a3a;background:#f0faf3;transform:translateY(-2px);box-shadow:0 6px 18px rgba(26,60,44,0.1);}
+.select-card.selected{
+  border-color:#1a3c2c;background:#e8f5e9;
+  box-shadow:0 0 0 3px rgba(26,60,44,0.1);
+  transform:translateY(-2px);
+}
+.card-icon{
+  width:36px;height:36px;border-radius:9px;
+  background:#e8f5e9;margin-bottom:10px;
+  display:flex;align-items:center;justify-content:center;
+}
+.select-card.selected .card-icon{background:rgba(26,60,44,0.12);}
+.card-icon svg{width:17px;height:17px;fill:#1a3c2c;}
+.card-label{font-size:13px;font-weight:700;color:#1a3c2c;}
+.card-sub{font-size:11px;color:#999;margin-top:3px;}
+
+/* SUMMARY PILL */
+.summary-pill{
+  background:#f0faf3;border:1px solid #c3e6cb;
+  border-radius:10px;padding:10px 14px;margin-bottom:20px;
+  font-size:13px;color:#1a3c2c;display:flex;align-items:center;gap:8px;
+  animation:slideDown 0.25s ease;
+}
+.summary-pill .check{
+  width:18px;height:18px;background:#00c853;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.summary-pill .check svg{width:10px;height:10px;fill:white;}
+
+/* FORM */
+.form-group{margin-bottom:18px;}
+.form-label{display:block;font-size:13px;font-weight:700;color:#333;margin-bottom:7px;}
+.form-input{
+  width:100%;padding:13px 16px;
+  border:1.5px solid #e0e0e0;border-radius:12px;
+  font-size:14px;font-family:inherit;outline:none;
+  transition:all 0.2s;background:#fafafa;color:#222;
+}
+.form-input:focus{border-color:#1a3c2c;background:white;box-shadow:0 0 0 3px rgba(26,60,44,0.08);}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:12px;margin-top:8px;}
+.btn-back{
+  padding:12px 22px;border:1.5px solid #ddd;
+  background:white;color:#666;border-radius:50px;
+  cursor:pointer;font-size:13.5px;font-weight:600;
+  transition:all 0.2s;
+}
+.btn-back:hover{background:#f5f5f5;border-color:#ccc;}
+.btn-next{
+  flex:1;padding:13px;
+  background:#1a3c2c;color:white;
+  border:none;border-radius:50px;
+  font-size:14px;font-weight:700;cursor:pointer;
+  transition:all 0.25s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 4px 16px rgba(26,60,44,0.18);
+}
+.btn-next:hover:not(:disabled){opacity:0.9;transform:translateY(-1px);box-shadow:0 8px 24px rgba(26,60,44,0.25);}
+.btn-next:active:not(:disabled){transform:scale(0.98);}
+.btn-next:disabled{background:#d0d0d0;cursor:not-allowed;box-shadow:none;}
+
+/* LOADING OVERLAY */
+.loading-overlay{
+  text-align:center;padding:40px 0;
+  animation:fadeUp 0.3s ease;
+}
+.spinner{
+  width:40px;height:40px;
+  border:3px solid #eee;border-top-color:#1a3c2c;
+  border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-overlay p{font-size:13.5px;color:#888;margin-top:4px;}
+
+/* TOKEN DISPLAY */
+.token-result{text-align:center;padding:10px 0;animation:fadeUp 0.5s ease;}
+.token-badge{
+  display:inline-block;background:#1a3c2c;color:white;
+  border-radius:20px;padding:32px 44px;margin-bottom:22px;
+  min-width:230px;
+  box-shadow:0 16px 48px rgba(26,60,44,0.3);
+  animation:tokenPop 0.6s cubic-bezier(.34,1.56,.64,1) 0.1s backwards;
+}
+@keyframes tokenPop{from{opacity:0;transform:scale(0.7)}to{opacity:1;transform:scale(1)}}
+.token-label{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;opacity:0.65;margin-bottom:10px;}
+.token-number{font-size:64px;font-weight:900;letter-spacing:8px;line-height:1;color:#ffd700;text-shadow:0 2px 12px rgba(255,215,0,0.3);}
+.token-meta{margin-top:10px;font-size:12px;opacity:0.7;}
+.token-details{background:#f8f9fa;border-radius:16px;padding:18px 20px;text-align:left;}
+.token-row{display:flex;justify-content:space-between;font-size:13.5px;padding:8px 0;border-bottom:1px solid #eee;}
+.token-row:last-child{border-bottom:none;}
+.token-row .lbl{color:#999;}
+.token-row .val{font-weight:700;color:#1a3c2c;}
+.token-row .val.green{color:#1a7a30;}
+.token-notice{
+  margin-top:16px;font-size:12.5px;color:#7a5c00;text-align:center;
+  padding:10px 16px;background:#fffbea;border-radius:12px;border:1px solid #ffe97a;
+}
+.token-actions{display:flex;gap:12px;margin-top:20px;justify-content:center;flex-wrap:wrap;}
+.btn-print{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 28px;background:#1a3c2c;color:white;
+  border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;
+  transition:all 0.22s;box-shadow:0 6px 20px rgba(26,60,44,0.22);
+}
+.btn-print:hover{opacity:0.88;transform:translateY(-1px);}
+.btn-print svg{width:16px;height:16px;fill:white;}
+.btn-new{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 24px;background:white;color:#1a3c2c;
+  border:1.5px solid #1a3c2c;border-radius:50px;
+  font-size:14px;font-weight:700;cursor:pointer;transition:background 0.2s;
+}
+.btn-new:hover{background:#f0faf3;}
+
+/* LOADING CARDS */
+.loading-cards{text-align:center;padding:28px 0;}
+.loading-cards .spinner{margin:0 auto 10px;}
+.loading-cards p{font-size:13px;color:#aaa;}
+
+/* RECEIPT HEADER (print only) */
+.receipt-header{display:none;text-align:center;margin-bottom:16px;border-bottom:2px dashed #ccc;padding-bottom:12px;}
+.receipt-header h2{font-size:16px;font-weight:700;color:#1a3c2c;}
+.receipt-header p{font-size:11px;color:#888;margin-top:2px;}
+
+@media print{
+  body{background:white!important;padding:0!important;display:block!important;}
+  .container{max-width:100%!important;}
+  .card{box-shadow:none!important;border-radius:0!important;padding:20px!important;}
+  .header,.step-indicator,.ai-panel,.token-actions,.token-notice,.launch-center{display:none!important;}
+  .token-result{page-break-inside:avoid;}
+  .token-badge{background:#1a3c2c!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .token-number{color:#ffd700!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .receipt-header{display:block!important;}
+}
+
+@media(max-width:480px){
+  .card{padding:24px 18px;}
+  .select-grid{grid-template-columns:1fr 1fr;}
+  .token-badge{padding:24px 28px;min-width:180px;}
+  .token-number{font-size:50px;}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>MAKERERE UNIVERSITY</h1>
+    <p>QUEUE MANAGEMENT SYSTEM</p>
+  </div>
+
+  <div class="card">
+
+    <div class="step-indicator" id="stepIndicator" style="display:none;">
+      <div class="step-item">
+        <div class="step-dot" id="dot1">1</div>
+        <div class="step-label" id="lbl1">Select Office</div>
+      </div>
+      <div class="step-line" id="line1"></div>
+      <div class="step-item">
+        <div class="step-dot" id="dot2">2</div>
+        <div class="step-label" id="lbl2">Select Service</div>
+      </div>
+      <div class="step-line" id="line2"></div>
+      <div class="step-item">
+        <div class="step-dot" id="dot3">3</div>
+        <div class="step-label" id="lbl3">Your Name</div>
+      </div>
+    </div>
+
+    <div class="error-bar" id="errorBar"></div>
+
+    <!-- ══ WELCOME SCREEN ══ -->
+    <div class="step-content active" id="step0">
+      <div class="ai-panel">
+        <div class="ai-avatar">
+          <div class="ai-dot">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+          </div>
+          <div>
+            <div class="ai-name">Queue Assistant <span>· Makerere University</span></div>
+          </div>
+        </div>
+        <div class="ai-bubble" id="aiBubble0">
+          <div class="ai-typing"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+      <div class="launch-center">
+        
+        
+        <button class="btn-launch" id="launchBtn" onclick="startFlow()">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Select an Office
+        </button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 1: SELECT OFFICE ══ -->
+    <div class="step-content" id="step1">
+      <div class="ai-panel">
+        <div class="ai-avatar">
+          <div class="ai-dot">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+          </div>
+          <div>
+            <div class="ai-name">Queue Assistant <span>· Makerere University</span></div>
+          </div>
+        </div>
+        <div class="ai-bubble" id="aiBubble1">
+          <div class="ai-typing"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+      <div class="section-title">Choose an Office</div>
+      <div id="officeGrid">
+        <div class="loading-cards"><div class="spinner"></div><p>Loading offices…</p></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-next" id="nextToStep2Btn" disabled onclick="goToStep(2)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 2: SELECT SERVICE ══ -->
+    <div class="step-content" id="step2">
+      <div class="summary-pill" id="officeSummary" style="display:none;">
+        <div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+        <span id="officeSummaryText"></span>
+      </div>
+      <div class="ai-panel">
+        <div class="ai-avatar">
+          <div class="ai-dot">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+          </div>
+          <div>
+            <div class="ai-name">Queue Assistant <span>· Makerere University</span></div>
+          </div>
+        </div>
+        <div class="ai-bubble" id="aiBubble2">
+          <div class="ai-typing"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+      <div class="section-title" id="serviceTitle">Choose a Service</div>
+      <div id="serviceGrid">
+        <div class="loading-cards"><div class="spinner"></div><p>Loading services…</p></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="goToStep(1)">← Back</button>
+        <button class="btn-next" id="nextToStep3Btn" disabled onclick="goToStep(3)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 3: NAME ══ -->
+    <div class="step-content" id="step3">
+      <div class="summary-pill" id="serviceSummary" style="display:none;">
+        <div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+        <span id="serviceSummaryText"></span>
+      </div>
+      <div class="ai-panel">
+        <div class="ai-avatar">
+          <div class="ai-dot">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+          </div>
+          <div>
+            <div class="ai-name">Queue Assistant <span>· Makerere University</span></div>
+          </div>
+        </div>
+        <div class="ai-bubble" id="aiBubble3">
+          <div class="ai-typing"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+      <div class="section-title" id="nameTitle" style="display:none;">Enter Your Name</div>
+      <div class="form-group" id="nameFieldWrap" style="display:none;">
+        <label class="form-label">Full Name *</label>
+        <input type="text" class="form-input" id="studentName" placeholder="e.g. Nakato Sarah" autocomplete="off">
+      </div>
+      <div class="btn-row" id="step3Btns" style="display:none;">
+        <button class="btn-back" onclick="goToStep(2)">← Back</button>
+        <button class="btn-next" id="getTokenBtn" onclick="generateToken()">Get My Token →</button>
+      </div>
+    </div>
+
+    <!-- ══ LOADING ══ -->
+    <div class="loading-overlay" id="loadingOverlay" style="display:none;">
+      <div class="spinner"></div>
+      <p id="loadingMsg">Generating your token…</p>
+    </div>
+
+    <!-- ══ TOKEN RESULT ══ -->
+    <div id="tokenDisplay"></div>
+
+  </div>
+</div>
+
+<script>
+const API_BASE_URL = "http://127.0.0.1:5000";
+
+let offices=[], services=[];
+let selectedOffice=null, selectedService=null;
+let currentStep=0;
+
+/* ── TYPEWRITER ── */
+function typeMessage(bubbleId, text, onDone, delay){
+  delay = (delay===undefined) ? 550 : delay;
+  const bubble = document.getElementById(bubbleId);
+  bubble.innerHTML = '<div class="ai-typing"><span></span><span></span><span></span></div>';
+  setTimeout(function(){
+    bubble.innerHTML = '';
+    let i=0;
+    const cursor = document.createElement('span');
+    cursor.className='ai-cursor';
+    bubble.appendChild(cursor);
+    const iv = setInterval(function(){
+      if(i < text.length){
+        bubble.insertBefore(document.createTextNode(text[i]), cursor);
+        i++;
+      } else {
+        clearInterval(iv);
+        cursor.remove();
+        if(onDone) onDone();
+      }
+    }, 16);
+  }, delay);
+}
+
+/* ── INIT ── */
+typeMessage('aiBubble0',
+  "Hello! 👋 Welcome to Makerere University's Queue System. I'll help you get your token quickly. Click the button below to get started — it only takes about a minute.",
+  null, 400
+);
+
+document.getElementById('studentName').addEventListener('keydown', function(e){
+  if(e.key==='Enter') generateToken();
+});
+
+/* ── START FLOW ── */
+function startFlow(){
+  document.getElementById('step0').classList.remove('active');
+  document.getElementById('step1').classList.add('active');
+  document.getElementById('stepIndicator').style.display='flex';
+  currentStep=1;
+  updateStepIndicator(1);
+  typeMessage('aiBubble1',
+    "Great, let's get started! Which office are you visiting today? Select the one that matches your purpose.",
+    null, 300
+  );
+  loadOffices();
+}
+
+/* ── LOAD OFFICES ── */
+async function loadOffices(){
+  try{
+    const res = await fetch(API_BASE_URL+'/api/offices');
+    const data = await res.json();
+    if(data.success){ offices=data.offices; renderOffices(); }
+    else{ showGridError('officeGrid','Could not load offices. Please refresh.'); }
+  } catch(e){
+    showGridError('officeGrid','Failed to connect. Please check your network.');
+  }
+}
+
+function renderOffices(){
+  const grid = document.getElementById('officeGrid');
+  if(!offices.length){ grid.innerHTML='<p style="color:#999;font-size:13px;padding:10px 0;">No offices available right now.</p>'; return; }
+  const html = '<div class="select-grid">'+offices.map(function(o,idx){
+    return '<div class="select-card" data-id="'+o.id+'" data-code="'+o.office_code+'" data-name="'+o.office_name+'" data-loc="'+(o.location||'')+'" style="animation-delay:'+(idx*0.06)+'s">'+
+      '<div class="card-icon"><svg viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zm-2 12H4v-2h6v2zm0-4H4v-2h6v2zm0-4H4V9h6v2zm0-4H4V5h6v2zm8 12h-6v-2h6v2zm0-4h-6v-2h6v2zm0-4h-6V9h6v2z"/></svg></div>'+
+      '<div class="card-label">'+o.office_name+'</div>'+
+      '<div class="card-sub">'+(o.location||'Main Campus')+'</div>'+
+    '</div>';
+  }).join('')+'</div>';
+  grid.innerHTML=html;
+  grid.querySelectorAll('.select-card').forEach(function(card){
+    card.addEventListener('click', function(){
+      grid.querySelectorAll('.select-card').forEach(function(c){ c.classList.remove('selected'); });
+      card.classList.add('selected');
+      selectedOffice={
+        id:+card.dataset.id, code:card.dataset.code,
+        name:card.dataset.name, location:card.dataset.loc
+      };
+      document.getElementById('nextToStep2Btn').disabled=false;
+      loadServicesForOffice(selectedOffice.id);
+    });
+  });
+}
+
+/* ── LOAD SERVICES ── */
+async function loadServicesForOffice(officeId){
+  document.getElementById('serviceGrid').innerHTML='<div class="loading-cards"><div class="spinner"></div><p>Loading services…</p></div>';
+  selectedService=null;
+  document.getElementById('nextToStep3Btn').disabled=true;
+  try{
+    const res = await fetch(API_BASE_URL+'/api/offices/'+officeId+'/services');
+    const data = await res.json();
+    if(data.success){ services=data.services; }
+    else{ services=[]; }
+  } catch(e){ services=[]; }
+}
+
+function renderServices(){
+  const grid = document.getElementById('serviceGrid');
+  const title = document.getElementById('serviceTitle');
+  if(!services.length){
+    grid.innerHTML='';
+    title.style.display='none';
+    typeMessage('aiBubble2',
+      "Hmm, it looks like "+selectedOffice.name+" doesn't have any services listed right now. Please go back and try a different office.",
+      null, 0
+    );
+    return;
+  }
+  title.style.display='block';
+  typeMessage('aiBubble2',
+    "You've selected "+selectedOffice.name+". Now, which service do you need today? Pick the one that best matches your visit.",
+    null, 0
+  );
+  const html = '<div class="select-grid">'+services.map(function(s,idx){
+    return '<div class="select-card" data-id="'+s.id+'" data-code="'+s.service_code+'" data-name="'+s.service_name+'" data-time="'+(s.estimated_time_minutes||0)+'" style="animation-delay:'+(idx*0.06)+'s">'+
+      '<div class="card-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></div>'+
+      '<div class="card-label">'+s.service_name+'</div>'+
+      (s.estimated_time_minutes?'<div class="card-sub">~'+s.estimated_time_minutes+' min</div>':'')+
+    '</div>';
+  }).join('')+'</div>';
+  grid.innerHTML=html;
+  grid.querySelectorAll('.select-card').forEach(function(card){
+    card.addEventListener('click', function(){
+      grid.querySelectorAll('.select-card').forEach(function(c){ c.classList.remove('selected'); });
+      card.classList.add('selected');
+      selectedService={
+        id:+card.dataset.id, code:card.dataset.code,
+        name:card.dataset.name, estimated_time:+card.dataset.time
+      };
+      document.getElementById('nextToStep3Btn').disabled=false;
+    });
+  });
+}
+
+/* ── STEP NAVIGATION ── */
+function goToStep(step){
+  if(step===2 && !selectedOffice){ showError('Please select an office first.'); return; }
+  if(step===3 && !selectedService){ showError('Please select a service first.'); return; }
+
+  document.querySelectorAll('.step-content').forEach(function(el){ el.classList.remove('active'); });
+  document.getElementById('step'+step).classList.add('active');
+  currentStep=step;
+  updateStepIndicator(step);
+  clearError();
+
+  if(step===2){
+    const pill=document.getElementById('officeSummary');
+    document.getElementById('officeSummaryText').textContent='Office: '+selectedOffice.name;
+    pill.style.display='flex';
+    renderServices();
+  }
+
+  if(step===3){
+    const pill=document.getElementById('serviceSummary');
+    document.getElementById('serviceSummaryText').textContent=selectedOffice.name+' → '+selectedService.name;
+    pill.style.display='flex';
+
+    const nameTitle=document.getElementById('nameTitle');
+    const nameWrap=document.getElementById('nameFieldWrap');
+    const btns=document.getElementById('step3Btns');
+    nameTitle.style.display='none';
+    nameWrap.style.display='none';
+    btns.style.display='none';
+
+    typeMessage('aiBubble3',
+      "Almost there! You've chosen "+selectedService.name+" at "+selectedOffice.name+". Just one last thing — what's your full name?",
+      function(){
+        nameTitle.style.display='block';
+        nameWrap.style.display='block';
+        btns.style.display='flex';
+        setTimeout(function(){ document.getElementById('studentName').focus(); }, 200);
+      },
+      0
+    );
+  }
+}
+
+function updateStepIndicator(active){
+  for(let i=1;i<=3;i++){
+    const dot=document.getElementById('dot'+i);
+    const lbl=document.getElementById('lbl'+i);
+    dot.className='step-dot';
+    lbl.className='step-label';
+    if(i<active){
+      dot.classList.add('done');
+      dot.innerHTML='<svg viewBox="0 0 12 12" width="12" height="12"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg>';
+    } else if(i===active){
+      dot.classList.add('active');
+      dot.textContent=i;
+      lbl.classList.add('active');
+    } else {
+      dot.textContent=i;
+    }
+  }
+  document.getElementById('line1').className='step-line'+(active>1?' done':'');
+  document.getElementById('line2').className='step-line'+(active>2?' done':'');
+}
+
+/* ── GENERATE TOKEN ── */
+async function generateToken(){
+  const name = document.getElementById('studentName').value.trim();
+  if(!name){ showError('Please enter your full name.'); document.getElementById('studentName').focus(); return; }
+
+  const btn=document.getElementById('getTokenBtn');
+  btn.disabled=true;
+
+  // AI says "generating…" then shows loader
+  document.getElementById('step3').classList.remove('active');
+  const loadingOverlay=document.getElementById('loadingOverlay');
+  document.getElementById('stepIndicator').style.display='none';
+
+  // Show a temporary AI panel while generating
+  const tempPanel=document.createElement('div');
+  tempPanel.innerHTML=
+    '<div class="ai-panel" style="margin-bottom:24px;">'+
+      '<div class="ai-avatar">'+
+        '<div class="ai-dot"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div>'+
+        '<div><div class="ai-name">Queue Assistant <span>· Makerere University</span></div></div>'+
+      '</div>'+
+      '<div class="ai-bubble" id="aiBubbleGen"><div class="ai-typing"><span></span><span></span><span></span></div></div>'+
+    '</div>';
+  document.querySelector('.card').insertBefore(tempPanel, loadingOverlay);
+  tempPanel.style.animation='fadeUp 0.3s ease';
+
+  clearError();
+
+  typeMessage('aiBubbleGen',
+    "You're almost done, "+name.split(' ')[0]+"! I'm now generating your queue token — this will only take a moment…",
+    function(){
+      setTimeout(function(){
+        tempPanel.remove();
+        loadingOverlay.style.display='block';
+        doApiCall(name);
+      }, 800);
+    },
+    0
+  );
+}
+
+async function doApiCall(name){
+  const loadingOverlay=document.getElementById('loadingOverlay');
+  try{
+    const res=await fetch(API_BASE_URL+'/api/student/token',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        office_id:selectedOffice.id,
+        service_id:selectedService.id,
+        service_code:selectedService.code,
+        student_name:name,
+        student_id:null,
+        student_phone:null
+      })
+    });
+    const data=await res.json();
+    loadingOverlay.style.display='none';
+
+    if(data.success){
+      const now=new Date();
+      const timeStr=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+      const dateStr=now.toLocaleDateString('en-UG',{day:'2-digit',month:'short',year:'numeric'});
+
+      document.getElementById('tokenDisplay').innerHTML=
+        '<div class="token-result" id="printArea">'+
+          '<div class="receipt-header">'+
+            '<h2>MAKERERE UNIVERSITY</h2>'+
+            '<p>Queue Management System &nbsp;|&nbsp; '+dateStr+' '+timeStr+'</p>'+
+          '</div>'+
+          '<div class="token-badge">'+
+            '<div class="token-label">Queue Token</div>'+
+            '<div class="token-number">'+data.token_number+'</div>'+
+            '<div class="token-meta">'+escapeHtml(data.office_name)+'</div>'+
+          '</div>'+
+          '<div class="token-details">'+
+            '<div class="token-row"><span class="lbl">Name</span><span class="val">'+escapeHtml(name)+'</span></div>'+
+            '<div class="token-row"><span class="lbl">Office</span><span class="val">'+escapeHtml(data.office_name)+'</span></div>'+
+            '<div class="token-row"><span class="lbl">Service</span><span class="val">'+escapeHtml(data.service_name)+'</span></div>'+
+            '<div class="token-row"><span class="lbl">Location</span><span class="val">'+escapeHtml(data.location)+'</span></div>'+
+            '<div class="token-row"><span class="lbl">Position in queue</span><span class="val green">'+data.queue_position+'</span></div>'+
+            '<div class="token-row"><span class="lbl">Estimated wait</span><span class="val">'+data.estimated_wait+' minutes</span></div>'+
+            '<div class="token-row"><span class="lbl">Issued at</span><span class="val">'+timeStr+'</span></div>'+
+          '</div>'+
+          '<div class="token-notice">Please remain nearby and listen for your token number to be called.</div>'+
+          '<div class="token-actions">'+
+            '<button class="btn-print" onclick="window.print()">'+
+              '<svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>'+
+              'Print Receipt'+
+            '</button>'+
+            '<button class="btn-new" onclick="location.reload()">New Token</button>'+
+          '</div>'+
+        '</div>';
+    } else {
+      restoreStep3(data.message||'Failed to generate token. Please try again.');
+    }
+  } catch(err){
+    loadingOverlay.style.display='none';
+    restoreStep3('Network error. Please check your connection and try again.');
+  }
+}
+
+function restoreStep3(errMsg){
+  document.getElementById('stepIndicator').style.display='flex';
+  document.getElementById('step3').classList.add('active');
+  const btn=document.getElementById('getTokenBtn');
+  btn.disabled=false;
+  showError(errMsg);
+}
+
+/* ── HELPERS ── */
+function showGridError(gridId, msg){
+  document.getElementById(gridId).innerHTML='<p style="color:#f44336;font-size:13px;padding:8px 0;">'+msg+'</p>';
+}
+
+function escapeHtml(text){
+  if(!text) return '';
+  const d=document.createElement('div');
+  d.textContent=text;
+  return d.innerHTML;
+}
+
+function showError(msg){
+  const bar=document.getElementById('errorBar');
+  bar.textContent=msg;
+  bar.style.display='block';
+  clearTimeout(showError._t);
+  showError._t=setTimeout(function(){ bar.style.display='none'; }, 5000);
+}
+
+function clearError(){
+  document.getElementById('errorBar').style.display='none';
+}
+</script>
+</body>
+</html>

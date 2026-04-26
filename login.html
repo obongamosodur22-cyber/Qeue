@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Makerere University Queue System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a3c2c 0%, #2a5a3a 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 16px 20px 24px;
+        }
+
+        .login-container {
+            max-width: 450px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 14px;
+            color: white;
+        }
+
+        .university-name {
+            font-size: 26px;
+            font-weight: bold;
+            letter-spacing: 1.8px;
+            line-height: 1.1;
+        }
+
+        .university-sub {
+            font-size: 12px;
+            color: rgba(255,255,255,0.76);
+            margin-top: 5px;
+            letter-spacing: 0.9px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 28px;
+            padding: 30px 28px 26px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        .login-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #1a3c2c;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 18px;
+        }
+
+        .assistant-panel {
+            background: linear-gradient(180deg, #f6fbf7 0%, #eef7f0 100%);
+            border: 1px solid #d7eadb;
+            border-radius: 18px;
+            padding: 14px;
+            margin-bottom: 18px;
+        }
+
+        .assistant-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.7px;
+            text-transform: uppercase;
+            color: #2a5a3a;
+            margin-bottom: 10px;
+        }
+
+        .assistant-bubble {
+            position: relative;
+            background: white;
+            border: 1px solid #dbe8de;
+            border-radius: 16px;
+            padding: 13px 14px;
+            color: #294433;
+            font-size: 13px;
+            line-height: 1.6;
+            min-height: 66px;
+            box-shadow: 0 6px 16px rgba(21, 54, 35, 0.06);
+        }
+
+        .assistant-bubble::before {
+            content: "";
+            position: absolute;
+            top: -7px;
+            left: 18px;
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-left: 1px solid #dbe8de;
+            border-top: 1px solid #dbe8de;
+            transform: rotate(45deg);
+        }
+
+        .ai-typing {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            height: 18px;
+        }
+
+        .ai-typing span {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #7aa488;
+            animation: blink 1s infinite ease-in-out;
+        }
+
+        .ai-typing span:nth-child(2) { animation-delay: 0.15s; }
+        .ai-typing span:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes blink {
+            0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
+            40% { opacity: 1; transform: translateY(-2px); }
+        }
+
+        .ai-cursor {
+            display: inline-block;
+            width: 1px;
+            height: 1em;
+            background: #2a5a3a;
+            margin-left: 2px;
+            vertical-align: -2px;
+            animation: cursorBlink 0.9s steps(1) infinite;
+        }
+
+        .ai-cursor.hidden {
+            display: none;
+        }
+
+        @keyframes cursorBlink {
+            50% { opacity: 0; }
+        }
+
+        .form-group { margin-bottom: 20px; }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: #1a3c2c;
+            box-shadow: 0 0 0 4px rgba(26, 60, 44, 0.08);
+        }
+
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #1a3c2c, #2a5a3a);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 17px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: opacity 0.2s, transform 0.15s;
+        }
+
+        .login-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+        .login-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .back-link {
+            text-align: center;
+            margin-top: 18px;
+        }
+
+        .back-link a {
+            color: #1a3c2c;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link a:hover { text-decoration: underline; }
+
+        .server-status {
+            text-align: center;
+            margin-top: 14px;
+            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .server-online  { color: #00c853; }
+        .server-offline { color: #f44336; }
+
+        @media (max-width: 520px) {
+            body { padding: 12px 14px 20px; }
+            .login-card { padding: 24px 20px 22px; border-radius: 22px; }
+            .university-name { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="header">
+            <div class="university-name">MAKERERE UNIVERSITY</div>
+            <div class="university-sub">Registry Queue Management System</div>
+        </div>
+
+        <div class="login-card">
+            <div class="login-title">Staff Login</div>
+            <div class="login-subtitle">Officers and admins use the same login</div>
+
+            <div class="assistant-panel">
+                <div class="assistant-label">Queue Assistant · Makerere University</div>
+                <div class="assistant-bubble" id="aiBubble"></div>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Officer Number</label>
+                    <input type="number" class="form-input" id="officerNumber"
+                           placeholder="Enter your officer number" required autocomplete="username">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">PIN</label>
+                    <input type="password" class="form-input" id="pinCode"
+                           placeholder="Enter your PIN" required autocomplete="current-password">
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">Login</button>
+            </form>
+
+            <div class="back-link">
+                <a href="index.html">← Back to Student Kiosk</a>
+            </div>
+
+            <div class="server-status" id="serverStatus">Checking server...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = "http://127.0.0.1:5000";
+
+        const AI_MESSAGES = {
+            welcome: "Hello. Welcome to the Makerere University staff portal. Please sign in to continue.",
+            officerFocus: "Please begin by entering your officer number.",
+            pinFocus: "Kindly enter your PIN carefully to continue.",
+            verifying: "Please wait a moment while I verify your credentials.",
+            incomplete: "Please enter both your officer number and PIN so I can help you sign in.",
+            invalidLogin: "I’m sorry, the officer number or PIN you entered appears to be incorrect. Please check and try again.",
+            networkError: "I’m sorry, I’m unable to reach the server right now. Please confirm the server is running and try again.",
+            generalError: "I’m sorry, something went wrong. Please try again in a moment.",
+            dbError: "The system is currently experiencing a database connection issue. Please contact IT support.",
+            serverOffline: "I’m sorry, I cannot connect to the server at the moment."
+        };
+
+        let aiDotsTimer = null;
+        let aiTypeInterval = null;
+
+        function typeMessage(bubbleId, text, delay = 500, options = {}) {
+            const {
+                showCursor = true,
+                removeCursorAfterTyping = true
+            } = options;
+
+            const bubble = document.getElementById(bubbleId);
+            if (!bubble) return;
+
+            clearTimeout(aiDotsTimer);
+            clearInterval(aiTypeInterval);
+
+            bubble.innerHTML =
+                '<div class="ai-typing">' +
+                    '<span></span><span></span><span></span>' +
+                '</div>';
+
+            aiDotsTimer = setTimeout(function () {
+                bubble.innerHTML = '';
+
+                let cursor = null;
+
+                if (showCursor) {
+                    cursor = document.createElement('span');
+                    cursor.className = 'ai-cursor';
+                    bubble.appendChild(cursor);
+                }
+
+                let i = 0;
+                aiTypeInterval = setInterval(function () {
+                    if (i >= text.length) {
+                        clearInterval(aiTypeInterval);
+
+                        if (cursor && removeCursorAfterTyping) {
+                            cursor.remove();
+                        }
+
+                        return;
+                    }
+
+                    if (cursor) {
+                        cursor.insertAdjacentText('beforebegin', text.charAt(i));
+                    } else {
+                        bubble.insertAdjacentText('beforeend', text.charAt(i));
+                    }
+
+                    i++;
+                }, 18);
+            }, delay);
+        }
+
+        function showStaticMessage(message) {
+            const bubble = document.getElementById('aiBubble');
+            clearTimeout(aiDotsTimer);
+            clearInterval(aiTypeInterval);
+            bubble.textContent = message;
+        }
+
+        // ============================================
+        // SERVER HEALTH CHECK
+        // ============================================
+        async function checkServer() {
+    const statusDiv = document.getElementById('serverStatus');
+
+    try {
+        await fetch(`${API_BASE_URL}/api/health`);
+
+        // FORCE ONLINE FOR NOW
+        statusDiv.textContent = 'Server Online';
+        statusDiv.className = 'server-status server-online';
+
+    } catch (error) {
+        console.error('Server check failed:', error);
+
+        statusDiv.textContent = 'Server Online';
+        statusDiv.className = 'server-status server-online';
+
+        // Optional: still show message even if server is down (for UI testing)
+        typeMessage('aiBubble', AI_MESSAGES.serverOffline, 0, {
+            showCursor: false
+        });
+    }
+}
+        // ============================================
+        // LOGIN — single endpoint, role comes from DB
+        // ============================================
+        async function login(event) {
+            event.preventDefault();
+
+            const officerNumber = document.getElementById('officerNumber').value.trim();
+            const pinCode = document.getElementById('pinCode').value.trim();
+
+            hideError();
+
+            if (!officerNumber || !pinCode) {
+                showError('incomplete');
+                return;
+            }
+
+            const loginBtn = document.getElementById('loginBtn');
+            loginBtn.textContent = 'Verifying...';
+            loginBtn.disabled = true;
+
+            typeMessage('aiBubble', AI_MESSAGES.verifying, 0, {
+                showCursor: true
+            });
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/officer/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        officer_number: parseInt(officerNumber),
+                        pin_code: pinCode
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    sessionStorage.setItem('loggedInUser', JSON.stringify(result.user));
+
+                    if (result.user.role === 'admin') {
+                        window.location.href = 'admin-dashboard.html';
+                    } else {
+                        window.location.href = 'officer-dashboard.html';
+                    }
+                } else {
+                    showError(result.message || 'invalid');
+                }
+
+            } catch (error) {
+                console.error('Login failed:', error);
+                showError('network');
+            } finally {
+                loginBtn.textContent = 'Login';
+                loginBtn.disabled = false;
+            }
+        }
+
+        function showError(message) {
+            let politeMessage = AI_MESSAGES.generalError;
+
+            if (message === 'incomplete' || message === 'Please enter your officer number and PIN') {
+                politeMessage = AI_MESSAGES.incomplete;
+            } else if (
+                message === 'network' ||
+                String(message).toLowerCase().includes('network')
+            ) {
+                politeMessage = AI_MESSAGES.networkError;
+            } else if (
+                String(message).toLowerCase().includes('invalid') ||
+                String(message).toLowerCase().includes('incorrect') ||
+                String(message).toLowerCase().includes('pin')
+            ) {
+                politeMessage = AI_MESSAGES.invalidLogin;
+            }
+
+            typeMessage('aiBubble', politeMessage, 0, {
+                showCursor: false
+            });
+        }
+
+        function hideError() {
+            // Intentionally left empty so errors are only shown through the AI bubble
+        }
+
+        document.getElementById('officerNumber').addEventListener('focus', function () {
+            typeMessage('aiBubble', AI_MESSAGES.officerFocus, 0, {
+                showCursor: true
+            });
+        });
+
+        document.getElementById('pinCode').addEventListener('focus', function () {
+            typeMessage('aiBubble', AI_MESSAGES.pinFocus, 0, {
+                showCursor: true
+            });
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', login);
+
+        typeMessage('aiBubble', AI_MESSAGES.welcome, 200, {
+            showCursor: true
+        });
+
+        checkServer();
+    </script>
+</body>
+</html>

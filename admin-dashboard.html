@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Makerere University</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green-dark: #1a3c2c;
+            --green-mid: #2a5a3a;
+            --green-light: #e8f5e9;
+            --gold: #ffd700;
+            --gold-dim: #b8960a;
+            --bg: #f0f2f5;
+            --white: #ffffff;
+            --border: #e4e8ee;
+            --text-primary: #1a2332;
+            --text-secondary: #6b7a90;
+            --text-muted: #9ba8bb;
+            --red: #e53935;
+            --red-light: #ffebee;
+            --blue: #1565c0;
+            --blue-light: #e3f2fd;
+            --orange: #ef6c00;
+            --orange-light: #fff3e0;
+            --success: #00a84f;
+            --success-light: #e8f5e9;
+            --shadow-sm: 0 1px 4px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-sm: 8px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: 256px;
+            min-height: 100vh;
+            background: linear-gradient(175deg, var(--green-dark) 0%, #16342a 60%, #0f2a1e 100%);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            z-index: 100;
+            overflow-y: auto;
+            flex-shrink: 0;
+            border-right: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .sidebar-logo {
+            padding: 24px 20px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo-icon {
+            width: 38px; height: 38px;
+            background: linear-gradient(135deg, var(--gold), #e6b800);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .logo-icon svg { width: 20px; height: 20px; }
+        .logo-text { line-height: 1.15; }
+        .logo-title { font-size: 15px; font-weight: 800; color: white; letter-spacing: -0.01em; }
+        .logo-sub { font-size: 10px; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: 0.08em; }
+
+        .admin-pill {
+            margin: 16px 14px 8px;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.09);
+            border-radius: var(--radius);
+            padding: 12px 14px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .admin-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), #e6b800);
+            color: var(--green-dark);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 12px; flex-shrink: 0;
+            letter-spacing: 0.03em;
+        }
+        .admin-meta { flex: 1; min-width: 0; }
+        .admin-name-text { font-size: 13px; font-weight: 700; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .admin-badge {
+            font-size: 9px; background: rgba(255,215,0,0.15); color: var(--gold);
+            border: 1px solid rgba(255,215,0,0.25);
+            padding: 2px 8px; border-radius: 20px; font-weight: 700;
+            display: inline-block; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+
+        .nav-section-label {
+            font-size: 9.5px; font-weight: 700; color: rgba(255,255,255,0.3);
+            text-transform: uppercase; letter-spacing: 0.12em;
+            padding: 18px 20px 6px;
+        }
+
+        .nav-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 20px;
+            color: rgba(255,255,255,0.6);
+            font-size: 13px; font-weight: 500;
+            cursor: pointer;
+            border-left: 2px solid transparent;
+            transition: all 0.15s ease;
+            user-select: none;
+            position: relative;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.9); }
+        .nav-item.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left: 2px solid var(--gold);
+            font-weight: 700;
+        }
+        .nav-icon {
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: var(--radius-sm);
+            background: rgba(255,255,255,0.06);
+            flex-shrink: 0;
+        }
+        .nav-item.active .nav-icon { background: rgba(255,215,0,0.12); }
+        .nav-icon svg { width: 15px; height: 15px; }
+        .nav-badge {
+            margin-left: auto; background: var(--red); color: white;
+            font-size: 9px; padding: 2px 7px; border-radius: 20px; font-weight: 700;
+            min-width: 20px; text-align: center;
+        }
+
+        .sidebar-spacer { flex: 1; }
+
+        /* ── TOPBAR ── */
+        .main-wrapper {
+            margin-left: 256px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background: var(--white);
+            padding: 0 28px;
+            height: 64px;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50;
+            box-shadow: 0 1px 0 var(--border);
+        }
+        .topbar-left { display: flex; align-items: center; gap: 14px; }
+        .topbar-divider {
+            width: 1px; height: 24px; background: var(--border);
+        }
+        .topbar-title { font-size: 16px; font-weight: 800; color: var(--green-dark); letter-spacing: -0.02em; }
+        .topbar-sub { font-size: 11.5px; color: var(--text-muted); font-weight: 500; margin-top: 1px; }
+        .topbar-right { display: flex; align-items: center; gap: 10px; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--green-dark), var(--green-mid));
+            color: white; border: none; padding: 9px 16px;
+            border-radius: var(--radius-sm); cursor: pointer; font-weight: 700;
+            font-size: 12.5px; display: inline-flex; align-items: center; gap: 7px;
+            transition: all 0.2s; letter-spacing: -0.01em;
+            font-family: inherit; box-shadow: 0 2px 8px rgba(26,60,44,0.3);
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(26,60,44,0.4); }
+        .btn-primary svg { width: 14px; height: 14px; }
+
+        .btn-logout {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: var(--red-light); color: var(--red);
+            border: 1px solid rgba(229,57,53,0.2);
+            padding: 8px 14px; border-radius: var(--radius-sm);
+            cursor: pointer; font-size: 12.5px; font-weight: 700;
+            transition: all 0.2s; font-family: inherit;
+        }
+        .btn-logout:hover { background: #ffcdd2; border-color: rgba(229,57,53,0.4); }
+        .btn-logout svg { width: 14px; height: 14px; }
+
+        /* ── CONTENT ── */
+        .content-area { padding: 26px 28px; flex: 1; }
+
+        .page { display: none; }
+        .page.active { display: block; }
+
+        /* ── STATS GRID ── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        .stat-card {
+            background: var(--white); border-radius: var(--radius-lg);
+            padding: 20px 22px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            position: relative; overflow: hidden;
+        }
+        .stat-card::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: var(--green-dark);
+        }
+        .stat-card.orange::before { background: var(--orange); }
+        .stat-card.blue::before { background: var(--blue); }
+        .stat-card.green::before { background: var(--success); }
+
+        .stat-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+        .stat-icon-wrap {
+            width: 40px; height: 40px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--green-light);
+        }
+        .stat-card.orange .stat-icon-wrap { background: var(--orange-light); }
+        .stat-card.blue .stat-icon-wrap { background: var(--blue-light); }
+        .stat-card.green .stat-icon-wrap { background: var(--success-light); }
+        .stat-icon-wrap svg { width: 19px; height: 19px; }
+
+        .stat-number { font-size: 34px; font-weight: 800; color: var(--text-primary); line-height: 1; letter-spacing: -0.03em; }
+        .stat-label { color: var(--text-muted); font-size: 12px; font-weight: 600; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+        /* ── SECTION ── */
+        .section { margin-bottom: 30px; }
+        .section-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .section-title {
+            font-size: 14px; font-weight: 800; color: var(--text-primary);
+            display: flex; align-items: center; gap: 8px; letter-spacing: -0.01em;
+        }
+        .section-title svg { width: 16px; height: 16px; color: var(--green-dark); }
+
+        /* ── OFFICE CARDS ── */
+        .offices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 16px;
+        }
+        .office-card {
+            background: var(--white); border-radius: var(--radius-lg);
+            padding: 20px 22px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .office-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+
+        .office-card-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .office-card-name { font-size: 14.5px; font-weight: 800; color: var(--green-dark); letter-spacing: -0.02em; }
+        .office-code-badge {
+            background: var(--green-light); color: var(--green-dark);
+            font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 20px;
+            border: 1px solid rgba(26,60,44,0.1);
+        }
+        .office-location {
+            font-size: 11.5px; color: var(--text-muted); margin-top: 2px;
+            display: flex; align-items: center; gap: 5px; font-weight: 500;
+        }
+        .office-location svg { width: 11px; height: 11px; }
+
+        .services-container {
+            margin: 14px 0 10px;
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+        }
+        .services-title {
+            font-size: 11px; font-weight: 700; color: var(--text-secondary);
+            margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;
+            text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .services-list-mini { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+        .service-tag {
+            background: var(--green-light); border: 1px solid rgba(26,60,44,0.08);
+            padding: 4px 8px; border-radius: 8px; font-size: 10.5px; color: var(--green-dark);
+            display: inline-flex; align-items: center; gap: 5px; font-weight: 600;
+        }
+        .service-tag button {
+            background: none; border: none; cursor: pointer; padding: 0; line-height: 1;
+            display: flex; align-items: center;
+        }
+        .service-tag button svg { width: 11px; height: 11px; }
+        .service-tag button:hover svg { color: var(--red); }
+
+        .stats-mini {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 8px; margin: 12px 0;
+        }
+        .mini-stat {
+            background: var(--bg); border-radius: var(--radius-sm);
+            padding: 10px 8px; text-align: center;
+            border: 1px solid var(--border);
+        }
+        .mini-stat-label { font-size: 9.5px; color: var(--text-muted); margin-bottom: 3px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+        .mini-stat-val { font-size: 20px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; }
+
+        .card-actions { display: flex; gap: 7px; margin-top: 14px; flex-wrap: wrap; }
+
+        .btn-sm {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 6px 11px; border-radius: 7px; cursor: pointer;
+            font-size: 11.5px; font-weight: 700; border: none; font-family: inherit;
+            transition: all 0.15s;
+        }
+        .btn-sm svg { width: 12px; height: 12px; }
+        .btn-edit-sm { background: var(--blue-light); color: var(--blue); }
+        .btn-edit-sm:hover { background: #bbdefb; }
+        .btn-delete-sm { background: var(--red-light); color: var(--red); }
+        .btn-delete-sm:hover { background: #ffcdd2; }
+        .btn-reset-sm { background: var(--orange-light); color: var(--orange); }
+        .btn-reset-sm:hover { background: #ffe0b2; }
+
+        .btn-success {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: var(--success); color: white; border: none;
+            padding: 5px 10px; border-radius: 7px; cursor: pointer;
+            font-size: 11px; font-weight: 700; font-family: inherit;
+            transition: all 0.15s;
+        }
+        .btn-success:hover { background: #007c3a; }
+        .btn-success svg { width: 11px; height: 11px; }
+
+        /* ── TABLE ── */
+        .table-wrap {
+            background: var(--white); border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm); overflow: auto;
+            border: 1px solid var(--border);
+        }
+        .data-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        .data-table th {
+            background: var(--bg); padding: 12px 18px; text-align: left;
+            font-size: 10.5px; color: var(--text-muted); font-weight: 700;
+            text-transform: uppercase; border-bottom: 1px solid var(--border); letter-spacing: 0.06em;
+        }
+        .data-table td {
+            padding: 13px 18px; font-size: 13.5px; color: var(--text-primary);
+            border-bottom: 1px solid var(--border);
+        }
+        .data-table tr:last-child td { border-bottom: none; }
+        .data-table tr:hover td { background: #fafbfc; }
+
+        .status-pill {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;
+        }
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; }
+        .pill-available { background: var(--success-light); color: #1b7a30; }
+        .pill-available .status-dot { background: var(--success); }
+        .pill-busy { background: var(--orange-light); color: #bf6c00; }
+        .pill-busy .status-dot { background: var(--orange); }
+        .pill-called { background: var(--orange-light); color: #bf6c00; }
+        .pill-called .status-dot { background: var(--orange); }
+
+        /* ── MODAL ── */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(15,30,20,0.6); backdrop-filter: blur(4px);
+            z-index: 1000; align-items: center; justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: var(--white); border-radius: var(--radius-lg); padding: 28px 30px;
+            width: 560px; max-width: 95%; max-height: 88vh; overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        .modal-header {
+            font-size: 16px; font-weight: 800; color: var(--green-dark);
+            margin-bottom: 20px; padding-bottom: 14px;
+            border-bottom: 2px solid var(--green-light);
+            display: flex; align-items: center; gap: 8px; letter-spacing: -0.02em;
+        }
+        .modal-header svg { width: 18px; height: 18px; }
+        .form-group { margin-bottom: 14px; }
+        .form-group label {
+            display: block; font-size: 11.5px; font-weight: 700;
+            margin-bottom: 6px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.04em;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 10px 13px;
+            border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+            font-size: 13.5px; font-family: inherit; background: var(--white);
+            color: var(--text-primary); transition: border-color 0.15s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none; border-color: var(--green-dark);
+            box-shadow: 0 0 0 3px rgba(26,60,44,0.08);
+        }
+
+        .services-list, .officers-list {
+            background: var(--bg); border-radius: var(--radius-sm); padding: 10px;
+            margin-bottom: 12px; max-height: 200px; overflow-y: auto;
+            border: 1.5px solid var(--border);
+        }
+        .service-item, .officer-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 9px 8px; border-bottom: 1px solid var(--border);
+        }
+        .service-item:last-child, .officer-item:last-child { border-bottom: none; }
+        .service-info, .officer-info { flex: 1; }
+        .service-name, .officer-name { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+        .service-code, .officer-number { font-size: 10.5px; color: var(--text-muted); margin-top: 2px; font-weight: 600; }
+        .remove-service, .remove-officer {
+            background: var(--red-light); color: var(--red); border: none;
+            padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 700;
+            font-family: inherit;
+        }
+        .remove-service:hover, .remove-officer:hover { background: #ffcdd2; }
+
+        .add-service-row {
+            display: flex; gap: 8px; margin-top: 10px;
+        }
+        .add-service-row input {
+            padding: 8px 10px; border: 1.5px solid var(--border);
+            border-radius: 7px; font-size: 12.5px; font-family: inherit;
+        }
+        .add-service-row input:focus { outline: none; border-color: var(--green-dark); }
+        .btn-add-service {
+            background: var(--success); color: white; border: none;
+            padding: 8px 14px; border-radius: 7px; cursor: pointer;
+            font-size: 12px; font-weight: 700; font-family: inherit; white-space: nowrap;
+            transition: background 0.15s;
+        }
+        .btn-add-service:hover { background: #007c3a; }
+
+        .modal-actions { display: flex; gap: 10px; margin-top: 22px; }
+        .modal-actions button {
+            flex: 1; padding: 11px; border: none;
+            border-radius: var(--radius-sm); cursor: pointer; font-weight: 700;
+            font-size: 13.5px; font-family: inherit; transition: all 0.15s;
+        }
+        .btn-save { background: linear-gradient(135deg, var(--green-dark), var(--green-mid)); color: white; box-shadow: 0 2px 8px rgba(26,60,44,0.25); }
+        .btn-save:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(26,60,44,0.35); }
+        .btn-cancel-modal { background: var(--bg); color: var(--text-secondary); border: 1px solid var(--border) !important; }
+        .btn-cancel-modal:hover { background: #e8e8e8; }
+
+        /* ── TOAST ── */
+        #toast {
+            position: fixed; bottom: 22px; right: 22px;
+            padding: 13px 20px; border-radius: var(--radius-sm); font-size: 13.5px;
+            color: white; background: var(--success); z-index: 9999;
+            display: none; box-shadow: var(--shadow-md); font-weight: 600;
+            max-width: 320px; animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .empty-state {
+            color: var(--text-muted); font-size: 13px; text-align: center;
+            padding: 40px 20px; font-weight: 500; grid-column: 1/-1;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 960px) {
+            .sidebar { width: 64px; }
+            .logo-text, .admin-meta, .nav-item > span:not(.nav-icon),
+            .nav-section-label { display: none; }
+            .admin-pill { padding: 8px; justify-content: center; }
+            .nav-item { padding: 12px 16px; justify-content: center; }
+            .nav-badge { position: absolute; top: 6px; right: 6px; }
+            .sidebar-logo { padding: 16px 13px; justify-content: center; }
+            .logo-icon { margin: 0; }
+            .main-wrapper { margin-left: 64px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .offices-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#1a3c2c" stroke-width="2.5">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                </svg>
+            </div>
+            <div class="logo-text">
+                <div class="logo-title">Makerere</div>
+                <div class="logo-sub">Admin Portal</div>
+            </div>
+        </div>
+
+        <div class="admin-pill">
+            <div class="admin-avatar" id="sidebarAvatar">SA</div>
+            <div class="admin-meta">
+                <div class="admin-name-text" id="sidebarName">Loading...</div>
+                <span class="admin-badge">Super Admin</span>
+            </div>
+        </div>
+
+        <div class="nav-section-label">Overview</div>
+        <div class="nav-item active" onclick="showPage('overview', this)">
+            <div class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+                </svg>
+            </div>
+            <span>Dashboard</span>
+        </div>
+
+        <div class="nav-section-label">Management</div>
+        <div class="nav-item" onclick="showPage('offices', this)">
+            <div class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg>
+            </div>
+            <span>Offices</span>
+        </div>
+        <div class="nav-item" onclick="showPage('officers', this)">
+            <div class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+            </div>
+            <span>Officers</span>
+        </div>
+
+        <div class="nav-section-label">Queue</div>
+        <div class="nav-item" onclick="showPage('queue', this)">
+            <div class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+                    <line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/>
+                    <line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+                </svg>
+            </div>
+            <span>Live Queue</span>
+            <span class="nav-badge" id="sidebarQueueBadge">0</span>
+        </div>
+
+        <div class="sidebar-spacer"></div>
+    </div>
+
+    <!-- MAIN WRAPPER -->
+    <div class="main-wrapper">
+        <div class="topbar">
+            <div class="topbar-left">
+                <div>
+                    <div class="topbar-title" id="topbarTitle">Dashboard Overview</div>
+                    <div class="topbar-sub" id="topbarSub">Manage Offices &amp; Services</div>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <div id="topbarActions"></div>
+                <div class="topbar-divider"></div>
+                <button class="btn-logout" onclick="logout()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    Logout
+                </button>
+            </div>
+        </div>
+
+        <div class="content-area">
+
+            <!-- DASHBOARD PAGE -->
+            <div class="page active" id="page-overview">
+                <div class="stats-grid">
+                    <div class="stat-card orange">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-number" id="totalWaiting">0</div>
+                                <div class="stat-label">Total Waiting</div>
+                            </div>
+                            <div class="stat-icon-wrap">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#ef6c00" stroke-width="2" stroke-linecap="round">
+                                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card blue">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-number" id="totalServing">0</div>
+                                <div class="stat-label">Serving Now</div>
+                            </div>
+                            <div class="stat-icon-wrap">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#1565c0" stroke-width="2" stroke-linecap="round">
+                                    <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+                                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-number" id="totalCompleted">0</div>
+                                <div class="stat-label">Completed Today</div>
+                            </div>
+                            <div class="stat-icon-wrap">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#00a84f" stroke-width="2" stroke-linecap="round">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-number" id="activeOfficers">0</div>
+                                <div class="stat-label">Active Officers</div>
+                            </div>
+                            <div class="stat-icon-wrap">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#1a3c2c" stroke-width="2" stroke-linecap="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                <rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                            </svg>
+                            Service Offices
+                        </div>
+                        <button class="btn-primary" onclick="showPage('offices', document.querySelector('[onclick*=offices]'))">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                                <polyline points="9 18 15 12 9 6"/>
+                            </svg>
+                            Manage Offices
+                        </button>
+                    </div>
+                    <div class="offices-grid" id="overviewOfficesGrid">
+                        <div class="empty-state">Loading offices...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OFFICES PAGE -->
+            <div class="page" id="page-offices">
+                <div class="offices-grid" id="officesGrid"></div>
+            </div>
+
+            <!-- OFFICERS PAGE -->
+            <div class="page" id="page-officers">
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th><th>Name</th><th>Office</th>
+                                <th>Email</th><th>Status</th><th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="officersTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- QUEUE PAGE -->
+            <div class="page" id="page-queue">
+                <div class="offices-grid" id="queueGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OFFICE MODAL -->
+    <div class="modal-overlay" id="officeModal">
+        <div class="modal-box">
+            <div class="modal-header" id="officeModalTitle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg>
+                Add New Office
+            </div>
+            <form id="officeForm">
+                <input type="hidden" id="officeId">
+                <div class="form-group">
+                    <label>Office Code *</label>
+                    <input type="text" id="officeCode" required maxlength="10" placeholder="e.g., AR, REC">
+                </div>
+                <div class="form-group">
+                    <label>Office Name *</label>
+                    <input type="text" id="officeName" required placeholder="e.g., Academic Registrar Office">
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" id="officeLocation" placeholder="e.g., Senate Building, Floor 2">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="officeDesc" rows="2" placeholder="Office description..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Services Offered</label>
+                    <div id="servicesListContainer" class="services-list">
+                        <div style="text-align:center;color:var(--text-muted);padding:20px;font-size:13px;">No services added yet</div>
+                    </div>
+                    <div class="add-service-row">
+                        <input type="text" id="newServiceName" placeholder="Service Name" style="flex:2">
+                        <input type="text" id="newServiceCode" placeholder="Code (e.g., REG)" style="flex:1">
+                        <input type="number" id="newServiceTime" placeholder="Min" style="width:68px" value="5">
+                        <button type="button" class="btn-add-service" onclick="addServiceToList()">+ Add</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Assigned Officers</label>
+                    <div id="officersListContainer" class="officers-list">
+                        <div style="text-align:center;color:var(--text-muted);padding:20px;font-size:13px;">No officers assigned yet</div>
+                    </div>
+                    <div class="add-service-row">
+                        <input type="number" id="newOfficerNumber" placeholder="Office Number eg,103 #" style="flex:1">
+                        <input type="text" id="newOfficerName" placeholder="Full Name" style="flex:2">
+                        <input type="password" id="newOfficerPin" placeholder="PIN" style="width:72px" maxlength="4">
+                        <button type="button" class="btn-add-service" onclick="addOfficerToList()">+ Add</button>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-save">Save Office</button>
+                    <button type="button" class="btn-cancel-modal" onclick="closeModal('officeModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADD SERVICE MODAL -->
+    <div class="modal-overlay" id="addServiceModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Add Service to Office
+            </div>
+            <form id="addServiceForm">
+                <input type="hidden" id="addServiceOfficeId">
+                <div class="form-group">
+                    <label>Office</label>
+                    <input type="text" id="addServiceOfficeName" readonly style="background:var(--bg);">
+                </div>
+                <div class="form-group">
+                    <label>Service Code *</label>
+                    <input type="text" id="addServiceCode" required maxlength="10" placeholder="e.g., REG">
+                </div>
+                <div class="form-group">
+                    <label>Service Name *</label>
+                    <input type="text" id="addServiceName" required placeholder="e.g., Registry Services">
+                </div>
+                <div class="form-group">
+                    <label>Estimated Time (minutes)</label>
+                    <input type="number" id="addServiceTime" value="5">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="addServiceDesc" rows="2"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-save">Add Service</button>
+                    <button type="button" class="btn-cancel-modal" onclick="closeModal('addServiceModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EDIT SERVICE MODAL -->
+    <div class="modal-overlay" id="serviceModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+                Edit Service
+            </div>
+            <form id="serviceForm">
+                <input type="hidden" id="serviceId">
+                <input type="hidden" id="serviceOfficeId">
+                <div class="form-group">
+                    <label>Service Code</label>
+                    <input type="text" id="serviceCode" required>
+                </div>
+                <div class="form-group">
+                    <label>Service Name</label>
+                    <input type="text" id="serviceName" required>
+                </div>
+                <div class="form-group">
+                    <label>Estimated Time (minutes)</label>
+                    <input type="number" id="serviceTime" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="serviceDesc" rows="2"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-save">Update Service</button>
+                    <button type="button" class="btn-cancel-modal" onclick="closeModal('serviceModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- OFFICER MODAL -->
+    <div class="modal-overlay" id="officerModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                </svg>
+                Add New Officer
+            </div>
+            <form id="officerForm">
+                <input type="hidden" id="officerId">
+                <div class="form-group">
+                    <label>Officer Number *</label>
+                    <input type="number" id="officerNumber" required>
+                </div>
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" id="officerName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="officerEmail">
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="officerPhone">
+                </div>
+                <div class="form-group">
+                    <label>Assign to Office *</label>
+                    <select id="officerOfficeId" required></select>
+                </div>
+                <div class="form-group">
+                    <label>PIN Code (4 digits)</label>
+                    <input type="password" id="officerPin" placeholder="1234" maxlength="4">
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-save">Save Officer</button>
+                    <button type="button" class="btn-cancel-modal" onclick="closeModal('officerModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+        const API_BASE_URL = "http://127.0.0.1:5000";
+        let currentAdmin = null;
+        let officesData = [];
+        let pendingServices = [];
+        let pendingOfficers = [];
+        let editingOfficeId = null;
+
+        function checkLogin() {
+            const loggedIn = sessionStorage.getItem('loggedInUser');
+            if (!loggedIn) { window.location.href = 'login.html'; return null; }
+            const user = JSON.parse(loggedIn);
+            if (user.role !== 'admin') { window.location.href = 'officer-dashboard.html'; return null; }
+            return user;
+        }
+
+        currentAdmin = checkLogin();
+        if (currentAdmin) {
+            const name = currentAdmin.officer_name || 'Administrator';
+            document.getElementById('sidebarName').textContent = name;
+            const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+            document.getElementById('sidebarAvatar').textContent = initials;
+        }
+
+        function logout() {
+            sessionStorage.removeItem('loggedInUser');
+            window.location.href = 'index.html';
+        }
+
+        function showPage(id, navEl) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            const pg = document.getElementById('page-' + id);
+            if (pg) pg.classList.add('active');
+            if (navEl) navEl.classList.add('active');
+
+            const titles = {
+                overview: { title: 'Dashboard Overview', sub: 'Manage Offices & Services' },
+                offices: { title: 'Service Offices', sub: 'Manage offices and their services' },
+                officers: { title: 'Officers', sub: 'Manage officers and assignments' },
+                queue: { title: 'Live Queue', sub: 'Real-time queue monitoring' }
+            };
+            const t = titles[id] || { title: 'Management', sub: '' };
+            document.getElementById('topbarTitle').textContent = t.title;
+            document.getElementById('topbarSub').textContent = t.sub;
+
+            if (id === 'offices') {
+                document.getElementById('topbarActions').innerHTML = `
+                    <button class="btn-primary" onclick="openAddOfficeModal()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:14px;height:14px;">
+                            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        Add New Office
+                    </button>`;
+            } else if (id === 'officers') {
+                document.getElementById('topbarActions').innerHTML = `
+                    <button class="btn-primary" onclick="openAddOfficerModal()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:14px;height:14px;">
+                            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        Add New Officer
+                    </button>`;
+            } else {
+                document.getElementById('topbarActions').innerHTML = '';
+            }
+        }
+
+        function openModal(id) { document.getElementById(id).classList.add('open'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.background = type === 'success' ? 'var(--success)' : 'var(--red)';
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        }
+
+        async function apiCall(endpoint, method = 'GET', data = null) {
+            try {
+                const options = { method, headers: { 'Content-Type': 'application/json' } };
+                if (data) options.body = JSON.stringify(data);
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+                return await response.json();
+            } catch (error) {
+                return { success: false, message: error.message };
+            }
+        }
+
+        // ── SERVICES IN MODAL ──
+        function addServiceToList() {
+            const name = document.getElementById('newServiceName').value.trim();
+            const code = document.getElementById('newServiceCode').value.trim();
+            const time = document.getElementById('newServiceTime').value;
+            if (!name || !code) { showToast('Please enter service name and code', 'error'); return; }
+            pendingServices.push({ service_name: name, service_code: code.toUpperCase(), estimated_time_minutes: parseInt(time) || 5, is_active: 1 });
+            renderServicesList();
+            document.getElementById('newServiceName').value = '';
+            document.getElementById('newServiceCode').value = '';
+            document.getElementById('newServiceTime').value = '';
+        }
+
+        function removeServiceFromList(index) { pendingServices.splice(index, 1); renderServicesList(); }
+
+        function renderServicesList() {
+            const container = document.getElementById('servicesListContainer');
+            if (!pendingServices.length) {
+                container.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:20px;font-size:13px;">No services added yet</div>';
+                return;
+            }
+            container.innerHTML = pendingServices.map((s, i) => `
+                <div class="service-item">
+                    <div class="service-info">
+                        <div class="service-name">${escapeHtml(s.service_name)}</div>
+                        <div class="service-code">${s.service_code} &bull; ${s.estimated_time_minutes} min</div>
+                    </div>
+                    <button type="button" class="remove-service" onclick="removeServiceFromList(${i})">Remove</button>
+                </div>`).join('');
+        }
+
+        // ── OFFICERS IN MODAL ──
+        function addOfficerToList() {
+            const number = document.getElementById('newOfficerNumber').value.trim();
+            const name = document.getElementById('newOfficerName').value.trim();
+            const pin = document.getElementById('newOfficerPin').value.trim() || '1234';
+            if (!number || !name) { showToast('Please enter officer number and name', 'error'); return; }
+            pendingOfficers.push({ officer_number: parseInt(number), officer_name: name, pin_code: pin, status: 'available' });
+            renderOfficersList();
+            document.getElementById('newOfficerNumber').value = '';
+            document.getElementById('newOfficerName').value = '';
+            document.getElementById('newOfficerPin').value = '';
+        }
+
+        function removeOfficerFromList(index) { pendingOfficers.splice(index, 1); renderOfficersList(); }
+
+        function renderOfficersList() {
+            const container = document.getElementById('officersListContainer');
+            if (!pendingOfficers.length) {
+                container.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:20px;font-size:13px;">No officers assigned yet</div>';
+                return;
+            }
+            container.innerHTML = pendingOfficers.map((o, i) => `
+                <div class="officer-item">
+                    <div class="officer-info">
+                        <div class="officer-name">${escapeHtml(o.officer_name)}</div>
+                        <div class="officer-number">#${o.officer_number} &bull; PIN: ${o.pin_code}</div>
+                    </div>
+                    <button type="button" class="remove-officer" onclick="removeOfficerFromList(${i})">Remove</button>
+                </div>`).join('');
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ── OFFICE CRUD ──
+        function openAddOfficeModal() {
+            editingOfficeId = null; pendingServices = []; pendingOfficers = [];
+            renderServicesList(); renderOfficersList();
+            document.getElementById('officeModalTitle').innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;">
+                    <rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg> Add New Office`;
+            document.getElementById('officeForm').reset();
+            document.getElementById('officeId').value = '';
+            openModal('officeModal');
+        }
+
+        async function editOffice(id) {
+            const office = officesData.find(o => o.id === id);
+            if (!office) return;
+            editingOfficeId = id; pendingServices = []; pendingOfficers = [];
+            document.getElementById('officeModalTitle').innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg> Edit Office`;
+            document.getElementById('officeId').value = office.id;
+            document.getElementById('officeCode').value = office.office_code;
+            document.getElementById('officeName').value = office.office_name;
+            document.getElementById('officeLocation').value = office.location || '';
+            document.getElementById('officeDesc').value = office.description || '';
+            const servicesResponse = await fetch(`${API_BASE_URL}/api/offices/${id}/services`);
+            const servicesData = await servicesResponse.json();
+            if (servicesData.success && servicesData.services) pendingServices = servicesData.services;
+            renderServicesList();
+            const statsResponse = await fetch(`${API_BASE_URL}/api/admin/stats`);
+            const statsData = await statsResponse.json();
+            if (statsData.success && statsData.officers) pendingOfficers = statsData.officers.filter(o => o.office_id === id);
+            renderOfficersList();
+            openModal('officeModal');
+        }
+
+        async function deleteOffice(id) {
+            if (confirm('Delete this office? This will also delete all services and officers assigned to it!')) {
+                const result = await apiCall(`/api/admin/office/${id}`, 'DELETE');
+                if (result.success) { showToast('Office deleted successfully'); loadAllData(); }
+                else showToast(result.message || 'Delete failed', 'error');
+            }
+        }
+
+        async function resetOfficeQueue(officeId) {
+            if (confirm('Reset all waiting students for this office?')) {
+                const result = await apiCall(`/api/admin/office/${officeId}/reset`, 'POST');
+                if (result.success) { showToast('Queue reset successfully'); loadAllData(); }
+                else showToast(result.message || 'Reset failed', 'error');
+            }
+        }
+
+        // ── ADD SERVICE TO EXISTING OFFICE ──
+        function openAddServiceToOffice(officeId, officeName) {
+            document.getElementById('addServiceOfficeId').value = officeId;
+            document.getElementById('addServiceOfficeName').value = officeName;
+            document.getElementById('addServiceForm').reset();
+            document.getElementById('addServiceCode').value = '';
+            document.getElementById('addServiceName').value = '';
+            document.getElementById('addServiceTime').value = '5';
+            document.getElementById('addServiceDesc').value = '';
+            openModal('addServiceModal');
+        }
+
+        document.getElementById('addServiceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const officeId = document.getElementById('addServiceOfficeId').value;
+            const serviceData = {
+                service_code: document.getElementById('addServiceCode').value.toUpperCase(),
+                service_name: document.getElementById('addServiceName').value,
+                office_id: parseInt(officeId),
+                description: document.getElementById('addServiceDesc').value,
+                estimated_time_minutes: parseInt(document.getElementById('addServiceTime').value) || 5
+            };
+            const result = await apiCall('/api/admin/service', 'POST', serviceData);
+            if (result.success) { showToast(result.message || 'Service added successfully'); closeModal('addServiceModal'); loadAllData(); }
+            else showToast(result.message || 'Failed to add service', 'error');
+        });
+
+        // ── EDIT SERVICE ──
+        async function editService(serviceId, serviceCode, serviceName, serviceTime, serviceDesc, officeId) {
+            document.getElementById('serviceId').value = serviceId;
+            document.getElementById('serviceOfficeId').value = officeId;
+            document.getElementById('serviceCode').value = serviceCode;
+            document.getElementById('serviceName').value = serviceName;
+            document.getElementById('serviceTime').value = serviceTime;
+            document.getElementById('serviceDesc').value = serviceDesc || '';
+            openModal('serviceModal');
+        }
+
+        // ── DELETE SERVICE ──
+        async function deleteService(serviceId) {
+            if (confirm('Delete this service?')) {
+                const result = await apiCall(`/api/admin/service/${serviceId}`, 'DELETE');
+                if (result.success) { showToast('Service deleted successfully'); loadAllData(); }
+                else showToast(result.message || 'Delete failed', 'error');
+            }
+        }
+
+        // ── SAVE OFFICE ──
+        document.getElementById('officeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const officeId = document.getElementById('officeId').value;
+            const officeData = {
+                office_code: document.getElementById('officeCode').value.toUpperCase(),
+                office_name: document.getElementById('officeName').value,
+                location: document.getElementById('officeLocation').value,
+                description: document.getElementById('officeDesc').value
+            };
+            try {
+                let result;
+                if (officeId) result = await apiCall(`/api/admin/office/${officeId}`, 'PUT', officeData);
+                else result = await apiCall('/api/admin/office', 'POST', officeData);
+                if (result.success) {
+                    const newOfficeId = result.id || officeId;
+                    for (const service of pendingServices) {
+                        if (!service.id) await apiCall('/api/admin/service', 'POST', { service_code: service.service_code, service_name: service.service_name, office_id: parseInt(newOfficeId), description: service.description || '', estimated_time_minutes: service.estimated_time_minutes });
+                    }
+                    for (const officer of pendingOfficers) {
+                        if (!officer.id) await apiCall('/api/admin/officer', 'POST', { officer_number: officer.officer_number, officer_name: officer.officer_name, office_id: parseInt(newOfficeId), pin_code: officer.pin_code, email: '', phone: '' });
+                    }
+                    showToast(officeId ? 'Office updated successfully' : 'Office created successfully');
+                    closeModal('officeModal'); loadAllData();
+                } else showToast(result.message || 'Operation failed', 'error');
+            } catch (error) { console.error('Error saving office:', error); showToast('Error saving office', 'error'); }
+        });
+
+        // ── SERVICE FORM (Edit) ──
+        document.getElementById('serviceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const serviceId = document.getElementById('serviceId').value;
+            const officeId = document.getElementById('serviceOfficeId').value;
+            const serviceData = { service_code: document.getElementById('serviceCode').value.toUpperCase(), service_name: document.getElementById('serviceName').value, office_id: parseInt(officeId), description: document.getElementById('serviceDesc').value, estimated_time_minutes: parseInt(document.getElementById('serviceTime').value) || 5 };
+            const result = await apiCall(`/api/admin/service/${serviceId}`, 'PUT', serviceData);
+            if (result.success) { showToast(result.message || 'Service updated successfully'); closeModal('serviceModal'); loadAllData(); }
+            else showToast(result.message || 'Failed to update service', 'error');
+        });
+
+        // ── OFFICER FORM ──
+        document.getElementById('officerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const officerId = document.getElementById('officerId').value;
+            const officerData = { officer_number: parseInt(document.getElementById('officerNumber').value), officer_name: document.getElementById('officerName').value, email: document.getElementById('officerEmail').value, phone: document.getElementById('officerPhone').value, office_id: parseInt(document.getElementById('officerOfficeId').value), pin_code: document.getElementById('officerPin').value || '1234' };
+            let result;
+            if (officerId) result = await apiCall(`/api/admin/officer/${officerId}`, 'PUT', officerData);
+            else result = await apiCall('/api/admin/officer', 'POST', officerData);
+            if (result.success) { showToast(result.message || 'Officer saved successfully'); closeModal('officerModal'); loadAllData(); }
+            else showToast(result.message || 'Failed to save officer', 'error');
+        });
+
+        // ── OFFICER MANAGEMENT ──
+        async function deleteOfficer(id) {
+            if (confirm('Delete this officer?')) {
+                const result = await apiCall(`/api/admin/officer/${id}`, 'DELETE');
+                if (result.success) { showToast('Officer deleted'); loadAllData(); }
+                else showToast(result.message || 'Delete failed', 'error');
+            }
+        }
+
+        function openAddOfficerModal() {
+            document.getElementById('officerForm').reset();
+            document.getElementById('officerId').value = '';
+            loadOfficeSelect();
+            openModal('officerModal');
+        }
+
+        async function loadOfficeSelect() {
+            const response = await fetch(`${API_BASE_URL}/api/offices`);
+            const data = await response.json();
+            if (data.success) {
+                const select = document.getElementById('officerOfficeId');
+                select.innerHTML = '<option value="">Select Office</option>' + data.offices.map(o => `<option value="${o.id}">${escapeHtml(o.office_name)} (${o.office_code})</option>`).join('');
+            }
+        }
+
+        // ── LOAD DATA ──
+        async function loadAllData() {
+            await loadStats();
+            await loadOffices();
+            await loadQueueData();
+        }
+
+        async function loadQueueData() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/public/queues`);
+                const data = await response.json();
+                if (data.success && data.queues) {
+                    const container = document.getElementById('queueGrid');
+                    container.innerHTML = data.queues.map(office => `
+                        <div class="office-card">
+                            <div class="office-card-header">
+                                <div class="office-card-name">${escapeHtml(office.office_name)}</div>
+                                <span class="office-code-badge">${escapeHtml(office.office_code)}</span>
+                            </div>
+                            <div class="office-location">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                ${escapeHtml(office.location || 'Main Campus')}
+                            </div>
+                            <div class="stats-mini">
+                                <div class="mini-stat"><div class="mini-stat-label">Waiting</div><div class="mini-stat-val">${office.waiting_count || 0}</div></div>
+                                <div class="mini-stat"><div class="mini-stat-label">Called</div><div class="mini-stat-val">${office.current_called || '—'}</div></div>
+                                <div class="mini-stat"><div class="mini-stat-label">Serving</div><div class="mini-stat-val">${office.current_serving || '—'}</div></div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn-sm btn-reset-sm" onclick="resetOfficeQueue(${office.office_id})">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                                    Reset Queue
+                                </button>
+                            </div>
+                        </div>`).join('');
+                }
+            } catch (error) { console.error('Error loading queue data:', error); }
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/stats`);
+                const data = await response.json();
+                if (!data.success) return;
+                const stats = data.stats || [];
+                const officers = data.officers || [];
+                let totalWaiting = 0, totalServing = 0, totalCompleted = 0;
+                stats.forEach(s => { totalWaiting += s.waiting || 0; totalServing += s.serving || 0; totalCompleted += s.completed || 0; });
+                const activeCount = officers.filter(o => o.status !== 'offline').length;
+                document.getElementById('totalWaiting').textContent = totalWaiting;
+                document.getElementById('totalServing').textContent = totalServing;
+                document.getElementById('totalCompleted').textContent = totalCompleted;
+                document.getElementById('activeOfficers').textContent = activeCount;
+                document.getElementById('sidebarQueueBadge').textContent = totalWaiting;
+
+                const overviewGrid = document.getElementById('overviewOfficesGrid');
+                if (stats.length) {
+                    overviewGrid.innerHTML = stats.slice(0, 3).map(o => `
+                        <div class="office-card">
+                            <div class="office-card-header">
+                                <div class="office-card-name">${escapeHtml(o.office_name)}</div>
+                                <span class="office-code-badge">${escapeHtml(o.office_code)}</span>
+                            </div>
+                            <div class="office-location">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:11px;height:11px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                ${escapeHtml(o.location || 'Main Campus')}
+                            </div>
+                            <div class="stats-mini">
+                                <div class="mini-stat"><div class="mini-stat-label">Waiting</div><div class="mini-stat-val">${o.waiting || 0}</div></div>
+                                <div class="mini-stat"><div class="mini-stat-label">Serving</div><div class="mini-stat-val">${o.serving || 0}</div></div>
+                                <div class="mini-stat"><div class="mini-stat-label">Done</div><div class="mini-stat-val">${o.completed || 0}</div></div>
+                            </div>
+                        </div>`).join('');
+                } else {
+                    overviewGrid.innerHTML = '<div class="empty-state">No offices found</div>';
+                }
+
+                document.getElementById('officersTableBody').innerHTML = officers.length ? officers.map(o => `
+                    <tr>
+                        <td><strong style="color:var(--text-muted);font-size:12px;">#${o.officer_number}</strong></td>
+                        <td><strong>${escapeHtml(o.officer_name)}</strong></td>
+                        <td>${escapeHtml(o.office_name)}</td>
+                        <td>${escapeHtml(o.email || '—')}</td>
+                        <td><span class="status-pill pill-${o.status === 'available' ? 'available' : (o.status === 'busy' ? 'busy' : 'called')}"><span class="status-dot"></span>${o.status}</span></td>
+                        <td>
+                            <button class="btn-sm btn-delete-sm" onclick="deleteOfficer(${o.id})">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                                Delete
+                            </button>
+                        </td>
+                    </tr>`).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:30px;">No officers found</td></tr>';
+
+            } catch (error) { console.error('Error loading stats:', error); }
+        }
+
+        async function loadOffices() {
+            const response = await fetch(`${API_BASE_URL}/api/offices`);
+            const data = await response.json();
+            if (data.success) { officesData = data.offices; renderOfficesList(); }
+        }
+
+        function renderOfficesList() {
+            const container = document.getElementById('officesGrid');
+            if (!officesData.length) {
+                container.innerHTML = '<div class="empty-state">No offices found. Click "Add New Office" to create one.</div>';
+                return;
+            }
+            container.innerHTML = officesData.map(office => `
+                <div class="office-card">
+                    <div class="office-card-header">
+                        <div class="office-card-name">${escapeHtml(office.office_name)}</div>
+                        <span class="office-code-badge">${escapeHtml(office.office_code)}</span>
+                    </div>
+                    <div class="office-location">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        ${escapeHtml(office.location || 'Main Campus')}
+                    </div>
+                    <div class="services-container">
+                        <div class="services-title">
+                            <span>Services</span>
+                            <button class="btn-success" onclick="openAddServiceToOffice(${office.id}, '${escapeHtml(office.office_name)}')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                Add Service
+                            </button>
+                        </div>
+                        <div class="services-list-mini" id="services-${office.id}">
+                            <span style="color:var(--text-muted);font-size:11px;">Loading services...</span>
+                        </div>
+                    </div>
+                    <div class="stats-mini">
+                        <div class="mini-stat"><div class="mini-stat-label">Waiting</div><div class="mini-stat-val" id="waiting-${office.id}">0</div></div>
+                        <div class="mini-stat"><div class="mini-stat-label">Serving</div><div class="mini-stat-val" id="serving-${office.id}">0</div></div>
+                        <div class="mini-stat"><div class="mini-stat-label">Done</div><div class="mini-stat-val" id="completed-${office.id}">0</div></div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-sm btn-edit-sm" onclick="editOffice(${office.id})">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            Edit
+                        </button>
+                        <button class="btn-sm btn-delete-sm" onclick="deleteOffice(${office.id})">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                            Delete
+                        </button>
+                        <button class="btn-sm btn-reset-sm" onclick="resetOfficeQueue(${office.id})">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                            Reset Queue
+                        </button>
+                    </div>
+                </div>`).join('');
+
+            for (const office of officesData) {
+                loadServicesForOffice(office.id);
+                loadOfficeStats(office.id);
+            }
+        }
+
+        async function loadOfficeStats(officeId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/stats`);
+                const data = await response.json();
+                if (data.success && data.stats) {
+                    const officeStat = data.stats.find(s => s.id === officeId);
+                    if (officeStat) {
+                        document.getElementById(`waiting-${officeId}`).textContent = officeStat.waiting || 0;
+                        document.getElementById(`serving-${officeId}`).textContent = officeStat.serving || 0;
+                        document.getElementById(`completed-${officeId}`).textContent = officeStat.completed || 0;
+                    }
+                }
+            } catch (error) { console.error('Error loading office stats:', error); }
+        }
+
+        async function loadServicesForOffice(officeId) {
+            const response = await fetch(`${API_BASE_URL}/api/offices/${officeId}/services`);
+            const data = await response.json();
+            const container = document.getElementById(`services-${officeId}`);
+            if (data.success && data.services.length) {
+                container.innerHTML = data.services.map(s => `
+                    <div class="service-tag">
+                        ${escapeHtml(s.service_code)} — ${escapeHtml(s.service_name)} (${s.estimated_time_minutes}min)
+                        <button onclick="editService(${s.id}, '${escapeHtml(s.service_code)}', '${escapeHtml(s.service_name)}', ${s.estimated_time_minutes}, '${escapeHtml(s.description || '')}', ${officeId})" title="Edit">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#1565c0" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                        <button onclick="deleteService(${s.id})" title="Delete">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#c62828" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                        </button>
+                    </div>`).join('');
+            } else {
+                container.innerHTML = '<span style="color:var(--text-muted);font-size:11px;">No services yet. Click "Add Service" to add one.</span>';
+            }
+        }
+
+        // Initialize
+        loadAllData();
+        setInterval(() => {
+            loadStats();
+            loadQueueData();
+            for (const office of officesData) loadOfficeStats(office.id);
+        }, 10000);
+    </script>
+</body>
+</html>
