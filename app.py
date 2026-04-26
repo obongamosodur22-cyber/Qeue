@@ -17,11 +17,11 @@ CORS(app)
 # DATABASE CONFIGURATION
 # ============================================
 DB_CONFIG = {
-    'host': 'localhost',
-    'port': 3306,
-    'user': 'root',
-    'password': '',
-    'database': 'db'
+    'host': os.environ.get('DB_HOST', 'shuttle.proxy.rlwy.net'),
+    'port': int(os.environ.get('DB_PORT', 34003)),
+    'user': os.environ.get('DB_USER', 'root'),
+    'password': os.environ.get('DB_PASSWORD', 'EdzIXocxkOmrjkmtCCdZZjZwOzZvafgm'),
+    'database': os.environ.get('DB_NAME', 'railway')
 }
 
 # Test connection on startup
@@ -113,12 +113,10 @@ def admin_create_office():
     cursor = conn.cursor(dictionary=True)
     
     try:
-        # Check if office code already exists
         cursor.execute("SELECT id FROM offices WHERE office_code = %s", (office_code,))
         if cursor.fetchone():
             return jsonify({'success': False, 'message': f'Office code {office_code} already exists'}), 400
         
-        # Get max display order
         cursor.execute("SELECT MAX(display_order) as max_order FROM offices")
         max_order = cursor.fetchone()
         display_order = (max_order['max_order'] or 0) + 1
@@ -164,12 +162,10 @@ def admin_update_office(office_id):
     cursor = conn.cursor(dictionary=True)
     
     try:
-        # Check if office exists
         cursor.execute("SELECT id FROM offices WHERE id = %s", (office_id,))
         if not cursor.fetchone():
             return jsonify({'success': False, 'message': 'Office not found'}), 404
         
-        # Check if another office has the same code
         cursor.execute("SELECT id FROM offices WHERE office_code = %s AND id != %s", (office_code, office_id))
         if cursor.fetchone():
             return jsonify({'success': False, 'message': f'Office code {office_code} already exists'}), 400
@@ -196,36 +192,24 @@ def admin_update_office(office_id):
 
 @app.route('/api/admin/office/<int:office_id>', methods=['DELETE'])
 def admin_delete_office(office_id):
-    """Delete an office and all associated data (services, officers, tokens)"""
+    """Delete an office and all associated data"""
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     
     try:
-        # Check if office exists
         cursor.execute("SELECT id, office_code FROM offices WHERE id = %s", (office_id,))
         office = cursor.fetchone()
         if not office:
             return jsonify({'success': False, 'message': 'Office not found'}), 404
         
-        # Delete all tokens for this office first (foreign key constraint)
         cursor.execute("DELETE FROM university_tokens WHERE office_id = %s", (office_id,))
-        
-        # Delete all queue logs for officers in this office
         cursor.execute("""
             DELETE FROM queue_logs 
             WHERE officer_id IN (SELECT id FROM officers WHERE office_id = %s)
         """, (office_id,))
-        
-        # Delete all office messages for this office
         cursor.execute("DELETE FROM office_messages WHERE office_id = %s", (office_id,))
-        
-        # Delete all services for this office
         cursor.execute("DELETE FROM services WHERE office_id = %s", (office_id,))
-        
-        # Delete all officers in this office
         cursor.execute("DELETE FROM officers WHERE office_id = %s", (office_id,))
-        
-        # Finally delete the office
         cursor.execute("DELETE FROM offices WHERE id = %s", (office_id,))
         
         conn.commit()
@@ -250,7 +234,6 @@ def admin_create_service():
     """Create a new service under an office"""
     data = request.get_json()
     
-    # ✅ CORRECT FIELD NAMES for service
     service_code = data.get('service_code')
     service_name = data.get('service_name')
     office_id = data.get('office_id')
@@ -258,7 +241,6 @@ def admin_create_service():
     estimated_time_minutes = data.get('estimated_time_minutes', 5)
     display_order = data.get('display_order', 0)
     
-    # ✅ Validate correct fields
     if not service_code or not service_name:
         return jsonify({'success': False, 'message': 'Service code and service name are required'}), 400
     
@@ -269,13 +251,11 @@ def admin_create_service():
     cursor = conn.cursor(dictionary=True)
     
     try:
-        # Check if office exists
         cursor.execute("SELECT id, office_name FROM offices WHERE id = %s", (office_id,))
         office = cursor.fetchone()
         if not office:
             return jsonify({'success': False, 'message': 'Office not found'}), 404
         
-        # Check if service code already exists for this office
         cursor.execute("""
             SELECT id FROM services 
             WHERE service_code = %s AND office_id = %s
@@ -317,7 +297,6 @@ def admin_update_service(service_id):
     is_active = data.get('is_active', 1)
     display_order = data.get('display_order', 0)
     
-    # ✅ Validate correct fields
     if not service_code or not service_name:
         return jsonify({'success': False, 'message': 'Service code and service name are required'}), 400
     
@@ -347,9 +326,10 @@ def admin_update_service(service_id):
     finally:
         cursor.close()
         conn.close()
+
 @app.route('/api/admin/office/<int:office_id>/reset', methods=['POST'])
 def admin_reset_office_queue(office_id):
-    """Reset queue for a specific office - expires waiting tokens AND resets token counter to start from 01"""
+    """Reset queue for a specific office"""
     data = request.get_json() or {}
     officer_id = data.get('officer_id')
     is_admin = data.get('is_admin', False)
@@ -357,7 +337,6 @@ def admin_reset_office_queue(office_id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        # 1. AUTHORIZATION CHECK
         if not is_admin and officer_id:
             cursor.execute("SELECT office_id, is_admin FROM officers WHERE id=%s", (officer_id,))
             officer = cursor.fetchone()
@@ -366,22 +345,18 @@ def admin_reset_office_queue(office_id):
             if not officer.get('is_admin') and officer['office_id'] != office_id:
                 return jsonify({'success': False, 'message': 'Not authorised to reset this office queue'}), 403
 
-        # 2. GET OFFICE DETAILS
         cursor.execute("SELECT id, office_code, office_name FROM offices WHERE id=%s", (office_id,))
         office = cursor.fetchone()
         
         if not office:
             return jsonify({'success': False, 'message': 'Office not found'}), 404
         
-        # 3. EXPIRE ALL WAITING AND CALLED TOKENS
         cursor.execute("""
             UPDATE university_tokens
             SET status = 'expired'
             WHERE office_id = %s AND status IN ('waiting', 'called')
         """, (office_id,))
         
-        # 4. 🔥 RESET TOKEN COUNTER - Delete today's expired/skipped tokens for this office
-        # This ensures next token starts from 01 again
         cursor.execute("""
             DELETE FROM university_tokens
             WHERE office_id = %s 
@@ -389,7 +364,6 @@ def admin_reset_office_queue(office_id):
             AND status IN ('expired', 'skipped')
         """, (office_id,))
         
-        # 5. LOG THE RESET ACTION
         cursor.execute("""
             INSERT INTO queue_logs (token_number, officer_id, action, action_details, created_at)
             VALUES ('SYSTEM', %s, 'queue_reset', 
@@ -438,7 +412,7 @@ def admin_delete_service(service_id):
 
 
 # ============================================
-# ADMIN OFFICER MANAGEMENT (Enhanced)
+# ADMIN OFFICER MANAGEMENT
 # ============================================
 
 @app.route('/api/admin/officer', methods=['POST'])
@@ -460,12 +434,10 @@ def admin_create_officer():
     cursor = conn.cursor(dictionary=True)
     
     try:
-        # Check if office exists
         cursor.execute("SELECT id FROM offices WHERE id = %s", (office_id,))
         if not cursor.fetchone():
             return jsonify({'success': False, 'message': 'Office not found'}), 404
         
-        # Check if officer number already exists
         cursor.execute("SELECT id FROM officers WHERE officer_number = %s", (officer_number,))
         if cursor.fetchone():
             return jsonify({'success': False, 'message': f'Officer number {officer_number} already exists'}), 400
@@ -514,7 +486,6 @@ def admin_update_officer(officer_id):
         if not cursor.fetchone():
             return jsonify({'success': False, 'message': 'Officer not found'}), 404
         
-        # Build update query dynamically
         update_fields = []
         params = []
         
@@ -569,16 +540,9 @@ def admin_delete_officer(officer_id):
         if not cursor.fetchone():
             return jsonify({'success': False, 'message': 'Officer not found'}), 404
         
-        # Delete queue logs for this officer
         cursor.execute("DELETE FROM queue_logs WHERE officer_id = %s", (officer_id,))
-        
-        # Delete office messages by this officer
         cursor.execute("DELETE FROM office_messages WHERE officer_id = %s", (officer_id,))
-        
-        # Update tokens to remove officer assignment
         cursor.execute("UPDATE university_tokens SET assigned_officer_id = NULL WHERE assigned_officer_id = %s", (officer_id,))
-        
-        # Delete the officer
         cursor.execute("DELETE FROM officers WHERE id = %s", (officer_id,))
         
         conn.commit()
@@ -694,6 +658,7 @@ def admin_reorder_offices():
     finally:
         cursor.close()
         conn.close()
+
 # ============================================
 # OFFICE AND SERVICES ENDPOINTS
 # ============================================
@@ -753,9 +718,6 @@ def generate_student_token():
     cursor = conn.cursor(dictionary=True)
 
     try:
-        # -------------------------
-        # OFFICE VALIDATION
-        # -------------------------
         cursor.execute("""
             SELECT id, office_code, office_name, location 
             FROM offices 
@@ -766,9 +728,6 @@ def generate_student_token():
         if not office:
             return jsonify({'success': False, 'message': 'Office not available'}), 400
 
-        # -------------------------
-        # SERVICE VALIDATION
-        # -------------------------
         cursor.execute("""
             SELECT id, service_name, estimated_time_minutes 
             FROM services 
@@ -779,9 +738,6 @@ def generate_student_token():
         if not service:
             return jsonify({'success': False, 'message': 'Service not available'}), 400
 
-        # -------------------------
-        # OFFICER CHECK
-        # -------------------------
         cursor.execute("""
             SELECT COUNT(*) as cnt 
             FROM officers
@@ -795,9 +751,6 @@ def generate_student_token():
                 'message': 'No officers available for this office right now'
             }), 400
 
-        # -------------------------
-        # GET NEXT TOKEN NUMBER (SAFE)
-        # -------------------------
         cursor.execute("""
             SELECT MAX(
                 CAST(SUBSTRING(token_number, LENGTH(%s) + 1) AS UNSIGNED)
@@ -814,9 +767,6 @@ def generate_student_token():
 
         print(f"📊 Token generated: {token_number} (max={max_number})")
 
-        # -------------------------
-        # QUEUE POSITION (FIXED)
-        # -------------------------
         cursor.execute("""
             SELECT COUNT(*) as ahead_count
             FROM university_tokens
@@ -829,9 +779,6 @@ def generate_student_token():
         queue_position = ahead_count + 1
         estimated_wait = ahead_count * service['estimated_time_minutes']
 
-        # -------------------------
-        # INSERT TOKEN (WITH SAFETY)
-        # -------------------------
         cursor.execute("""
             INSERT INTO university_tokens
                 (token_number, office_id, service_id, service_code,
@@ -1021,7 +968,6 @@ def get_public_queues():
 
         result = []
         for office in offices:
-            # Get current called token with student name
             cursor.execute("""
                 SELECT t.token_number, t.student_name
                 FROM university_tokens t
@@ -1030,7 +976,6 @@ def get_public_queues():
             """, (office['id'],))
             called = cursor.fetchone()
 
-            # Get current serving token with student name
             cursor.execute("""
                 SELECT t.token_number, t.student_name
                 FROM university_tokens t
@@ -1039,7 +984,6 @@ def get_public_queues():
             """, (office['id'],))
             serving = cursor.fetchone()
 
-            # Get waiting count
             cursor.execute("""
                 SELECT COUNT(*) as waiting_count FROM university_tokens
                 WHERE office_id = %s AND status = 'waiting'
@@ -1067,8 +1011,7 @@ def get_public_queues():
         return jsonify({'success': False, 'message': str(e)})
 
 # ============================================
-# OFFICER ACTIONS - WITH RECALL LOGGING
-
+# OFFICER ACTIONS
 # ============================================
 @app.route('/api/officer/call-next', methods=['POST'])
 def officer_call_next():
@@ -1084,7 +1027,6 @@ def officer_call_next():
         if not officer:
             return jsonify({'success': False, 'message': 'Officer not found'})
 
-        # Auto-complete any currently serving student
         cursor.execute("""
             SELECT token_number FROM university_tokens
             WHERE office_id = %s AND status = 'serving'
@@ -1097,9 +1039,7 @@ def officer_call_next():
                 SET status = 'completed', completed_at = NOW()
                 WHERE token_number = %s
             """, (current_serving['token_number'],))
-            print(f"✅ Auto-completed previous token: {current_serving['token_number']}")
 
-        # Get next waiting token with student name
         cursor.execute("""
             SELECT id, token_number, student_name, service_code 
             FROM university_tokens
@@ -1123,16 +1063,13 @@ def officer_call_next():
             WHERE id=%s
         """, (token['token_number'], officer_id))
 
-        # Insert recall log with student name for voice announcement
         cursor.execute("""
             INSERT INTO queue_logs (token_number, officer_id, action, action_details, created_at)
             VALUES (%s, %s, 'recall', 'Called from officer dashboard', NOW())
         """, (token['token_number'], officer_id))
 
         conn.commit()
-        print(f"🔔 RECORDED RECALL: {token['token_number']} for student: {token['student_name']}")
 
-        # Return student name for voice announcement on public display
         return jsonify({
             'success': True, 
             'token_number': token['token_number'], 
@@ -1172,20 +1109,16 @@ def officer_call_specific():
             WHERE id=%s
         """, (token_number, officer_id))
 
-        # Insert recall log for public display
         cursor.execute("""
             INSERT INTO queue_logs (token_number, officer_id, action, action_details, created_at)
             VALUES (%s, %s, 'recall', 'Called from officer dashboard', NOW())
         """, (token_number, officer_id))
 
         conn.commit()
-        print(f"🔔 RECORDED RECALL: {token_number}")
 
         return jsonify({'success': True, 'token_number': token_number})
     except Exception as e:
         conn.rollback()
-        print(f"❌ Error in call-specific: {e}")
-        print(traceback.format_exc())
         return jsonify({'success': False, 'message': str(e)}), 500
     finally:
         cursor.close()
@@ -1407,7 +1340,6 @@ def admin_get_stats():
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
 
-        # 🔥 FIX: Remove date filter to count ALL waiting tokens (like public display)
         cursor.execute("""
             SELECT 
                 off.id, off.office_code, off.office_name, off.location, off.is_active,
@@ -1451,22 +1383,22 @@ def get_recent_recalls():
         cursor = conn.cursor(dictionary=True)
 
         cursor.execute("""
-    SELECT
-        l.id,
-        l.token_number,
-        l.officer_id,
-        l.created_at,
-        off.office_code,
-        off.office_name,
-        t.student_name
-    FROM queue_logs l
-    JOIN officers o ON l.officer_id = o.id
-    JOIN offices off ON o.office_id = off.id
-    LEFT JOIN university_tokens t ON l.token_number = t.token_number
-    WHERE l.action = 'recall'
-      AND l.created_at >= NOW() - INTERVAL 30 SECOND
-    ORDER BY l.created_at DESC
-""")
+            SELECT
+                l.id,
+                l.token_number,
+                l.officer_id,
+                l.created_at,
+                off.office_code,
+                off.office_name,
+                t.student_name
+            FROM queue_logs l
+            JOIN officers o ON l.officer_id = o.id
+            JOIN offices off ON o.office_id = off.id
+            LEFT JOIN university_tokens t ON l.token_number = t.token_number
+            WHERE l.action = 'recall'
+              AND l.created_at >= NOW() - INTERVAL 30 SECOND
+            ORDER BY l.created_at DESC
+        """)
         recalls = cursor.fetchall()
 
         for r in recalls:
@@ -1486,7 +1418,7 @@ def get_recent_recalls():
 # RUN APPLICATION
 # ============================================
 if __name__ == '__main__':
-    PORT = int(os.environ.get('PORT', 5000))
+    PORT = int(os.environ.get('PORT', 8080))
     print("=" * 55)
     print("🎓 MAKERERE UNIVERSITY QUEUE SYSTEM API")
     print("=" * 55)
@@ -1503,4 +1435,4 @@ if __name__ == '__main__':
     print("  ✅ Voice announcements for called/serving tokens")
     print("  ✅ Recall logging for public display synchronization")
     print("=" * 55)
-    app.run(host='0.0.0.0', port=PORT, debug=True)
+    app.run(host='0.0.0.0', port=PORT, debug=False)
