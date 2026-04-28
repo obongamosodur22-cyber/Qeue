@@ -18,10 +18,17 @@
         body::before {
             content: '';
             position: fixed; inset: 0; z-index: 0;
-            background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-image:
+                linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
             background-size: 60px 60px;
             pointer-events: none;
         }
+        .ticker-from {
+    color: #ffffff;
+    font-weight: 500; /* optional */
+    margin-right: 4px;
+}
 
         /* ── HEADER ── */
         .header {
@@ -38,8 +45,7 @@
             width: 44px; height: 44px; border-radius: 50%;
             background: radial-gradient(circle at 40% 35%, #e8c547, #a07c18);
             border: 2px solid rgba(201,162,39,0.5);
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
         .uni-emblem svg { width: 22px; height: 22px; fill: #0f2318; }
         .uni-name { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 1.5px; }
@@ -55,19 +61,19 @@
             display: flex; flex-direction: column; gap: 20px;
             overflow: hidden;
         }
+/* Office name styling - ADD THIS */
+.office-name {
+    font-size: clamp(14px, 2.2vw, 18px);
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+    margin-top: 12px;
+    letter-spacing: 0.5px;
+}
 
-        .office-name {
-            font-size: clamp(14px, 2.2vw, 18px);
-            color: rgba(255,255,255,0.85);
-            font-weight: 500;
-            margin-top: 12px;
-            letter-spacing: 0.5px;
-        }
-        .serving-card .office-name {
-            color: rgba(255,255,255,0.95);
-            font-weight: 600;
-        }
-
+.serving-card .office-name {
+    color: rgba(255,255,255,0.95);
+    font-weight: 600;
+}
         /* ── ACTIVE TOKENS GRID ── */
         .active-grid {
             flex: 1;
@@ -80,8 +86,7 @@
         /* ── CALLED CARD ── */
         .called-card {
             background: linear-gradient(145deg, #1a1200, #2a1e00);
-            border-radius: 20px;
-            padding: 30px 28px;
+            border-radius: 20px; padding: 30px 28px;
             text-align: center;
             border: 2px solid #ff9800;
             box-shadow: 0 0 24px rgba(255,152,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05);
@@ -95,30 +100,25 @@
         /* ── SERVING CARD ── */
         .serving-card {
             background: #000d03;
-            border-radius: 20px;
-            padding: 30px 28px;
+            border-radius: 20px; padding: 30px 28px;
             text-align: center;
             position: relative;
             overflow: hidden;
             border: 2px solid #00e676;
             animation: servingPulse 1.4s ease-in-out infinite;
         }
+
         .serving-card::before {
             content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 60%;
-            height: 100%;
+            position: absolute; top: 0; left: -100%;
+            width: 60%; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(0,230,118,0.12), transparent);
             animation: beamSweep 2s ease-in-out infinite;
             pointer-events: none;
         }
         .serving-card::after {
             content: '';
-            position: absolute;
-            inset: -2px;
-            border-radius: 22px;
+            position: absolute; inset: -2px; border-radius: 22px;
             background: linear-gradient(45deg, #00e676, #00c853, #69ff9c, #00e676);
             background-size: 400% 400%;
             animation: gradientShift 2s ease infinite;
@@ -147,15 +147,9 @@
         }
 
         .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            padding: 5px 14px;
-            border-radius: 20px;
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+            text-transform: uppercase; padding: 5px 14px; border-radius: 20px;
             margin-bottom: 18px;
         }
         .badge-dot { width: 7px; height: 7px; border-radius: 50%; }
@@ -168,10 +162,8 @@
         .token-number {
             font-family: 'DM Mono', monospace;
             font-size: clamp(52px, 8vw, 80px);
-            font-weight: 500;
-            letter-spacing: 10px;
-            margin: 10px 0 14px;
-            line-height: 1;
+            font-weight: 500; letter-spacing: 10px;
+            margin: 10px 0 14px; line-height: 1;
         }
         .called-card .token-number { color: #ffb74d; }
         .serving-card .token-number {
@@ -184,6 +176,7 @@
             50% { text-shadow: 0 0 40px rgba(0,255,136,1), 0 0 80px rgba(0,230,118,0.6), 0 0 120px rgba(0,200,100,0.3); }
         }
 
+        /* Student name styling */
         .student-name {
             font-size: clamp(18px, 3vw, 24px);
             font-weight: 600;
@@ -199,38 +192,26 @@
         /* ── NO ACTIVE STATE ── */
         .no-active {
             flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0;
-            text-align: center;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 0; text-align: center;
         }
         .no-active-ring {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
+            width: 120px; height: 120px; border-radius: 50%;
             border: 2px solid rgba(201,162,39,0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 32px;
-            position: relative;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 32px; position: relative;
         }
         .no-active-ring::before { content: ''; position: absolute; inset: -8px; border-radius: 50%; border: 1px solid rgba(201,162,39,0.08); }
-        .no-active-ring::after  { content: ''; position: absolute; inset: -18px; border-radius: 50%; border: 1px solid rgba(201,162,39,0.04); }
+        .no-active-ring::after { content: ''; position: absolute; inset: -18px; border-radius: 50%; border: 1px solid rgba(201,162,39,0.04); }
         .no-active-ring svg { width: 52px; height: 52px; fill: rgba(201,162,39,0.35); }
         .no-active-title { font-family: 'Playfair Display', serif; font-size: clamp(32px, 5vw, 52px); font-weight: 700; color: rgba(255,255,255,0.85); letter-spacing: 1px; margin-bottom: 14px; line-height: 1.1; }
         .no-active-sub { font-size: clamp(15px, 2.2vw, 20px); color: rgba(255,255,255,0.38); font-weight: 300; letter-spacing: 0.3px; }
         .no-active-kiosk {
             margin-top: 36px;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(201,162,39,0.08);
-            border: 1px solid rgba(201,162,39,0.2);
-            border-radius: 40px;
-            padding: 11px 26px;
+            display: inline-flex; align-items: center; gap: 10px;
+            background: rgba(201,162,39,0.08); border: 1px solid rgba(201,162,39,0.2);
+            border-radius: 40px; padding: 11px 26px;
         }
         .kiosk-dot { width: 8px; height: 8px; border-radius: 50%; background: #e8c547; opacity: 0.7; animation: pulseDot 2s infinite; }
         @keyframes pulseDot { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.4;transform:scale(1.4);} }
@@ -242,8 +223,8 @@
         .stat-chip-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .stat-chip-icon svg { width: 16px; height: 16px; }
         .icon-waiting { background: rgba(255,152,0,0.12); } .icon-waiting svg { fill: #ffb74d; }
-        .icon-called  { background: rgba(255,193,7,0.12);  } .icon-called  svg { fill: #ffd700; }
-        .icon-serving { background: rgba(0,230,118,0.12);  } .icon-serving svg { fill: #69ff9c; }
+        .icon-called  { background: rgba(255,193,7,0.12); }  .icon-called svg  { fill: #ffd700; }
+        .icon-serving { background: rgba(0,230,118,0.12); }  .icon-serving svg { fill: #69ff9c; }
         .stat-val { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500; color: rgba(255,255,255,0.85); line-height: 1; }
         .stat-lbl { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; letter-spacing: 0.5px; }
 
@@ -265,72 +246,129 @@
             animation: barShimmer 3s linear infinite;
         }
         @keyframes barShimmer {
-            0%   { background-position: 0%   0%; }
+            0% { background-position: 0% 0%; }
             100% { background-position: 200% 0%; }
         }
 
         .ticker-body {
-            display: flex; align-items: stretch;
+            display: flex;
+            align-items: stretch;
             background: rgba(5,10,6,0.97);
             border-top: 1px solid rgba(201,162,39,0.4);
-            overflow: hidden; height: 52px;
+            overflow: hidden;
+            height: 52px;
         }
 
         .ticker-label {
-            display: flex; align-items: center; gap: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             padding: 0 18px 0 20px;
-            background: #c9a227; flex-shrink: 0; position: relative;
+            background: #c9a227;
+            flex-shrink: 0;
+            position: relative;
             clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%);
-            padding-right: 28px; min-width: 120px;
+            padding-right: 28px;
+            min-width: 120px;
         }
-        .ticker-label-dot { width: 8px; height: 8px; border-radius: 50%; background: #0f2318; animation: pulseDot 1s infinite; flex-shrink: 0; }
-        .ticker-label-text { font-size: 11px; font-weight: 800; color: #0f2318; letter-spacing: 2px; text-transform: uppercase; white-space: nowrap; }
+        .ticker-label-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #0f2318;
+            animation: pulseDot 1s infinite;
+            flex-shrink: 0;
+        }
+        .ticker-label-text {
+            font-size: 11px; font-weight: 800;
+            color: #0f2318; letter-spacing: 2px;
+            text-transform: uppercase; white-space: nowrap;
+        }
 
         .ticker-scroll-track {
-            flex: 1; overflow: hidden;
-            display: flex; align-items: center; position: relative;
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            position: relative;
         }
+
         .ticker-scroll-inner {
-            display: flex; align-items: center; gap: 0;
+            display: flex;
+            align-items: center;
+            gap: 0;
             white-space: nowrap;
             animation: tickerScroll 28s linear infinite;
             will-change: transform;
         }
-        .ticker-scroll-track:hover .ticker-scroll-inner { animation-play-state: paused; }
+        .ticker-scroll-track:hover .ticker-scroll-inner {
+            animation-play-state: paused;
+        }
+
         @keyframes tickerScroll {
             0%   { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
 
-        .ticker-item { display: inline-flex; align-items: center; gap: 0; padding: 0 10px 0 0; }
-        .ticker-from { color: #ffffff; font-weight: 500; margin-right: 4px; }
-        .ticker-office-badge {
-            display: inline-flex; align-items: center;
-            background: rgba(201,162,39,0.15); border: 1px solid rgba(201,162,39,0.35);
-            color: #e8c547; font-size: 10px; font-weight: 800;
-            letter-spacing: 1px; text-transform: uppercase;
-            padding: 3px 10px; border-radius: 4px; margin-right: 10px; flex-shrink: 0;
+        .ticker-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0;
+            padding: 0 10px 0 0;
         }
-        .ticker-message-text { font-size: 15px; color: rgba(255,255,255,0.92); font-weight: 400; letter-spacing: 0.1px; }
-        .ticker-sep { display: inline-block; color: #e8c547; font-size: 16px; margin: 0 28px; opacity: 0.7; flex-shrink: 0; }
+
+        .ticker-office-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(201,162,39,0.15);
+            border: 1px solid rgba(201,162,39,0.35);
+            color: #e8c547;
+            font-size: 10px; font-weight: 800;
+            letter-spacing: 1px; text-transform: uppercase;
+            padding: 3px 10px; border-radius: 4px;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .ticker-message-text {
+            font-size: 15px;
+            color: rgba(255,255,255,0.92);
+            font-weight: 400;
+            letter-spacing: 0.1px;
+        }
+
+        .ticker-sep {
+            display: inline-block;
+            color: #e8c547;
+            font-size: 16px;
+            margin: 0 28px;
+            opacity: 0.7;
+            flex-shrink: 0;
+        }
 
         .ticker-scroll-track::after {
-            content: ''; position: absolute; top: 0; right: 0;
+            content: '';
+            position: absolute; top: 0; right: 0;
             width: 80px; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(5,10,6,0.97));
-            pointer-events: none; z-index: 2;
+            pointer-events: none;
+            z-index: 2;
         }
         .ticker-scroll-track::before {
-            content: ''; position: absolute; top: 0; left: 0;
+            content: '';
+            position: absolute; top: 0; left: 0;
             width: 30px; height: 100%;
             background: linear-gradient(90deg, rgba(5,10,6,0.97), transparent);
-            pointer-events: none; z-index: 2;
+            pointer-events: none;
+            z-index: 2;
         }
+
         .ticker-time {
-            display: flex; align-items: center; padding: 0 16px;
-            border-left: 1px solid rgba(255,255,255,0.08); flex-shrink: 0;
-            font-family: 'DM Mono', monospace; font-size: 11px;
-            color: rgba(201,162,39,0.6); white-space: nowrap;
+            display: flex; align-items: center;
+            padding: 0 16px;
+            border-left: 1px solid rgba(255,255,255,0.08);
+            flex-shrink: 0;
+            font-family: 'DM Mono', monospace;
+            font-size: 11px; color: rgba(201,162,39,0.6);
+            white-space: nowrap;
         }
 
         /* ── FOOTER ── */
@@ -343,53 +381,32 @@
             gap: 24px; backdrop-filter: blur(12px);
         }
         .footer-text { font-size: 11px; color: rgba(255,255,255,0.3); letter-spacing: 0.4px; }
-        .footer-dot  { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.15); }
+        .footer-dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.15); }
 
         /* ── VOICE INDICATOR ── */
         .voice-indicator {
             position: fixed; bottom: 50px; left: 20px; z-index: 100;
             display: flex; align-items: center; gap: 8px;
-            background: rgba(7,13,9,0.9);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(7,13,9,0.9); border: 1px solid rgba(255,255,255,0.08);
             border-radius: 20px; padding: 6px 14px; transition: all 0.3s;
         }
-        .voice-dot  { width: 7px; height: 7px; border-radius: 50%; background: #00e676; animation: blinkDot 1.2s infinite; }
+        .voice-dot { width: 7px; height: 7px; border-radius: 50%; background: #00e676; animation: blinkDot 1.2s infinite; }
         .voice-text { font-size: 11px; color: rgba(255,255,255,0.4); font-family: 'DM Mono', monospace; }
-
-        /* ── CONNECTION STATUS BANNER ── */
-        /*
-         * Shown at the very bottom when server is unreachable.
-         * Sits above the footer. Never overlaps queue content.
-         */
-        .conn-banner {
-            position: fixed; bottom: 40px; left: 0; right: 0; z-index: 200;
-            height: 0; overflow: hidden;
-            transition: height 0.4s ease;
-        }
-        .conn-banner.visible { height: 36px; }
-        .conn-banner-inner {
-            height: 36px;
-            background: rgba(180,60,0,0.92);
-            border-top: 1px solid rgba(255,120,0,0.5);
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
-        .conn-dot-red {
-            width: 7px; height: 7px; border-radius: 50%;
-            background: #ff6d00; animation: blinkDot 0.8s infinite;
-        }
-        .conn-text { font-size: 12px; color: rgba(255,255,255,0.85); letter-spacing: 1px; font-family: 'DM Mono', monospace; }
 
         /* ── RECALL BANNER ── */
         .recall-banner {
             position: fixed; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             background: linear-gradient(135deg, #b54800, #ff6d00);
-            color: white; padding: 24px 52px; border-radius: 60px;
+            color: white; padding: 24px 52px;
+            border-radius: 60px;
             font-family: 'DM Mono', monospace;
             font-size: clamp(24px, 4vw, 36px);
             font-weight: 500; letter-spacing: 5px;
-            z-index: 300; box-shadow: 0 0 80px rgba(255,109,0,0.6);
-            animation: recallAnim 3s ease-in-out forwards; white-space: nowrap;
+            z-index: 300;
+            box-shadow: 0 0 80px rgba(255,109,0,0.6);
+            animation: recallAnim 3s ease-in-out forwards;
+            white-space: nowrap;
         }
         @keyframes recallAnim {
             0%   { opacity:0; transform:translate(-50%,-50%) scale(0.8); }
@@ -412,28 +429,6 @@
 </head>
 <body>
 
-    <!--
-        KEEP-ALIVE VIDEO
-        ─────────────────────────────────────────────────────────────
-        A 1×1 transparent looping video element.
-        Every TV OS — Google TV, Skyworth, LG WebOS, Samsung Tizen —
-        will never sleep or dim the display while a video element is
-        actively playing. This is more universal than the Wake Lock API
-        which many TV browsers do not support.
-        The src is a minimal valid MP4 (base64 inline, ~800 bytes).
-        No external file needed. Zero visual impact.
-        ─────────────────────────────────────────────────────────────
-    -->
-    <video
-        id="keepAliveVideo"
-        loop
-        muted
-        autoplay
-        playsinline
-        style="position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;z-index:-1;"
-        src="data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQAAA2htZGF0AAACrgYF//+q3EXpvebZSLeWLNgg2SPu73gyNjQgLSBjb3JlIDE2NCByMzEwOCAxOTlmNzI0IC0gSC4yNjQvTVBFRy00IEFWQSBDB29kZWMgLSBDb3B5bGVmdCAyMDAzLTIwMjQgLSBodHRwOi8vd3d3LnZpZGVvbGFuLm9yZy94MjY0Lmh0bWwgLSBvcHRpb25zOiBjYWJhYz0xIHJlZj0zIGRlYmxvY2s9MTowOjAgYW5hbHlzZT0weDM6MHgxMTMgbWU9aGV4IHN1Ym1lPTcgcHN5PTEgcHN5X3JkPTEuMDA6MC4wMCBtaXhlZF9yZWY9MSBtZV9yYW5nZT0xNiBjaHJvbWFfbWU9MSB0cmVsbGlzPTEgOHg4ZGN0PTEgY3FtPTAgZGVhZHpvbmU9MjEsMTEgZmFzdF9wc2tpcD0xIGNocm9tYV9xcF9vZmZzZXQ9LTIgdGhyZWFkcz02IGxvb2thaGVhZF90aHJlYWRzPTEgc2xpY2VkX3RocmVhZHM9MCBucj0wIGRlY2ltYXRlPTEgaW50ZXJsYWNlZD0wIGJsdXJheV9jb21wYXQ9MCBjb25zdHJhaW5lZF9pbnRyYT0wIGJmcmFtZXM9MyBiX3B5cmFtaWQ9MiByZWZzPTMgbW9kZXM9b3B0aW1pemVkIGFuYWx5emU9MCBBQ0M9MAAAABN2aWRlbwAAABRzdHNzAAAAAAAAAAAAAAAAIXN0c2QAAAAAAAAAAAAAAAAAAAABAAAAAGlzb20AAAAIc3R0cwAAAAAAAAAAAAAAAAAAAAEAAAA="
-    ></video>
-
     <!-- HEADER -->
     <div class="header">
         <div class="header-left">
@@ -454,7 +449,6 @@
     <!-- MAIN SCREEN -->
     <div class="screen">
         <div class="active-grid" id="activeGrid" style="display:none;"></div>
-
         <div class="no-active" id="noActive">
             <div class="no-active-ring">
                 <svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>
@@ -504,15 +498,6 @@
         </div>
     </div>
 
-    <!-- CONNECTION BANNER -->
-    <div class="conn-banner" id="connBanner">
-        <div class="conn-banner-inner">
-            <div class="conn-dot-red"></div>
-            <span class="conn-text">Reconnecting to server...</span>
-        </div>
-    </div>
-
-    <!-- FOOTER -->
     <div class="footer">
         <div class="footer-text">Listen for your token announcement</div>
         <div class="footer-dot"></div>
@@ -521,222 +506,104 @@
         <div class="footer-text">&copy; 2026 Makerere University &mdash; Queue Management System</div>
     </div>
 
-    <!-- VOICE INDICATOR -->
     <div class="voice-indicator" id="voiceIndicator">
         <div class="voice-dot"></div>
         <span class="voice-text" id="voiceText">Voice System Ready</span>
     </div>
 
     <script>
-    /* ═══════════════════════════════════════════════════════════════════════
-       MAKERERE UNIVERSITY — PUBLIC DISPLAY
-       TV-HARDENED RUNTIME  v2.0
-
-       Design: UNTOUCHED — every CSS class, animation, card layout preserved.
-
-       What this runtime adds over the original:
-       ───────────────────────────────────────────
-       1. XHR with hard timeout  — replaces fetch() for all three polling
-          calls. XMLHttpRequest.timeout works on every TV browser since 2010.
-          A hung request aborts in 6 s and the next cycle starts cleanly.
-
-       2. Cache busting (?_t=)   — appended to every polling URL so no TV
-          browser ever serves a stale cached response.
-
-       3. Smart DOM diff          — activeGrid cards are created ONCE and
-          reused. Only text nodes are updated when token/name changes.
-          The compositor keeps its animation state; no rebuild, no freeze.
-
-       4. Render watchdog         — a counter (renderVersion) is written to
-          a hidden DOM attribute every time updateDisplay() runs. A separate
-          10-second checker reads it back from the DOM. If JS says version N
-          but the DOM still shows version N-3 or older, the compositor has
-          frozen and we trigger a silent reload.
-
-       5. Connection banner       — after 3 consecutive XHR failures a small
-          amber strip at the bottom tells staff the display is reconnecting.
-          Disappears automatically when connection resumes.
-
-       6. Audio blob cleanup      — every object URL is revoked immediately
-          after the audio element ends, preventing memory accumulation over
-          a full working day.
-
-       7. Keep-alive video        — the hidden <video> element (above) keeps
-          every TV OS from sleeping the display. No Wake Lock API needed.
-
-       8. Scheduled 4 AM reload   — silently reloads at 04:00 every day,
-          clearing all accumulated memory and resetting the compositor.
-
-       All original endpoints, function names, polling intervals preserved.
-    ═══════════════════════════════════════════════════════════════════════ */
-
-        const API_BASE_URL   = "https://web-production-eeaf2.up.railway.app";
+        const API_BASE_URL = "https://web-production-eeaf2.up.railway.app";
         const GOOGLE_API_KEY = "AIzaSyDS83DgfiXEvcIbm2klAa2FzkswmQFN4Zs";
 
-        /* ── STATE ─────────────────────────────────────────────────────── */
-        let lastCalledTokens  = {};   // office_code → token string
-        let lastServingTokens = {};   // office_code → token string
-        let audioQueue        = [];
-        let isPlaying         = false;
-        let announcedRecalls  = new Set();
-        let isIdle            = true;
-        let currentMessages   = [];
+        let lastCalledTokens = {};
+        let lastServingTokens = {};
+        let audioQueue = [];
+        let isPlaying = false;
+        let announcedRecalls = new Set();
+        let isIdle = true;
+        let currentMessages = [];
 
-        /* TV stability */
-        let consecutiveFails  = 0;    // XHR failure counter
-        let connBannerVisible = false;
-        let renderVersion     = 0;    // incremented by updateDisplay()
-        let domVersion        = 0;    // written into DOM, read back by watchdog
-        let reloadScheduled   = false;
-
-        /* ── KEEP-ALIVE VIDEO ──────────────────────────────────────────── */
-        /*
-         * Ensure the hidden video plays. Some TV browsers need a user
-         * gesture before play(). We attempt autoplay and silently ignore
-         * if it fails — the <video autoplay> attribute handles most cases.
-         */
-        (function ensureVideoPlays() {
-            const v = document.getElementById('keepAliveVideo');
-            if (!v) return;
-            v.play().catch(() => {
-                /* autoplay blocked — listen for first any-key / click */
-                const unlock = () => { v.play().catch(() => {}); };
-                document.addEventListener('click',   unlock, { once: true });
-                document.addEventListener('keydown', unlock, { once: true });
-            });
-        })();
-
-        /* ── DATETIME ──────────────────────────────────────────────────── */
+        // ── DATETIME ──
         function updateDateTime() {
             const now = new Date();
-            document.getElementById('dtTime').textContent =
-                now.toLocaleTimeString('en-UG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            document.getElementById('dtDate').textContent =
-                now.toLocaleDateString('en-UG', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-            document.getElementById('tickerTime').textContent =
-                now.toLocaleTimeString('en-UG', { hour: '2-digit', minute: '2-digit' });
-
-            /* ── 4 AM SCHEDULED RELOAD ── */
-            if (!reloadScheduled && now.getHours() === 4 && now.getMinutes() === 0) {
-                reloadScheduled = true;
-                console.log('🌅 4 AM scheduled reload — clearing memory');
-                setTimeout(() => location.reload(), 3000);
-            }
-            if (now.getHours() !== 4) reloadScheduled = false;
+            document.getElementById('dtTime').textContent = now.toLocaleTimeString('en-UG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById('dtDate').textContent = now.toLocaleDateString('en-UG', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('tickerTime').textContent = now.toLocaleTimeString('en-UG', { hour: '2-digit', minute: '2-digit' });
         }
         updateDateTime();
         setInterval(updateDateTime, 1000);
 
-        /* ── XHR HELPER ────────────────────────────────────────────────── */
-        /*
-         * Replaces fetch() for all three polling calls.
-         * - Hard 6-second timeout: if the request hangs the TV browser
-         *   aborts it and onError fires, starting the next cycle cleanly.
-         * - Cache busting: ?_t=timestamp forces the browser to the server
-         *   every single time, on every TV make/model.
-         * Returns a Promise that resolves with parsed JSON or rejects.
-         */
-        function xhrGet(url, timeoutMs) {
-            timeoutMs = timeoutMs || 6000;
-            return new Promise(function(resolve, reject) {
-                var xhr = new XMLHttpRequest();
-                /* append cache-bust timestamp */
-                var sep = url.indexOf('?') === -1 ? '?' : '&';
-                xhr.open('GET', url + sep + '_t=' + Date.now(), true);
-                xhr.timeout = timeoutMs;
-                xhr.onload  = function() {
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        try { resolve(JSON.parse(xhr.responseText)); }
-                        catch(e) { reject(new Error('JSON parse error')); }
-                    } else {
-                        reject(new Error('HTTP ' + xhr.status));
-                    }
-                };
-                xhr.onerror   = function() { reject(new Error('Network error')); };
-                xhr.ontimeout = function() { reject(new Error('Timeout after ' + timeoutMs + 'ms')); };
-                xhr.send();
-            });
-        }
-
-        /* ── CONNECTION BANNER ─────────────────────────────────────────── */
-        function showConnBanner() {
-            if (connBannerVisible) return;
-            connBannerVisible = true;
-            document.getElementById('connBanner').classList.add('visible');
-        }
-        function hideConnBanner() {
-            if (!connBannerVisible) return;
-            connBannerVisible = false;
-            document.getElementById('connBanner').classList.remove('visible');
-        }
-
-        /* ── VOICE ─────────────────────────────────────────────────────── */
-        function generateVoice(token, studentName, officeName, actionType) {
-            var vi = document.getElementById('voiceIndicator');
-            var vt = document.getElementById('voiceText');
-            var spelledToken = token.split('').join(' ');
-            var hasName = studentName && studentName.trim() !== '';
-            var text = '';
-
+        // ── VOICE WITH STUDENT NAMES ──
+        async function generateVoice(token, studentName, officeName, actionType) {
+            const vi = document.getElementById('voiceIndicator');
+            const vt = document.getElementById('voiceText');
+            const spelledToken = token.split('').join(' ');
+            
+            let text = '';
+            const hasName = studentName && studentName.trim() !== '';
+            
             if (actionType === 'called') {
-                text = hasName
-                    ? 'Now calling ' + studentName + ' with token ' + spelledToken + '. Please proceed to ' + officeName + '.'
-                    : 'Now calling token ' + spelledToken + '. Please proceed to ' + officeName + '.';
-            } else if (actionType === 'recall') {
-                text = hasName
-                    ? 'Attention please, ' + studentName + ', token ' + spelledToken + ' please proceed to ' + officeName + '.'
-                    : 'Attention please, token ' + spelledToken + ' is now ready at ' + officeName + '.';
-            } else {
-                text = hasName
-                    ? 'Now serving ' + studentName + ' with token ' + spelledToken + ' at ' + officeName + '.'
-                    : 'Now serving token ' + spelledToken + ' at ' + officeName + '.';
+                if (hasName) {
+                    text = `Now calling ${studentName} with token ${spelledToken}. Please proceed to ${officeName}.`;
+                } else {
+                    text = `Now calling token ${spelledToken}. Please proceed to ${officeName}.`;
+                }
+            } 
+            else if (actionType === 'recall') {
+                if (hasName) {
+                    text = `Attention please, ${studentName}, token ${spelledToken} please proceed to ${officeName}.`;
+                } else {
+                    text = `Attention please, token ${spelledToken} is now ready at ${officeName}.`;
+                }
             }
-
-            vt.textContent = 'Announcing ' + token + '...';
+            else if (actionType === 'serving') {
+                if (hasName) {
+                    text = `Now serving ${studentName} with token ${spelledToken} at ${officeName}.`;
+                } else {
+                    text = `Now serving token ${spelledToken} at ${officeName}.`;
+                }
+            }
+            
+            vt.textContent = `Announcing ${token}...`;
             vi.style.borderColor = 'rgba(255,193,7,0.4)';
-
-            fetch('https://texttospeech.googleapis.com/v1/text:synthesize', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': GOOGLE_API_KEY },
-                body: JSON.stringify({
-                    input: { text: text },
-                    voice: { languageCode: 'en-US', name: 'en-US-Neural2-F' },
-                    audioConfig: { audioEncoding: 'MP3', speakingRate: 0.95 }
-                })
-            }).then(function(r) {
-                return r.ok ? r.json() : Promise.reject('TTS error');
-            }).then(function(json) {
-                var blob  = base64ToBlob(json.audioContent, 'audio/mpeg');
-                var objUrl = URL.createObjectURL(blob);
-                var audio  = new Audio(objUrl);
-                /* MEMORY CLEANUP: revoke the object URL the moment playback ends */
-                audio.onended = function() {
-                    URL.revokeObjectURL(objUrl);
-                    isPlaying = false;
+            
+            try {
+                const response = await fetch("https://texttospeech.googleapis.com/v1/text:synthesize", {
+                    method: 'POST',
+                    headers: { "Content-Type": "application/json", "X-Goog-Api-Key": GOOGLE_API_KEY },
+                    body: JSON.stringify({ 
+                        input: { text }, 
+                        voice: { languageCode: "en-US", name: "en-US-Neural2-F" }, 
+                        audioConfig: { audioEncoding: "MP3", speakingRate: 0.95 } 
+                    })
+                });
+                if (response.ok) {
+                    const json = await response.json();
+                    const blob = base64ToBlob(json.audioContent, 'audio/mpeg');
+                    const audio = new Audio(URL.createObjectURL(blob));
+                    audioQueue.push(audio); 
                     playNextAudio();
-                };
-                audioQueue.push(audio);
-                playNextAudio();
-                vt.textContent = 'Done: ' + token;
-                vi.style.borderColor = 'rgba(0,230,118,0.3)';
-                setTimeout(function() {
-                    vt.textContent = 'Voice System Ready';
-                    vi.style.borderColor = 'rgba(255,255,255,0.08)';
-                }, 2000);
-            }).catch(function(e) {
-                console.error('Voice error:', e);
-                vt.textContent = 'Voice Error';
-                setTimeout(function() { vt.textContent = 'Voice System Ready'; }, 2000);
-            });
+                    vt.textContent = `Done: ${token}`;
+                    vi.style.borderColor = 'rgba(0,230,118,0.3)';
+                    setTimeout(() => { 
+                        vt.textContent = 'Voice System Ready'; 
+                        vi.style.borderColor = 'rgba(255,255,255,0.08)'; 
+                    }, 2000);
+                }
+            } catch(e) { 
+                console.error('Voice error:', e); 
+                vt.textContent = 'Voice Error'; 
+                setTimeout(() => { vt.textContent = 'Voice System Ready'; }, 2000); 
+            }
         }
 
         function base64ToBlob(base64, mime) {
-            var bytes  = atob(base64);
-            var arrays = [];
-            for (var i = 0; i < bytes.length; i += 512) {
-                var slice = bytes.slice(i, i + 512);
-                var nums  = new Uint8Array(slice.length);
-                for (var j = 0; j < slice.length; j++) nums[j] = slice.charCodeAt(j);
+            const bytes = atob(base64); 
+            const arrays = [];
+            for (let i = 0; i < bytes.length; i += 512) {
+                const slice = bytes.slice(i, i + 512);
+                const nums = new Uint8Array(slice.length);
+                for (let j = 0; j < slice.length; j++) nums[j] = slice.charCodeAt(j);
                 arrays.push(nums);
             }
             return new Blob(arrays, { type: mime });
@@ -745,366 +612,192 @@
         function playNextAudio() {
             if (isPlaying || !audioQueue.length) return;
             isPlaying = true;
-            var audio = audioQueue.shift();
-            /* onended handles isPlaying = false and revokeObjectURL */
-            audio.play().catch(function() { isPlaying = false; });
+            const audio = audioQueue.shift();
+            audio.onended = () => { isPlaying = false; playNextAudio(); };
+            audio.play().catch(() => {});
         }
 
-        /* ── RECALL BANNER ─────────────────────────────────────────────── */
         function showRecallBanner(token, officeName, studentName) {
-            var existing = document.querySelector('.recall-banner');
-            if (existing) existing.remove();
-            var b = document.createElement('div');
+            document.querySelector('.recall-banner')?.remove();
+            const b = document.createElement('div');
             b.className = 'recall-banner';
-            b.textContent = (studentName && studentName.trim())
-                ? studentName + '  —  ' + token
-                : token + '  —  ' + officeName;
+            if (studentName && studentName.trim() !== '') {
+                b.textContent = `${studentName}  —  ${token}`;
+            } else {
+                b.textContent = `${token}  —  ${officeName}`;
+            }
             document.body.appendChild(b);
-            setTimeout(function() { if (b && b.parentNode) b.remove(); }, 3000);
+            setTimeout(() => b?.remove(), 3000);
         }
 
-        /* ── TICKER ────────────────────────────────────────────────────── */
+        // ── TICKER ──
         function buildTickerContent(messages) {
-            var inner = document.getElementById('tickerInner');
-            var html  = '';
+            const inner = document.getElementById('tickerInner');
             if (!messages || messages.length === 0) {
-                var standby =
-                    '<div class="ticker-item">' +
-                        '<span class="ticker-office-badge">INFO</span>' +
-                        '<span class="ticker-message-text">No active queue. Please take a token from the kiosk at the entrance and wait for your number to be called.</span>' +
-                    '</div>' +
-                    '<span class="ticker-sep">&#9656;</span>' +
-                    '<div class="ticker-item">' +
-                        '<span class="ticker-office-badge">INFO</span>' +
-                        '<span class="ticker-message-text">Watch this screen and listen for announcements when your token is ready.</span>' +
-                    '</div>' +
-                    '<span class="ticker-sep">&#9656;</span>';
+                const standby = `
+                    <div class="ticker-item">
+                        <span class="ticker-office-badge">INFO</span>
+                        <span class="ticker-message-text">No active queue. Please take a token from the kiosk at the entrance and wait for your number to be called.</span>
+                    </div>
+                    <span class="ticker-sep">&#9656;</span>
+                    <div class="ticker-item">
+                        <span class="ticker-office-badge">INFO</span>
+                        <span class="ticker-message-text">Watch this screen and listen for announcements when your token is ready.</span>
+                    </div>
+                    <span class="ticker-sep">&#9656;</span>`;
                 inner.innerHTML = standby + standby;
                 return;
             }
-            for (var i = 0; i < messages.length; i++) {
-                var msg = messages[i];
-                html +=
-                    '<div class="ticker-item">' +
-                        '<span class="ticker-from">From:</span>' +
-                        '<span class="ticker-office-badge">' + escapeHtml(msg.office_name) + '</span>' +
-                        '<span class="ticker-message-text">' + escapeHtml(msg.message) + '</span>' +
-                    '</div>' +
-                    '<span class="ticker-sep">&#9656;</span>';
+            let html = '';
+            for (const msg of messages) {
+                html += `
+                  <div class="ticker-item">
+    <span class="ticker-from">From:</span>
+    <span class="ticker-office-badge">${escapeHtml(msg.office_name)}</span>
+    <span class="ticker-message-text">${escapeHtml(msg.message)}</span>
+</div>
+                    <span class="ticker-sep">&#9656;</span>`;
             }
-            inner.innerHTML = html + html; /* duplicate for seamless loop */
-            var totalLen = messages.reduce(function(a, m) { return a + m.message.length; }, 0);
-            var speed    = Math.max(20, Math.min(60, totalLen * 0.4));
+            inner.innerHTML = html + html;
+            const totalLen = messages.reduce((a, m) => a + m.message.length, 0);
+            const speed = Math.max(20, Math.min(60, totalLen * 0.4));
             inner.style.animationDuration = speed + 's';
         }
 
+        async function fetchAndDisplayMessages() {
+            if (!isIdle) return;
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/office/messages`);
+                const data = await res.json();
+                const msgs = (data.success && data.messages?.length) ? data.messages : [];
+                const sig = JSON.stringify(msgs.map(m => m.id + m.message));
+                if (sig !== fetchAndDisplayMessages._lastSig) {
+                    fetchAndDisplayMessages._lastSig = sig;
+                    currentMessages = msgs;
+                    buildTickerContent(msgs);
+                }
+            } catch(e) { console.error('Messages error:', e); }
+        }
+        fetchAndDisplayMessages._lastSig = null;
+
+        // ── RECALLS ──
+        async function fetchRecentRecalls() {
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/queue/recent-recalls`);
+                const data = await res.json();
+                if (data.success && data.recalls?.length) {
+                    for (const recall of data.recalls) {
+                        if (!announcedRecalls.has(recall.id)) {
+                            announcedRecalls.add(recall.id);
+                            showRecallBanner(recall.token_number, recall.office_name, recall.student_name);
+                            await generateVoice(recall.token_number, recall.student_name, recall.office_name, 'recall');
+                        }
+                    }
+                    if (announcedRecalls.size > 50) {
+                        Array.from(announcedRecalls).slice(0, announcedRecalls.size - 50).forEach(id => announcedRecalls.delete(id));
+                    }
+                }
+            } catch(e) { console.error('Recall error:', e); }
+        }
+
+        // ── QUEUE DATA ──
+        async function fetchQueueData() {
+            try {
+                const res = await fetch(`${API_BASE_URL}/api/public/queues`);
+                const data = await res.json();
+                if (data.success) updateDisplay(data.queues);
+            } catch(e) { console.error('Queue error:', e); }
+        }
+
         function escapeHtml(t) {
-            var d = document.createElement('div');
-            d.textContent = t;
+            const d = document.createElement('div'); 
+            d.textContent = t; 
             return d.innerHTML;
         }
 
-        function truncateName(name, max) {
-            max = max || 20;
+        function truncateName(name, maxLength = 20) {
             if (!name) return '';
-            return name.length <= max ? name : name.substring(0, max) + '...';
+            if (name.length <= maxLength) return name;
+            return name.substring(0, maxLength) + '...';
         }
 
-        /* ── FETCH MESSAGES — original endpoint ────────────────────────
-           GET /api/office/messages
-           Now uses xhrGet() for hard timeout + cache busting.
-        ────────────────────────────────────────────────────────────────── */
-        var _lastMsgSig = null;
-        function fetchAndDisplayMessages() {
-            if (!isIdle) return;
-            xhrGet(API_BASE_URL + '/api/office/messages', 6000)
-                .then(function(data) {
-                    var msgs = (data.success && data.messages && data.messages.length)
-                        ? data.messages : [];
-                    var sig  = JSON.stringify(msgs.map(function(m) { return m.id + m.message; }));
-                    if (sig !== _lastMsgSig) {
-                        _lastMsgSig    = sig;
-                        currentMessages = msgs;
-                        buildTickerContent(msgs);
-                    }
-                })
-                .catch(function(e) { console.error('Messages error:', e); });
-        }
-
-        /* ── FETCH RECALLS — original endpoint ─────────────────────────
-           GET /api/queue/recent-recalls
-           Now uses xhrGet() for hard timeout + cache busting.
-        ────────────────────────────────────────────────────────────────── */
-        function fetchRecentRecalls() {
-            xhrGet(API_BASE_URL + '/api/queue/recent-recalls', 6000)
-                .then(function(data) {
-                    if (!data.success || !data.recalls || !data.recalls.length) return;
-                    data.recalls.forEach(function(recall) {
-                        if (announcedRecalls.has(recall.id)) return;
-                        announcedRecalls.add(recall.id);
-                        showRecallBanner(recall.token_number, recall.office_name, recall.student_name);
-                        generateVoice(recall.token_number, recall.student_name, recall.office_name, 'recall');
-                    });
-                    /* cap set size to prevent memory growth */
-                    if (announcedRecalls.size > 50) {
-                        Array.from(announcedRecalls)
-                            .slice(0, announcedRecalls.size - 50)
-                            .forEach(function(id) { announcedRecalls.delete(id); });
-                    }
-                })
-                .catch(function(e) { console.error('Recall error:', e); });
-        }
-
-        /* ── SMART DOM DIFF ─────────────────────────────────────────────
-           Cards are created once per office_code and reused.
-           Only text-node values are updated when a token changes.
-           The compositor never has to re-promote the animation layer.
-
-           Card DOM IDs:
-             called  card → "card-called-{office_code}"
-             serving card → "card-serving-{office_code}"
-
-           Text node IDs inside each card:
-             "{cardId}-token"   → token number text
-             "{cardId}-name"    → student name text
-             "{cardId}-office"  → office name text
-        ────────────────────────────────────────────────────────────────── */
-        function setTextIfChanged(id, value) {
-            var el = document.getElementById(id);
-            if (!el) return;
-            if (el.textContent !== value) el.textContent = value;
-        }
-
-        function ensureCard(grid, type, officeCode, officeName, token, studentName) {
-            var cardId  = 'card-' + type + '-' + officeCode.replace(/[^a-zA-Z0-9]/g, '_');
-            var card    = document.getElementById(cardId);
-
-            if (!card) {
-                /* ── CREATE card once ── */
-                card = document.createElement('div');
-                card.id        = cardId;
-                card.className = type + '-card';
-
-                var badgeLabel = type === 'called'
-                    ? 'CALLED \u2014 PLEASE PROCEED'
-                    : 'BEING SERVED NOW';
-                var badgeClass = 'badge-' + type;
-
-                card.innerHTML =
-                    '<div class="status-badge ' + badgeClass + '">' +
-                        '<span class="badge-dot"></span>' +
-                        badgeLabel +
-                    '</div>' +
-                    '<div class="token-number" id="' + cardId + '-token"></div>' +
-                    '<div class="student-name" id="' + cardId + '-name"></div>' +
-                    '<div class="office-name"  id="' + cardId + '-office"></div>';
-
-                grid.appendChild(card);
-            }
-
-            /* ── UPDATE text nodes only — compositor stays intact ── */
-            setTextIfChanged(cardId + '-token',  token);
-            setTextIfChanged(cardId + '-name',   studentName ? truncateName(studentName) : '');
-            setTextIfChanged(cardId + '-office', officeName);
-
-            /* Hide student-name div when empty to avoid gap */
-            var nameEl = document.getElementById(cardId + '-name');
-            if (nameEl) nameEl.style.display = (studentName && studentName.trim()) ? '' : 'none';
-
-            return cardId;
-        }
-
-        /* ── UPDATE DISPLAY ─────────────────────────────────────────────
-           Central render function. Called by fetchQueueData on every
-           successful response.
-        ────────────────────────────────────────────────────────────────── */
         function updateDisplay(queues) {
-            var activeGrid  = document.getElementById('activeGrid');
-            var noActive    = document.getElementById('noActive');
-            var newsTicker  = document.getElementById('newsTicker');
+            const activeGrid = document.getElementById('activeGrid');
+            const noActive = document.getElementById('noActive');
+            const newsTicker = document.getElementById('newsTicker');
 
-            var activeTokens  = [];
-            var totalCalled   = 0;
-            var totalServing  = 0;
-            var totalWaiting  = 0;
-            var liveCardIds   = {};   /* track which cards are needed this cycle */
+            const activeTokens = [];
+            let totalCalled = 0, totalServing = 0, totalWaiting = 0;
 
-            for (var i = 0; i < queues.length; i++) {
-                var office = queues[i];
+            for (const office of queues) {
                 totalWaiting += office.waiting_count || 0;
-
                 if (office.current_called) {
-                    var calledId = ensureCard(
-                        activeGrid,
-                        'called',
-                        office.office_code,
-                        office.office_name,
-                        office.current_called,
-                        office.called_student || ''
-                    );
-                    liveCardIds[calledId] = true;
+                    activeTokens.push({ 
+                        type: 'called', 
+                        token: office.current_called, 
+                        officeName: office.office_name,
+                        studentName: office.called_student || ''
+                    });
                     totalCalled++;
-
-                    /* voice only on token change */
+                    
                     if (lastCalledTokens[office.office_code] !== office.current_called) {
                         lastCalledTokens[office.office_code] = office.current_called;
-                        generateVoice(
-                            office.current_called,
-                            office.called_student,
-                            office.office_name,
-                            'called'
-                        );
+                        generateVoice(office.current_called, office.called_student, office.office_name, 'called');
                     }
                 }
-
                 if (office.current_serving) {
-                    var servingId = ensureCard(
-                        activeGrid,
-                        'serving',
-                        office.office_code,
-                        office.office_name,
-                        office.current_serving,
-                        office.serving_student || ''
-                    );
-                    liveCardIds[servingId] = true;
+                    activeTokens.push({ 
+                        type: 'serving', 
+                        token: office.current_serving, 
+                        officeName: office.office_name,
+                        studentName: office.serving_student || ''
+                    });
                     totalServing++;
-
+                    
                     if (lastServingTokens[office.office_code] !== office.current_serving) {
                         lastServingTokens[office.office_code] = office.current_serving;
-                        generateVoice(
-                            office.current_serving,
-                            office.serving_student,
-                            office.office_name,
-                            'serving'
-                        );
+                        generateVoice(office.current_serving, office.serving_student, office.office_name, 'serving');
                     }
                 }
             }
 
-            /* Remove cards that are no longer active (student served/skipped) */
-            var existingCards = activeGrid.querySelectorAll('[id^="card-"]');
-            for (var c = 0; c < existingCards.length; c++) {
-                if (!liveCardIds[existingCards[c].id]) {
-                    activeGrid.removeChild(existingCards[c]);
-                }
-            }
-
-            /* Update stats */
             document.getElementById('totalWaiting').textContent = totalWaiting;
-            document.getElementById('totalCalled').textContent  = totalCalled;
+            document.getElementById('totalCalled').textContent = totalCalled;
             document.getElementById('totalServing').textContent = totalServing;
 
-            var hasActive = (totalCalled + totalServing) > 0;
-
-            if (hasActive) {
+            if (activeTokens.length > 0) {
                 isIdle = false;
                 newsTicker.classList.remove('visible');
-                noActive.style.display   = 'none';
+                noActive.style.display = 'none';
                 activeGrid.style.display = 'grid';
+
+                activeGrid.innerHTML = activeTokens.map(t => `
+                    <div class="${t.type}-card">
+                        <div class="status-badge badge-${t.type}">
+                            <span class="badge-dot"></span>
+                            ${t.type === 'called' ? 'CALLED — PLEASE PROCEED' : 'BEING SERVED NOW'}
+                        </div>
+                        <div class="token-number">${t.token}</div>
+                        ${t.studentName ? `<div class="student-name">${escapeHtml(truncateName(t.studentName))}</div>` : ''}
+                        <div class="office-name">${escapeHtml(t.officeName)}</div>
+                    </div>
+                `).join('');
             } else {
                 isIdle = true;
                 activeGrid.style.display = 'none';
-                noActive.style.display   = 'flex';
+                noActive.style.display = 'flex';
                 newsTicker.classList.add('visible');
                 fetchAndDisplayMessages();
             }
-
-            /* ── RENDER WATCHDOG: stamp current version into a DOM attribute ──
-               The watchdog reads this back and compares against renderVersion.
-               If they diverge the compositor has stopped painting.            */
-            renderVersion++;
-            activeGrid.setAttribute('data-rv', renderVersion);
         }
 
-        /* ── RENDER WATCHDOG ────────────────────────────────────────────
-           Runs every 10 seconds independently of the fetch cycle.
-           Reads the data-rv attribute back from the DOM and compares
-           it to the JS renderVersion counter.
-
-           If the DOM attribute has not changed in 3 consecutive checks
-           (≈ 30 seconds) while renderVersion kept incrementing, the
-           compositor has frozen and we reload.
-
-           This catches exactly the Skyworth failure mode: JS running,
-           sound working, fetch working — but GPU compositor frozen.
-        ────────────────────────────────────────────────────────────────── */
-        var _lastDomRv        = 0;
-        var _frozenCheckCount = 0;
-
-        function renderWatchdog() {
-            var grid  = document.getElementById('activeGrid');
-            if (!grid) return;
-
-            var domRv = parseInt(grid.getAttribute('data-rv') || '0', 10);
-
-            if (domRv === _lastDomRv && renderVersion > _lastDomRv + 2) {
-                /* DOM version has not advanced but JS has — compositor may be stuck */
-                _frozenCheckCount++;
-                console.warn(
-                    'Render watchdog: DOM rv=' + domRv +
-                    ' JS rv=' + renderVersion +
-                    ' frozen checks=' + _frozenCheckCount
-                );
-                if (_frozenCheckCount >= 3) {
-                    console.error('🔄 Compositor frozen — reloading page');
-                    location.reload();
-                }
-            } else {
-                _frozenCheckCount = 0;
-                _lastDomRv        = domRv;
-            }
-        }
-
-        /* ── FETCH QUEUE DATA — original endpoint ───────────────────────
-           GET /api/public/queues
-           Uses xhrGet() for hard timeout + cache busting.
-           Manages connection banner and consecutive failure counter.
-        ────────────────────────────────────────────────────────────────── */
-        function fetchQueueData() {
-            xhrGet(API_BASE_URL + '/api/public/queues', 8000)
-                .then(function(data) {
-                    consecutiveFails = 0;
-                    hideConnBanner();
-                    if (data.success) {
-                        updateDisplay(data.queues);
-                    }
-                })
-                .catch(function(e) {
-                    consecutiveFails++;
-                    console.warn('Queue fetch error (' + consecutiveFails + '):', e.message);
-
-                    if (consecutiveFails >= 3) {
-                        showConnBanner();
-                    }
-                    /* reload after 12 consecutive failures ≈ 60 seconds */
-                    if (consecutiveFails >= 12) {
-                        console.error('🔄 12 consecutive failures — reloading');
-                        location.reload();
-                    }
-                });
-        }
-
-        /* ── INIT ───────────────────────────────────────────────────────── */
+        // ── INIT ──
         function init() {
-            /* initial fetches */
             fetchQueueData();
             fetchRecentRecalls();
-
-            /* polling — same intervals as original */
-            setInterval(fetchQueueData,          5000);   /* queue:    every 5 s  */
-            setInterval(fetchRecentRecalls,      3000);   /* recalls:  every 3 s  */
-            setInterval(fetchAndDisplayMessages, 10000);  /* messages: every 10 s */
-
-            /* render watchdog — independent of fetch cycle */
-            setInterval(renderWatchdog, 10000);
-
-            console.log('📺 Public Display — TV-hardened runtime v2.0 initialized');
-            console.log('   Cache busting : enabled (?_t=)');
-            console.log('   XHR timeout   : 6-8 s per request');
-            console.log('   DOM diff      : smart card reuse, no full rebuild');
-            console.log('   Render watch  : every 10 s');
-            console.log('   4 AM reload   : scheduled');
-            console.log('   Keep-alive    : hidden video loop active');
+            setInterval(fetchQueueData, 3000);
+            setInterval(fetchRecentRecalls, 2000);
+            setInterval(fetchAndDisplayMessages, 10000);
         }
 
         init();
