@@ -3,195 +3,102 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="X-Content-Type-Options" content="nosniff">
-<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
-<meta name="referrer" content="no-referrer">
-<title>Queue Token — Makerere University</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<title>Queue Token – Makerere University</title>
 <style>
-:root{
-  --forest:#1a3c2c;
-  --moss:#2a5a3a;
-  --fern:#3a7a50;
-  --sage:#7aa488;
-  --gold:#f5c842;
-  --gold-pale:#fffbea;
-  --cream:#f5faf6;
-  --pale:#edf7f1;
-  --border:#cce8d4;
-  --text:#162820;
-  --muted:#607a6a;
-  --white:#ffffff;
-  --success:#19a84a;
-  --error:#c0392b;
-  --radius-sm:10px;
-  --radius-md:18px;
-  --radius-lg:26px;
-  --radius-xl:50px;
-  --shadow-sm:0 2px 10px rgba(26,60,44,.07);
-  --shadow-md:0 8px 32px rgba(26,60,44,.13);
-  --shadow-lg:0 24px 64px rgba(26,60,44,.22);
-}
-
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+*{margin:0;padding:0;box-sizing:border-box;}
 
 body{
-  font-family:'DM Sans',sans-serif;
-  background:linear-gradient(148deg,#122b1e 0%,var(--forest) 38%,var(--moss) 70%,#1e4d30 100%);
+  font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+  background:linear-gradient(160deg,#1a3c2c 0%,#2a5a3a 60%,#1a3c2c 100%);
   min-height:100vh;
   display:flex;align-items:flex-start;justify-content:center;
-  padding:24px 16px 64px;
-  position:relative;
-  overflow-x:hidden;
+  padding:20px 16px 60px;
 }
 
-/* Background texture */
-body::before{
-  content:'';
-  position:fixed;inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
-  pointer-events:none;z-index:0;
-}
-body::after{
-  content:'';
-  position:fixed;
-  width:600px;height:600px;
-  background:radial-gradient(circle,rgba(245,200,66,.06) 0%,transparent 68%);
-  top:-180px;right:-180px;border-radius:50%;
-  pointer-events:none;z-index:0;
-}
-.orb2{
-  position:fixed;
-  width:450px;height:450px;
-  background:radial-gradient(circle,rgba(58,122,80,.15) 0%,transparent 70%);
-  bottom:-120px;left:-120px;border-radius:50%;
-  pointer-events:none;z-index:0;
-}
+.container{width:100%;max-width:640px;}
 
-.wrap{position:relative;z-index:1;width:100%;max-width:640px;animation:wrapRise .65s cubic-bezier(.22,1,.36,1) both;}
-@keyframes wrapRise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+/* HEADER */
+.header{text-align:center;margin-bottom:24px;color:white;}
+.header h1{font-size:19px;font-weight:700;letter-spacing:2.5px;}
+.header p{font-size:12px;color:rgba(255,255,255,0.55);margin-top:3px;letter-spacing:1px;}
 
-/* ── HEADER ── */
-.hdr{text-align:center;margin-bottom:22px;color:var(--white);}
-.hdr-badge{
-  display:inline-flex;align-items:center;gap:10px;
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:var(--radius-xl);
-  padding:7px 18px 7px 10px;
-  margin-bottom:14px;
-  backdrop-filter:blur(8px);
-}
-.hdr-badge-dot{
-  width:30px;height:30px;border-radius:50%;
-  background:linear-gradient(135deg,var(--fern),var(--moss));
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;
-}
-.hdr-badge-dot svg{width:15px;height:15px;fill:var(--gold);}
-.hdr-badge-text{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.75);font-weight:600;}
-.hdr-name{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900;letter-spacing:.04em;line-height:1.1;}
-.hdr-sub{font-size:.72rem;color:rgba(255,255,255,.5);letter-spacing:.14em;text-transform:uppercase;margin-top:5px;}
-
-/* ── CARD ── */
+/* CARD */
 .card{
-  background:var(--white);
-  border-radius:var(--radius-lg);
-  padding:32px 30px 28px;
-  box-shadow:var(--shadow-lg);
-  border:1px solid rgba(255,255,255,.55);
+  background:white;border-radius:28px;
+  padding:32px 30px;
+  box-shadow:0 32px 72px rgba(0,0,0,0.28);
   position:relative;overflow:hidden;
 }
 .card::before{
-  content:'';
-  position:absolute;top:-80px;right:-80px;
-  width:220px;height:220px;border-radius:50%;
-  background:radial-gradient(circle,rgba(26,60,44,.03) 0%,transparent 70%);
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(26,60,44,0.04) 0%,transparent 70%);
   pointer-events:none;
 }
 
-/* ── STEP INDICATOR ── */
-.step-indicator{
-  display:none;
-  align-items:center;
-  margin-bottom:28px;
-  padding-bottom:24px;
-  border-bottom:1.5px solid #eef3ef;
-}
-.step-item{display:flex;align-items:center;gap:8px;flex:1;}
+/* STEP INDICATOR */
+.step-indicator{display:flex;align-items:center;margin-bottom:28px;}
+.step-item{display:flex;align-items:center;gap:7px;flex:1;}
 .step-item:last-child{flex:none;}
 .step-dot{
-  width:32px;height:32px;border-radius:50%;
+  width:30px;height:30px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  font-size:11.5px;font-weight:700;
-  background:#eef3ef;color:#b0bfb5;flex-shrink:0;
-  transition:all .4s cubic-bezier(.34,1.56,.64,1);
-  border:2px solid transparent;
+  font-size:11px;font-weight:700;
+  background:#f0f0f0;color:#bbb;flex-shrink:0;
+  transition:all 0.4s cubic-bezier(.34,1.56,.64,1);
 }
 .step-dot.active{
-  background:var(--forest);color:var(--white);
-  box-shadow:0 0 0 5px rgba(26,60,44,.12);
-  transform:scale(1.1);border-color:transparent;
+  background:#1a3c2c;color:white;
+  box-shadow:0 0 0 4px rgba(26,60,44,0.15);
+  transform:scale(1.08);
 }
-.step-dot.done{background:var(--success);color:var(--white);border-color:transparent;}
-.step-label{font-size:11px;color:#b0bfb5;font-weight:600;white-space:nowrap;transition:color .3s;letter-spacing:.02em;}
-.step-label.active{color:var(--forest);font-weight:700;}
-.step-label.done{color:var(--success);}
-.step-line{flex:1;height:2px;background:#eef3ef;margin:0 4px;border-radius:2px;transition:background .5s;}
-.step-line.done{background:var(--success);}
+.step-dot.done{background:#00c853;color:white;}
+.step-label{font-size:11.5px;color:#bbb;font-weight:500;transition:color 0.3s;white-space:nowrap;}
+.step-label.active{color:#1a3c2c;font-weight:700;}
+.step-line{flex:1;height:2px;background:#f0f0f0;margin:0 6px;border-radius:2px;transition:background 0.5s;}
+.step-line.done{background:#00c853;}
 
-/* ── ERROR BAR ── */
+/* ERROR */
 .error-bar{
-  background:#fff5f5;border:1.5px solid #ffd0d0;
-  color:var(--error);padding:11px 15px;border-radius:var(--radius-sm);
-  font-size:.82rem;margin-bottom:18px;display:none;
-  animation:slideDown .2s ease;
-  display:flex;align-items:center;gap:8px;
+  background:#fff0f0;border:1px solid #ffc9c9;
+  color:#c62828;padding:11px 14px;border-radius:12px;
+  font-size:13px;margin-bottom:18px;display:none;
+  animation:slideDown 0.2s ease;
 }
-.error-bar::before{content:'⚠';font-size:1rem;}
-.error-bar.show{display:flex;}
 @keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── AI PANEL ── */
+/* AI PANEL */
 .ai-panel{
-  background:linear-gradient(145deg,var(--cream) 0%,var(--pale) 100%);
-  border:1.5px solid var(--border);border-radius:var(--radius-md);
-  padding:16px 18px;margin-bottom:26px;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#f4faf6 0%,#edf7f1 100%);
+  border:1.5px solid #c3e6cb;border-radius:18px;
+  padding:18px 20px;margin-bottom:26px;
+  position:relative;overflow:hidden;
 }
 .ai-panel::after{
-  content:'';position:absolute;bottom:-24px;right:-24px;
-  width:90px;height:90px;border-radius:50%;
-  background:rgba(26,60,44,.04);pointer-events:none;
+  content:'';position:absolute;bottom:-20px;right:-20px;
+  width:80px;height:80px;border-radius:50%;
+  background:rgba(26,60,44,0.04);pointer-events:none;
 }
 .ai-avatar{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
-.ai-dot-wrap{position:relative;flex-shrink:0;}
 .ai-dot{
-  width:36px;height:36px;border-radius:50%;
-  background:linear-gradient(135deg,var(--forest),var(--moss));
+  width:34px;height:34px;border-radius:50%;
+  background:#1a3c2c;
   display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;position:relative;
 }
-.ai-dot svg{width:16px;height:16px;fill:var(--gold);}
-.ai-status{
-  position:absolute;top:1px;right:1px;
+.ai-dot::after{
+  content:'';position:absolute;top:0;right:0;
   width:9px;height:9px;border-radius:50%;
-  background:var(--success);border:2px solid var(--white);
-  animation:statusPulse 2s ease-in-out infinite;
+  background:#00c853;border:2px solid white;
 }
-@keyframes statusPulse{0%,100%{box-shadow:0 0 0 0 rgba(25,168,74,.4)}50%{box-shadow:0 0 0 4px rgba(25,168,74,0)}}
-.ai-info{}
-.ai-name{font-size:.78rem;font-weight:700;color:var(--forest);letter-spacing:.02em;}
-.ai-caption{font-size:.69rem;color:var(--muted);}
-
+.ai-dot svg{width:17px;height:17px;fill:#ffd700;}
+.ai-name{font-size:12px;font-weight:700;color:#1a3c2c;letter-spacing:0.3px;}
+.ai-name span{font-weight:400;color:#999;margin-left:4px;}
 .ai-bubble{
-  background:var(--white);
-  border-radius:4px var(--radius-md) var(--radius-md) var(--radius-md);
-  padding:13px 16px;
-  border:1.5px solid #ddeee4;
-  font-size:.84rem;color:var(--text);line-height:1.68;
-  min-height:48px;
-  position:relative;
-  box-shadow:var(--shadow-sm);
+  background:white;border-radius:4px 16px 16px 16px;
+  padding:13px 16px;border:1px solid #ddeee4;
+  font-size:13.5px;color:#222;line-height:1.65;
+  min-height:46px;position:relative;
 }
 .ai-bubble::before{
   content:'';position:absolute;top:0;left:-9px;
@@ -200,333 +107,262 @@ body::after{
 }
 .ai-cursor{
   display:inline-block;width:2px;height:1em;
-  background:var(--moss);vertical-align:text-bottom;
-  animation:blink .85s step-end infinite;margin-left:2px;
+  background:#1a3c2c;vertical-align:text-bottom;
+  animation:blink 0.85s step-end infinite;margin-left:1px;
 }
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .ai-typing{display:flex;align-items:center;gap:5px;padding:4px 0;}
 .ai-typing span{
   width:7px;height:7px;border-radius:50%;
-  background:var(--sage);
-  animation:typingBounce 1.2s ease-in-out infinite;
+  background:#1a3c2c;opacity:0.3;
+  animation:bounce 1.2s ease-in-out infinite;
 }
-.ai-typing span:nth-child(2){animation-delay:.2s;}
-.ai-typing span:nth-child(3){animation-delay:.4s;}
-@keyframes typingBounce{0%,80%,100%{transform:translateY(0);opacity:.35}40%{transform:translateY(-6px);opacity:1}}
+.ai-typing span:nth-child(2){animation-delay:0.2s;}
+.ai-typing span:nth-child(3){animation-delay:0.4s;}
+@keyframes bounce{0%,80%,100%{transform:translateY(0);opacity:0.3}40%{transform:translateY(-6px);opacity:1}}
 
-/* ── STEP PAGES ── */
+/* STEP PAGES */
 .step-content{display:none;}
-.step-content.active{display:block;animation:fadeUp .35s cubic-bezier(.22,1,.36,1);}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.step-content.active{display:block;animation:fadeUp 0.35s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── SECTION TITLE ── */
-.section-title{
-  font-family:'Playfair Display',serif;
-  font-size:1.1rem;font-weight:700;color:var(--forest);
-  margin-bottom:16px;letter-spacing:.02em;
-}
+/* SECTION TITLE */
+.section-title{font-size:14px;font-weight:700;color:#1a3c2c;margin-bottom:14px;letter-spacing:0.3px;}
 
-/* ── LAUNCH CENTER ── */
+/* CENTERED LAUNCH */
 .launch-center{
   display:flex;flex-direction:column;align-items:center;
-  text-align:center;padding:12px 0 28px;
+  text-align:center;padding:10px 0 24px;
 }
 .launch-icon{
-  width:78px;height:78px;border-radius:22px;
-  background:linear-gradient(135deg,var(--forest),var(--moss));
+  width:72px;height:72px;border-radius:20px;
+  background:linear-gradient(135deg,#1a3c2c,#2a5a3a);
   display:flex;align-items:center;justify-content:center;
-  margin-bottom:20px;
-  box-shadow:0 14px 40px rgba(26,60,44,.25);
-  position:relative;
+  margin-bottom:18px;
+  box-shadow:0 12px 32px rgba(26,60,44,0.22);
 }
-.launch-icon::after{
-  content:'';
-  position:absolute;inset:-3px;border-radius:25px;
-  background:linear-gradient(135deg,rgba(245,200,66,.3),transparent);
-  z-index:-1;
-}
-.launch-icon svg{width:36px;height:36px;fill:var(--gold);}
-.launch-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--forest);margin-bottom:8px;}
-.launch-sub{font-size:.83rem;color:var(--muted);margin-bottom:30px;line-height:1.6;max-width:300px;}
+.launch-icon svg{width:34px;height:34px;fill:#ffd700;}
+.launch-title{font-size:22px;font-weight:800;color:#1a3c2c;margin-bottom:6px;}
+.launch-sub{font-size:13px;color:#888;margin-bottom:28px;line-height:1.55;max-width:320px;}
 .btn-launch{
   display:inline-flex;align-items:center;gap:10px;
-  padding:15px 40px;
-  background:linear-gradient(135deg,var(--forest),var(--moss));
-  color:var(--white);border:none;border-radius:var(--radius-xl);
-  font-size:.95rem;font-weight:700;font-family:inherit;cursor:pointer;
-  letter-spacing:.04em;
-  transition:all .25s cubic-bezier(.34,1.56,.64,1);
-  box-shadow:0 8px 28px rgba(26,60,44,.3);
-  position:relative;overflow:hidden;
+  padding:15px 38px;
+  background:#1a3c2c;color:white;
+  border:none;border-radius:50px;
+  font-size:15px;font-weight:700;cursor:pointer;
+  letter-spacing:0.3px;
+  transition:all 0.25s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 8px 24px rgba(26,60,44,0.28);
 }
-.btn-launch::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,0);transition:background .2s;}
-.btn-launch:hover::after{background:rgba(255,255,255,.07);}
-.btn-launch:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(26,60,44,.38);}
-.btn-launch:active{transform:scale(.97);}
-.btn-launch svg{width:18px;height:18px;fill:var(--white);}
+.btn-launch:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(26,60,44,0.35);}
+.btn-launch:active{transform:scale(0.97);}
+.btn-launch svg{width:18px;height:18px;fill:white;}
 
-/* ── OFFICE / SERVICE GRID ── */
+/* OFFICE / SERVICE GRID */
 .select-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(148px,1fr));
+  grid-template-columns:repeat(auto-fill,minmax(155px,1fr));
   gap:11px;margin-bottom:22px;
 }
 .select-card{
-  border:1.5px solid #e4ece6;border-radius:var(--radius-md);
-  padding:16px 14px;cursor:pointer;
-  transition:all .22s cubic-bezier(.34,1.56,.64,1);
-  background:#fafcfb;
-  animation:popIn .3s ease backwards;
+  border:1.5px solid #e8e8e8;border-radius:14px;
+  padding:15px 13px;cursor:pointer;
+  transition:all 0.22s cubic-bezier(.34,1.56,.64,1);
+  background:#fafafa;
+  animation:popIn 0.3s ease backwards;
 }
-@keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
-.select-card:hover{
-  border-color:var(--moss);background:var(--pale);
-  transform:translateY(-3px);box-shadow:0 8px 22px rgba(26,60,44,.11);
-}
+@keyframes popIn{from{opacity:0;transform:scale(0.88)}to{opacity:1;transform:scale(1)}}
+.select-card:hover{border-color:#2a5a3a;background:#f0faf3;transform:translateY(-2px);box-shadow:0 6px 18px rgba(26,60,44,0.1);}
 .select-card.selected{
-  border-color:var(--forest);background:#e8f5eb;
-  box-shadow:0 0 0 3px rgba(26,60,44,.1),0 6px 18px rgba(26,60,44,.1);
-  transform:translateY(-3px);
+  border-color:#1a3c2c;background:#e8f5e9;
+  box-shadow:0 0 0 3px rgba(26,60,44,0.1);
+  transform:translateY(-2px);
 }
 .card-icon{
-  width:38px;height:38px;border-radius:10px;
-  background:var(--pale);margin-bottom:11px;
+  width:36px;height:36px;border-radius:9px;
+  background:#e8f5e9;margin-bottom:10px;
   display:flex;align-items:center;justify-content:center;
-  transition:background .2s;
 }
-.select-card.selected .card-icon{background:rgba(26,60,44,.1);}
-.card-icon svg{width:18px;height:18px;fill:var(--forest);}
-.card-label{font-size:.82rem;font-weight:700;color:var(--forest);line-height:1.3;}
-.card-sub{font-size:.71rem;color:var(--muted);margin-top:4px;}
+.select-card.selected .card-icon{background:rgba(26,60,44,0.12);}
+.card-icon svg{width:17px;height:17px;fill:#1a3c2c;}
+.card-label{font-size:13px;font-weight:700;color:#1a3c2c;}
+.card-sub{font-size:11px;color:#999;margin-top:3px;}
 
-/* ── SUMMARY PILL ── */
+/* SUMMARY PILL */
 .summary-pill{
-  background:var(--pale);border:1.5px solid var(--border);
-  border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:18px;
-  font-size:.81rem;color:var(--forest);display:none;
-  align-items:center;gap:9px;
-  animation:slideDown .25s ease;
+  background:#f0faf3;border:1px solid #c3e6cb;
+  border-radius:10px;padding:10px 14px;margin-bottom:20px;
+  font-size:13px;color:#1a3c2c;display:flex;align-items:center;gap:8px;
+  animation:slideDown 0.25s ease;
 }
-.summary-pill.show{display:flex;}
-.pill-check{
-  width:20px;height:20px;background:var(--success);
+.summary-pill .check{
+  width:18px;height:18px;background:#00c853;
   border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;
 }
-.pill-check svg{width:10px;height:10px;stroke:white;fill:none;stroke-width:2.5;}
+.summary-pill .check svg{width:10px;height:10px;fill:white;}
 
-/* ── FORM ── */
-.form-group{margin-bottom:20px;}
-.form-label{display:block;font-size:.78rem;font-weight:700;color:var(--text);margin-bottom:8px;letter-spacing:.02em;}
-.field-wrap{position:relative;}
-.field-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--sage);pointer-events:none;display:flex;}
+/* FORM */
+.form-group{margin-bottom:18px;}
+.form-label{display:block;font-size:13px;font-weight:700;color:#333;margin-bottom:7px;}
 .form-input{
-  width:100%;padding:13px 14px 13px 40px;
-  border:1.5px solid #dde8e1;border-radius:var(--radius-sm);
-  font-size:.92rem;font-family:inherit;outline:none;
-  background:var(--cream);color:var(--text);
-  transition:border-color .2s,box-shadow .2s,background .2s;
-  -webkit-appearance:none;
+  width:100%;padding:13px 16px;
+  border:1.5px solid #e0e0e0;border-radius:12px;
+  font-size:14px;font-family:inherit;outline:none;
+  transition:all 0.2s;background:#fafafa;color:#222;
 }
-.form-input:focus{border-color:var(--moss);background:var(--white);box-shadow:0 0 0 4px rgba(42,90,58,.1);}
-.form-input.err{border-color:var(--error);}
+.form-input:focus{border-color:#1a3c2c;background:white;box-shadow:0 0 0 3px rgba(26,60,44,0.08);}
 
-/* ── BUTTONS ── */
+/* BUTTONS */
 .btn-row{display:flex;gap:12px;margin-top:8px;}
 .btn-back{
-  padding:12px 22px;border:1.5px solid #dce8de;
-  background:var(--white);color:var(--muted);border-radius:var(--radius-xl);
-  cursor:pointer;font-size:.84rem;font-weight:600;font-family:inherit;
-  transition:all .2s;
+  padding:12px 22px;border:1.5px solid #ddd;
+  background:white;color:#666;border-radius:50px;
+  cursor:pointer;font-size:13.5px;font-weight:600;
+  transition:all 0.2s;
 }
-.btn-back:hover{background:var(--cream);border-color:#c4d8c8;color:var(--forest);}
+.btn-back:hover{background:#f5f5f5;border-color:#ccc;}
 .btn-next{
   flex:1;padding:13px;
-  background:linear-gradient(135deg,var(--forest),var(--moss));
-  color:var(--white);border:none;border-radius:var(--radius-xl);
-  font-size:.9rem;font-weight:700;font-family:inherit;cursor:pointer;
-  transition:all .25s cubic-bezier(.34,1.56,.64,1);
-  box-shadow:0 4px 18px rgba(26,60,44,.2);
-  position:relative;overflow:hidden;
+  background:#1a3c2c;color:white;
+  border:none;border-radius:50px;
+  font-size:14px;font-weight:700;cursor:pointer;
+  transition:all 0.25s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 4px 16px rgba(26,60,44,0.18);
 }
-.btn-next::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,0);transition:background .2s;}
-.btn-next:hover:not(:disabled)::after{background:rgba(255,255,255,.07);}
-.btn-next:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 26px rgba(26,60,44,.28);}
-.btn-next:active:not(:disabled){transform:scale(.98);}
-.btn-next:disabled{background:#d4ddd6;cursor:not-allowed;box-shadow:none;color:#aaa;}
+.btn-next:hover:not(:disabled){opacity:0.9;transform:translateY(-1px);box-shadow:0 8px 24px rgba(26,60,44,0.25);}
+.btn-next:active:not(:disabled){transform:scale(0.98);}
+.btn-next:disabled{background:#d0d0d0;cursor:not-allowed;box-shadow:none;}
 
-/* ── LOADING ── */
-.loading-overlay{text-align:center;padding:44px 0;display:none;animation:fadeUp .3s ease;}
+/* LOADING OVERLAY */
+.loading-overlay{
+  text-align:center;padding:40px 0;
+  animation:fadeUp 0.3s ease;
+}
 .spinner{
-  width:42px;height:42px;
-  border:3px solid var(--pale);border-top-color:var(--forest);
-  border-radius:50%;animation:spin .75s linear infinite;margin:0 auto 18px;
+  width:40px;height:40px;
+  border:3px solid #eee;border-top-color:#1a3c2c;
+  border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px;
 }
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-overlay p{font-size:.83rem;color:var(--muted);margin-top:4px;}
+.loading-overlay p{font-size:13.5px;color:#888;margin-top:4px;}
 
-.loading-cards{text-align:center;padding:28px 0;}
-.loading-cards .spinner{margin:0 auto 12px;width:32px;height:32px;border-width:2.5px;}
-.loading-cards p{font-size:.78rem;color:#aaa;}
-
-/* ── TOKEN RESULT ── */
-.token-result{text-align:center;padding:10px 0;animation:fadeUp .5s cubic-bezier(.22,1,.36,1);}
-
+/* TOKEN DISPLAY */
+.token-result{text-align:center;padding:10px 0;animation:fadeUp 0.5s ease;}
 .token-badge{
-  display:inline-block;
-  background:linear-gradient(145deg,var(--forest),var(--moss));
-  color:var(--white);border-radius:24px;
-  padding:34px 48px;margin-bottom:24px;
-  min-width:240px;
-  box-shadow:0 20px 56px rgba(26,60,44,.35);
-  animation:tokenPop .65s cubic-bezier(.34,1.56,.64,1) .1s backwards;
-  position:relative;overflow:hidden;
+  display:inline-block;background:#1a3c2c;color:white;
+  border-radius:20px;padding:32px 44px;margin-bottom:22px;
+  min-width:230px;
+  box-shadow:0 16px 48px rgba(26,60,44,0.3);
+  animation:tokenPop 0.6s cubic-bezier(.34,1.56,.64,1) 0.1s backwards;
 }
-.token-badge::before{
-  content:'';position:absolute;top:-40px;right:-40px;
-  width:140px;height:140px;border-radius:50%;
-  background:rgba(245,200,66,.08);pointer-events:none;
-}
-@keyframes tokenPop{from{opacity:0;transform:scale(.65)}to{opacity:1;transform:scale(1)}}
-.token-label{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;opacity:.6;margin-bottom:10px;}
-.token-number{
-  font-family:'Playfair Display',serif;
-  font-size:5rem;font-weight:900;letter-spacing:.12em;
-  line-height:1;color:var(--gold);
-  text-shadow:0 4px 16px rgba(245,200,66,.35);
-}
-.token-meta{margin-top:10px;font-size:.75rem;opacity:.65;letter-spacing:.04em;}
-
-.token-details{
-  background:var(--cream);border-radius:var(--radius-md);
-  padding:18px 22px;text-align:left;
-  border:1.5px solid var(--border);
-}
-.token-row{
-  display:flex;justify-content:space-between;align-items:center;
-  font-size:.83rem;padding:9px 0;border-bottom:1px solid #e8f0ea;
-}
+@keyframes tokenPop{from{opacity:0;transform:scale(0.7)}to{opacity:1;transform:scale(1)}}
+.token-label{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;opacity:0.65;margin-bottom:10px;}
+.token-number{font-size:64px;font-weight:900;letter-spacing:8px;line-height:1;color:#ffd700;text-shadow:0 2px 12px rgba(255,215,0,0.3);}
+.token-meta{margin-top:10px;font-size:12px;opacity:0.7;}
+.token-details{background:#f8f9fa;border-radius:16px;padding:18px 20px;text-align:left;}
+.token-row{display:flex;justify-content:space-between;font-size:13.5px;padding:8px 0;border-bottom:1px solid #eee;}
 .token-row:last-child{border-bottom:none;}
-.token-row .lbl{color:var(--muted);font-weight:500;}
-.token-row .val{font-weight:700;color:var(--forest);}
-.token-row .val.green{color:var(--success);}
-
+.token-row .lbl{color:#999;}
+.token-row .val{font-weight:700;color:#1a3c2c;}
+.token-row .val.green{color:#1a7a30;}
 .token-notice{
-  margin-top:16px;font-size:.76rem;color:#7a5c00;
-  padding:11px 18px;background:var(--gold-pale);
-  border-radius:var(--radius-sm);border:1.5px solid #f0da7a;
-  display:flex;align-items:flex-start;gap:8px;
+  margin-top:16px;font-size:12.5px;color:#7a5c00;text-align:center;
+  padding:10px 16px;background:#fffbea;border-radius:12px;border:1px solid #ffe97a;
 }
-.token-notice::before{content:'🔔';font-size:1rem;flex-shrink:0;}
-
-.token-actions{display:flex;gap:12px;margin-top:22px;justify-content:center;flex-wrap:wrap;}
+.token-actions{display:flex;gap:12px;margin-top:20px;justify-content:center;flex-wrap:wrap;}
 .btn-print{
   display:inline-flex;align-items:center;gap:8px;
-  padding:13px 30px;
-  background:linear-gradient(135deg,var(--forest),var(--moss));
-  color:var(--white);border:none;border-radius:var(--radius-xl);
-  font-size:.88rem;font-weight:700;font-family:inherit;cursor:pointer;
-  transition:all .22s;box-shadow:0 6px 22px rgba(26,60,44,.24);
+  padding:13px 28px;background:#1a3c2c;color:white;
+  border:none;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;
+  transition:all 0.22s;box-shadow:0 6px 20px rgba(26,60,44,0.22);
 }
-.btn-print:hover{opacity:.9;transform:translateY(-1px);}
+.btn-print:hover{opacity:0.88;transform:translateY(-1px);}
 .btn-print svg{width:16px;height:16px;fill:white;}
 .btn-new{
   display:inline-flex;align-items:center;gap:8px;
-  padding:13px 26px;background:var(--white);color:var(--forest);
-  border:1.5px solid var(--border);border-radius:var(--radius-xl);
-  font-size:.88rem;font-weight:700;font-family:inherit;cursor:pointer;
-  transition:all .2s;
+  padding:13px 24px;background:white;color:#1a3c2c;
+  border:1.5px solid #1a3c2c;border-radius:50px;
+  font-size:14px;font-weight:700;cursor:pointer;transition:background 0.2s;
 }
-.btn-new:hover{background:var(--pale);border-color:var(--sage);}
+.btn-new:hover{background:#f0faf3;}
 
-/* ── PRINT ── */
-.receipt-header{display:none;text-align:center;margin-bottom:16px;border-bottom:2px dashed #ccc;padding-bottom:14px;}
-.receipt-header h2{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--forest);}
-.receipt-header p{font-size:.72rem;color:#888;margin-top:3px;}
+/* LOADING CARDS */
+.loading-cards{text-align:center;padding:28px 0;}
+.loading-cards .spinner{margin:0 auto 10px;}
+.loading-cards p{font-size:13px;color:#aaa;}
+
+/* RECEIPT HEADER (print only) */
+.receipt-header{display:none;text-align:center;margin-bottom:16px;border-bottom:2px dashed #ccc;padding-bottom:12px;}
+.receipt-header h2{font-size:16px;font-weight:700;color:#1a3c2c;}
+.receipt-header p{font-size:11px;color:#888;margin-top:2px;}
 
 @media print{
   body{background:white!important;padding:0!important;display:block!important;}
-  .wrap{max-width:100%!important;}
-  .hdr,.step-indicator,.ai-panel,.token-actions,.token-notice,.launch-center,
-  .orb2,body::before,body::after{display:none!important;}
-  .card{box-shadow:none!important;border-radius:0!important;padding:20px!important;border:none!important;}
+  .container{max-width:100%!important;}
+  .card{box-shadow:none!important;border-radius:0!important;padding:20px!important;}
+  .header,.step-indicator,.ai-panel,.token-actions,.token-notice,.launch-center{display:none!important;}
   .token-result{page-break-inside:avoid;}
-  .token-badge{background:var(--forest)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-  .token-number{color:var(--gold)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .token-badge{background:#1a3c2c!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .token-number{color:#ffd700!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   .receipt-header{display:block!important;}
 }
 
-@media(max-width:500px){
-  .card{padding:24px 16px;}
+@media(max-width:480px){
+  .card{padding:24px 18px;}
   .select-grid{grid-template-columns:1fr 1fr;}
-  .token-badge{padding:26px 32px;min-width:180px;}
-  .token-number{font-size:3.8rem;}
-  .hdr-name{font-size:1.4rem;}
+  .token-badge{padding:24px 28px;min-width:180px;}
+  .token-number{font-size:50px;}
 }
 </style>
 </head>
 <body>
-<div class="orb2" aria-hidden="true"></div>
+<div class="container">
 
-<div class="wrap">
+  <div class="header">
+    <h1>MAKERERE UNIVERSITY</h1>
+    <p>QUEUE MANAGEMENT SYSTEM</p>
+  </div>
 
-  <header class="hdr">
-    <div class="hdr-badge">
-      <div class="hdr-badge-dot">
-        <svg viewBox="0 0 24 24"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg>
-      </div>
-      <span class="hdr-badge-text">Official · Makerere University</span>
-    </div>
-    <div class="hdr-name">Queue Management</div>
-    <div class="hdr-sub">Student Kiosk · Registry Services</div>
-  </header>
+  <div class="card">
 
-  <div class="card" role="main">
-
-    <!-- Step indicator -->
-    <nav class="step-indicator" id="stepIndicator" aria-label="Progress steps">
+    <div class="step-indicator" id="stepIndicator" style="display:none;">
       <div class="step-item">
-        <div class="step-dot" id="dot1" aria-label="Step 1">1</div>
-        <div class="step-label" id="lbl1">Office</div>
+        <div class="step-dot" id="dot1">1</div>
+        <div class="step-label" id="lbl1">Select Office</div>
       </div>
-      <div class="step-line" id="line1" role="separator"></div>
+      <div class="step-line" id="line1"></div>
       <div class="step-item">
-        <div class="step-dot" id="dot2" aria-label="Step 2">2</div>
-        <div class="step-label" id="lbl2">Service</div>
+        <div class="step-dot" id="dot2">2</div>
+        <div class="step-label" id="lbl2">Select Service</div>
       </div>
-      <div class="step-line" id="line2" role="separator"></div>
+      <div class="step-line" id="line2"></div>
       <div class="step-item">
-        <div class="step-dot" id="dot3" aria-label="Step 3">3</div>
+        <div class="step-dot" id="dot3">3</div>
         <div class="step-label" id="lbl3">Your Name</div>
       </div>
-    </nav>
+    </div>
 
-    <!-- Error bar -->
-    <div class="error-bar" id="errorBar" role="alert" aria-live="assertive"></div>
+    <div class="error-bar" id="errorBar"></div>
 
-    <!-- ══ STEP 0: WELCOME ══ -->
+    <!-- ══ WELCOME SCREEN ══ -->
     <div class="step-content active" id="step0">
       <div class="ai-panel">
         <div class="ai-avatar">
-          <div class="ai-dot-wrap">
-            <div class="ai-dot"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div>
-            <div class="ai-status" aria-hidden="true"></div>
+          <div class="ai-dot">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
           </div>
-          <div class="ai-info">
-            <div class="ai-name">Queue Assistant</div>
-            <div class="ai-caption">Makerere University · Online</div>
+          <div>
+            <div class="ai-name">Queue Assistant <span>· Makerere University</span></div>
           </div>
         </div>
-        <div class="ai-bubble" id="aiBubble0" aria-live="polite">
+        <div class="ai-bubble" id="aiBubble0">
           <div class="ai-typing"><span></span><span></span><span></span></div>
         </div>
       </div>
       <div class="launch-center">
-        <div class="launch-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.33C18 2.53 15.58 1 13 1c-1.5 0-3.04.63-4 1.67C8.04 1.63 6.5 1 5 1 2.42 1 0 2.53 0 4.67c0 .45.11.89.18 1.33H-1v2h22V6zm-7.69-2.87c.43-.59 1.19-.96 1.69-.96c.89 0 1.67.53 1.67 1.5c0 .47-.2.87-.41 1.33H13.5l-1.19-1.87zm-6.63-.96c.5 0 1.26.37 1.69.96L8.56 5.5H6.11c-.21-.46-.41-.86-.41-1.33c0-.97.78-1.5 1.97-1.5zM2 8v12c0 1.1.9 2 2 2h8V8H2zm12 0v14h6c1.1 0 2-.9 2-2V8h-8z"/></svg>
-        </div>
-        <div class="launch-title">Get Your Queue Token</div>
-        <div class="launch-sub">Select your office and service in about a minute — no account needed.</div>
-        <button class="btn-launch" id="launchBtn" onclick="startFlow()" aria-label="Begin queue token process">
+        
+        
+        <button class="btn-launch" id="launchBtn" onclick="startFlow()">
           <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           Select an Office
         </button>
@@ -537,538 +373,437 @@ body::after{
     <div class="step-content" id="step1">
       <div class="ai-panel">
         <div class="ai-avatar">
-          <div class="ai-dot-wrap">
-            <div class="ai-dot"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div>
-            <div class="ai-status" aria-hidden="true"></div>
+          <div class="ai-dot">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
           </div>
-          <div class="ai-info">
-            <div class="ai-name">Queue Assistant</div>
-            <div class="ai-caption">Makerere University · Online</div>
+          <div>
+            <div class="ai-name">Queue Assistant <span>· Makerere University</span></div>
           </div>
         </div>
-        <div class="ai-bubble" id="aiBubble1" aria-live="polite">
+        <div class="ai-bubble" id="aiBubble1">
           <div class="ai-typing"><span></span><span></span><span></span></div>
         </div>
       </div>
       <div class="section-title">Choose an Office</div>
-      <div id="officeGrid" role="list" aria-label="Available offices">
+      <div id="officeGrid">
         <div class="loading-cards"><div class="spinner"></div><p>Loading offices…</p></div>
       </div>
       <div class="btn-row">
-        <button class="btn-next" id="nextToStep2Btn" disabled onclick="goToStep(2)" aria-label="Continue to service selection">Continue →</button>
+        <button class="btn-next" id="nextToStep2Btn" disabled onclick="goToStep(2)">Continue →</button>
       </div>
     </div>
 
     <!-- ══ STEP 2: SELECT SERVICE ══ -->
     <div class="step-content" id="step2">
-      <div class="summary-pill" id="officeSummary" aria-live="polite">
-        <div class="pill-check" aria-hidden="true">
-          <svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
+      <div class="summary-pill" id="officeSummary" style="display:none;">
+        <div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
         <span id="officeSummaryText"></span>
       </div>
       <div class="ai-panel">
         <div class="ai-avatar">
-          <div class="ai-dot-wrap">
-            <div class="ai-dot"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div>
-            <div class="ai-status" aria-hidden="true"></div>
+          <div class="ai-dot">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
           </div>
-          <div class="ai-info">
-            <div class="ai-name">Queue Assistant</div>
-            <div class="ai-caption">Makerere University · Online</div>
+          <div>
+            <div class="ai-name">Queue Assistant <span>· Makerere University</span></div>
           </div>
         </div>
-        <div class="ai-bubble" id="aiBubble2" aria-live="polite">
+        <div class="ai-bubble" id="aiBubble2">
           <div class="ai-typing"><span></span><span></span><span></span></div>
         </div>
       </div>
       <div class="section-title" id="serviceTitle">Choose a Service</div>
-      <div id="serviceGrid" role="list" aria-label="Available services">
+      <div id="serviceGrid">
         <div class="loading-cards"><div class="spinner"></div><p>Loading services…</p></div>
       </div>
       <div class="btn-row">
-        <button class="btn-back" onclick="goToStep(1)" aria-label="Back to office selection">← Back</button>
-        <button class="btn-next" id="nextToStep3Btn" disabled onclick="goToStep(3)" aria-label="Continue to name entry">Continue →</button>
+        <button class="btn-back" onclick="goToStep(1)">← Back</button>
+        <button class="btn-next" id="nextToStep3Btn" disabled onclick="goToStep(3)">Continue →</button>
       </div>
     </div>
 
     <!-- ══ STEP 3: NAME ══ -->
     <div class="step-content" id="step3">
-      <div class="summary-pill" id="serviceSummary" aria-live="polite">
-        <div class="pill-check" aria-hidden="true">
-          <svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
+      <div class="summary-pill" id="serviceSummary" style="display:none;">
+        <div class="check"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
         <span id="serviceSummaryText"></span>
       </div>
       <div class="ai-panel">
         <div class="ai-avatar">
-          <div class="ai-dot-wrap">
-            <div class="ai-dot"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div>
-            <div class="ai-status" aria-hidden="true"></div>
+          <div class="ai-dot">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
           </div>
-          <div class="ai-info">
-            <div class="ai-name">Queue Assistant</div>
-            <div class="ai-caption">Makerere University · Online</div>
+          <div>
+            <div class="ai-name">Queue Assistant <span>· Makerere University</span></div>
           </div>
         </div>
-        <div class="ai-bubble" id="aiBubble3" aria-live="polite">
+        <div class="ai-bubble" id="aiBubble3">
           <div class="ai-typing"><span></span><span></span><span></span></div>
         </div>
       </div>
-      <div class="section-title" id="nameTitle" style="display:none">Enter Your Name</div>
-      <div class="form-group" id="nameFieldWrap" style="display:none">
-        <label class="form-label" for="studentName">Full Name <span aria-hidden="true">*</span></label>
-        <div class="field-wrap">
-          <span class="field-icon" aria-hidden="true">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-            </svg>
-          </span>
-          <input type="text" class="form-input" id="studentName"
-            placeholder="e.g. Nakato Sarah"
-            autocomplete="off"
-            maxlength="80"
-            aria-required="true"
-            aria-describedby="nameHint">
-        </div>
-        <div id="nameHint" style="font-size:.72rem;color:var(--muted);margin-top:5px;">Enter your full name as it appears on your student ID.</div>
+      <div class="section-title" id="nameTitle" style="display:none;">Enter Your Name</div>
+      <div class="form-group" id="nameFieldWrap" style="display:none;">
+        <label class="form-label">Full Name *</label>
+        <input type="text" class="form-input" id="studentName" placeholder="e.g. Nakato Sarah" autocomplete="off">
       </div>
-      <div class="btn-row" id="step3Btns" style="display:none">
-        <button class="btn-back" onclick="goToStep(2)" aria-label="Back to service selection">← Back</button>
-        <button class="btn-next" id="getTokenBtn" onclick="generateToken()" aria-label="Generate my queue token">Get My Token →</button>
+      <div class="btn-row" id="step3Btns" style="display:none;">
+        <button class="btn-back" onclick="goToStep(2)">← Back</button>
+        <button class="btn-next" id="getTokenBtn" onclick="generateToken()">Get My Token →</button>
       </div>
     </div>
 
     <!-- ══ LOADING ══ -->
-    <div class="loading-overlay" id="loadingOverlay" aria-live="polite" aria-label="Generating token">
-      <div class="spinner" aria-hidden="true"></div>
+    <div class="loading-overlay" id="loadingOverlay" style="display:none;">
+      <div class="spinner"></div>
       <p id="loadingMsg">Generating your token…</p>
     </div>
 
     <!-- ══ TOKEN RESULT ══ -->
-    <div id="tokenDisplay" aria-live="polite"></div>
+    <div id="tokenDisplay"></div>
 
   </div>
 </div>
 
 <script>
-(function(){
-'use strict';
+const API_BASE_URL = "http://web-production-eeaf2.up.railway.app";
 
-/* ── Config ── All endpoints unchanged ─────────────────────────── */
-const _CFG = (function(){
-  // Base URL split so it's not a single scannable string
-  const _p = ['https://', 'web-production-', 'eeaf2', '.up.railway.app'];
-  return { base: _p.join('') };
-})();
+let offices=[], services=[];
+let selectedOffice=null, selectedService=null;
+let currentStep=0;
 
-/* ── State ──────────────────────────────────────────────────────── */
-let _offices = [], _services = [];
-let _selOffice = null, _selService = null;
-let _step = 0;
-
-/* ── DOM helpers ─────────────────────────────────────────────────── */
-const $ = id => document.getElementById(id);
-
-/* ── Input sanitisation ──────────────────────────────────────────── */
-function _sanitise(str) {
-  if (!str) return '';
-  // Trim, strip control characters, limit length
-  return str.replace(/[\x00-\x1F\x7F]/g, '').trim().slice(0, 120);
-}
-
-function _escHtml(s) {
-  if (!s) return '';
-  const d = document.createElement('div');
-  d.textContent = s;
-  return d.innerHTML;
-}
-
-/* ── Error display ───────────────────────────────────────────────── */
-let _errTimer;
-function showError(msg) {
-  const bar = $('errorBar');
-  bar.textContent = _sanitise(msg);
-  bar.classList.add('show');
-  clearTimeout(_errTimer);
-  _errTimer = setTimeout(() => bar.classList.remove('show'), 5000);
-}
-function clearError() { $('errorBar').classList.remove('show'); }
-
-/* ── Grid error ──────────────────────────────────────────────────── */
-function showGridError(gridId, msg) {
-  $(gridId).innerHTML = '<p style="color:var(--error);font-size:.8rem;padding:10px 0;">' + _escHtml(msg) + '</p>';
-}
-
-/* ── Typewriter ──────────────────────────────────────────────────── */
-function typeMessage(bubbleId, text, onDone, delay) {
-  delay = (delay === undefined) ? 550 : delay;
-  const bubble = $(bubbleId);
-  if (!bubble) return;
+/* ── TYPEWRITER ── */
+function typeMessage(bubbleId, text, onDone, delay){
+  delay = (delay===undefined) ? 550 : delay;
+  const bubble = document.getElementById(bubbleId);
   bubble.innerHTML = '<div class="ai-typing"><span></span><span></span><span></span></div>';
-  setTimeout(function() {
+  setTimeout(function(){
     bubble.innerHTML = '';
-    let i = 0;
+    let i=0;
     const cursor = document.createElement('span');
-    cursor.className = 'ai-cursor';
+    cursor.className='ai-cursor';
     bubble.appendChild(cursor);
-    const iv = setInterval(function() {
-      if (i < text.length) {
+    const iv = setInterval(function(){
+      if(i < text.length){
         bubble.insertBefore(document.createTextNode(text[i]), cursor);
         i++;
       } else {
         clearInterval(iv);
         cursor.remove();
-        if (onDone) onDone();
+        if(onDone) onDone();
       }
-    }, 15);
+    }, 16);
   }, delay);
 }
 
-/* ── Step indicator ──────────────────────────────────────────────── */
-function updateSteps(active) {
-  for (let i = 1; i <= 3; i++) {
-    const dot = $('dot' + i);
-    const lbl = $('lbl' + i);
-    dot.className = 'step-dot';
-    lbl.className = 'step-label';
-    if (i < active) {
-      dot.classList.add('done');
-      dot.innerHTML = '<svg width="13" height="13" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg>';
-      lbl.classList.add('done');
-    } else if (i === active) {
-      dot.classList.add('active');
-      dot.textContent = i;
-      lbl.classList.add('active');
-    } else {
-      dot.textContent = i;
-    }
-  }
-  $('line1').className = 'step-line' + (active > 1 ? ' done' : '');
-  $('line2').className = 'step-line' + (active > 2 ? ' done' : '');
-}
-
-/* ── Show a step ─────────────────────────────────────────────────── */
-function showStep(n) {
-  document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
-  $('step' + n).classList.add('active');
-  _step = n;
-  updateSteps(n);
-  clearError();
-}
-
-/* ── API fetch wrapper ───────────────────────────────────────────── */
-async function _apiFetch(path, opts) {
-  const defaults = { credentials: 'omit', headers: { 'Content-Type': 'application/json' } };
-  const merged = Object.assign({}, defaults, opts || {});
-  if (merged.body && typeof merged.body === 'object') {
-    merged.body = JSON.stringify(merged.body);
-  }
-  const url = _CFG.base + path;
-  const resp = await fetch(url, merged);
-  if (!resp.ok) throw new Error('HTTP ' + resp.status);
-  return resp.json();
-}
-
-/* ── INIT ────────────────────────────────────────────────────────── */
+/* ── INIT ── */
 typeMessage('aiBubble0',
-  "Hello! 👋 Welcome to Makerere University's Queue System. I'll help you get your token quickly. Tap the button below to get started — it only takes about a minute.",
+  "Hello! 👋 Welcome to Makerere University's Queue System. I'll help you get your token quickly. Click the button below to get started — it only takes about a minute.",
   null, 400
 );
 
-$('studentName').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') generateToken();
+document.getElementById('studentName').addEventListener('keydown', function(e){
+  if(e.key==='Enter') generateToken();
 });
 
-// Strip dangerous characters on input
-$('studentName').addEventListener('input', function() {
-  this.value = this.value.replace(/[<>"'`;&\\]/g, '');
-});
-
-/* ── START FLOW ──────────────────────────────────────────────────── */
-window.startFlow = function() {
-  $('step0').classList.remove('active');
-  $('stepIndicator').style.display = 'flex';
-  showStep(1);
+/* ── START FLOW ── */
+function startFlow(){
+  document.getElementById('step0').classList.remove('active');
+  document.getElementById('step1').classList.add('active');
+  document.getElementById('stepIndicator').style.display='flex';
+  currentStep=1;
+  updateStepIndicator(1);
   typeMessage('aiBubble1',
     "Great, let's get started! Which office are you visiting today? Select the one that matches your purpose.",
     null, 300
   );
   loadOffices();
-};
+}
 
-/* ── LOAD OFFICES ────────────────────────────────────────────────── */
-async function loadOffices() {
-  try {
-    const data = await _apiFetch('/api/offices');
-    if (data.success) { _offices = data.offices; renderOffices(); }
-    else showGridError('officeGrid', 'Could not load offices. Please refresh.');
-  } catch (_) {
-    showGridError('officeGrid', 'Failed to connect. Please check your network.');
+/* ── LOAD OFFICES ── */
+async function loadOffices(){
+  try{
+    const res = await fetch(API_BASE_URL+'/api/offices');
+    const data = await res.json();
+    if(data.success){ offices=data.offices; renderOffices(); }
+    else{ showGridError('officeGrid','Could not load offices. Please refresh.'); }
+  } catch(e){
+    showGridError('officeGrid','Failed to connect. Please check your network.');
   }
 }
 
-function renderOffices() {
-  const grid = $('officeGrid');
-  if (!_offices.length) {
-    grid.innerHTML = '<p style="color:var(--muted);font-size:.82rem;padding:10px 0;">No offices available right now.</p>';
-    return;
-  }
-  const html = '<div class="select-grid">' + _offices.map(function(o, idx) {
-    return '<div class="select-card" role="listitem" tabindex="0"' +
-      ' data-id="' + (+o.id) + '"' +
-      ' data-code="' + _escHtml(o.office_code) + '"' +
-      ' data-name="' + _escHtml(o.office_name) + '"' +
-      ' data-loc="' + _escHtml(o.location || '') + '"' +
-      ' style="animation-delay:' + (idx * 0.06) + 's"' +
-      ' aria-label="' + _escHtml(o.office_name) + '">' +
-      '<div class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 7V3H2v18h20V7H12zm-2 12H4v-2h6v2zm0-4H4v-2h6v2zm0-4H4V9h6v2zm0-4H4V5h6v2zm8 12h-6v-2h6v2zm0-4h-6v-2h6v2zm0-4h-6V9h6v2z"/></svg></div>' +
-      '<div class="card-label">' + _escHtml(o.office_name) + '</div>' +
-      '<div class="card-sub">' + _escHtml(o.location || 'Main Campus') + '</div>' +
-      '</div>';
-  }).join('') + '</div>';
-  grid.innerHTML = html;
-
-  grid.querySelectorAll('.select-card').forEach(function(card) {
-    const selectCard = function() {
-      grid.querySelectorAll('.select-card').forEach(c => { c.classList.remove('selected'); c.removeAttribute('aria-selected'); });
+function renderOffices(){
+  const grid = document.getElementById('officeGrid');
+  if(!offices.length){ grid.innerHTML='<p style="color:#999;font-size:13px;padding:10px 0;">No offices available right now.</p>'; return; }
+  const html = '<div class="select-grid">'+offices.map(function(o,idx){
+    return '<div class="select-card" data-id="'+o.id+'" data-code="'+o.office_code+'" data-name="'+o.office_name+'" data-loc="'+(o.location||'')+'" style="animation-delay:'+(idx*0.06)+'s">'+
+      '<div class="card-icon"><svg viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zm-2 12H4v-2h6v2zm0-4H4v-2h6v2zm0-4H4V9h6v2zm0-4H4V5h6v2zm8 12h-6v-2h6v2zm0-4h-6v-2h6v2zm0-4h-6V9h6v2z"/></svg></div>'+
+      '<div class="card-label">'+o.office_name+'</div>'+
+      '<div class="card-sub">'+(o.location||'Main Campus')+'</div>'+
+    '</div>';
+  }).join('')+'</div>';
+  grid.innerHTML=html;
+  grid.querySelectorAll('.select-card').forEach(function(card){
+    card.addEventListener('click', function(){
+      grid.querySelectorAll('.select-card').forEach(function(c){ c.classList.remove('selected'); });
       card.classList.add('selected');
-      card.setAttribute('aria-selected', 'true');
-      _selOffice = {
-        id: +card.dataset.id,
-        code: card.dataset.code,
-        name: card.dataset.name,
-        location: card.dataset.loc
+      selectedOffice={
+        id:+card.dataset.id, code:card.dataset.code,
+        name:card.dataset.name, location:card.dataset.loc
       };
-      $('nextToStep2Btn').disabled = false;
-      loadServicesForOffice(_selOffice.id);
-    };
-    card.addEventListener('click', selectCard);
-    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectCard(); } });
+      document.getElementById('nextToStep2Btn').disabled=false;
+      loadServicesForOffice(selectedOffice.id);
+    });
   });
 }
 
-/* ── LOAD SERVICES ───────────────────────────────────────────────── */
-async function loadServicesForOffice(officeId) {
-  $('serviceGrid').innerHTML = '<div class="loading-cards"><div class="spinner"></div><p>Loading services…</p></div>';
-  _selService = null;
-  $('nextToStep3Btn').disabled = true;
-  try {
-    const data = await _apiFetch('/api/offices/' + (+officeId) + '/services');
-    _services = data.success ? data.services : [];
-  } catch (_) { _services = []; }
+/* ── LOAD SERVICES ── */
+async function loadServicesForOffice(officeId){
+  document.getElementById('serviceGrid').innerHTML='<div class="loading-cards"><div class="spinner"></div><p>Loading services…</p></div>';
+  selectedService=null;
+  document.getElementById('nextToStep3Btn').disabled=true;
+  try{
+    const res = await fetch(API_BASE_URL+'/api/offices/'+officeId+'/services');
+    const data = await res.json();
+    if(data.success){ services=data.services; }
+    else{ services=[]; }
+  } catch(e){ services=[]; }
 }
 
-function renderServices() {
-  const grid = $('serviceGrid');
-  const title = $('serviceTitle');
-  if (!_services.length) {
-    grid.innerHTML = '';
-    title.style.display = 'none';
+function renderServices(){
+  const grid = document.getElementById('serviceGrid');
+  const title = document.getElementById('serviceTitle');
+  if(!services.length){
+    grid.innerHTML='';
+    title.style.display='none';
     typeMessage('aiBubble2',
-      "Hmm, it looks like " + _escHtml(_selOffice.name) + " doesn't have any services listed right now. Please go back and try a different office.",
+      "Hmm, it looks like "+selectedOffice.name+" doesn't have any services listed right now. Please go back and try a different office.",
       null, 0
     );
     return;
   }
-  title.style.display = 'block';
+  title.style.display='block';
   typeMessage('aiBubble2',
-    "You've selected " + _selOffice.name + ". Now, which service do you need today?",
+    "You've selected "+selectedOffice.name+". Now, which service do you need today? Pick the one that best matches your visit.",
     null, 0
   );
-  const html = '<div class="select-grid">' + _services.map(function(s, idx) {
-    return '<div class="select-card" role="listitem" tabindex="0"' +
-      ' data-id="' + (+s.id) + '"' +
-      ' data-code="' + _escHtml(s.service_code) + '"' +
-      ' data-name="' + _escHtml(s.service_name) + '"' +
-      ' data-time="' + (+s.estimated_time_minutes || 0) + '"' +
-      ' style="animation-delay:' + (idx * 0.06) + 's"' +
-      ' aria-label="' + _escHtml(s.service_name) + '">' +
-      '<div class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></div>' +
-      '<div class="card-label">' + _escHtml(s.service_name) + '</div>' +
-      (s.estimated_time_minutes ? '<div class="card-sub">~' + (+s.estimated_time_minutes) + ' min</div>' : '') +
-      '</div>';
-  }).join('') + '</div>';
-  grid.innerHTML = html;
-
-  grid.querySelectorAll('.select-card').forEach(function(card) {
-    const selectCard = function() {
-      grid.querySelectorAll('.select-card').forEach(c => { c.classList.remove('selected'); c.removeAttribute('aria-selected'); });
+  const html = '<div class="select-grid">'+services.map(function(s,idx){
+    return '<div class="select-card" data-id="'+s.id+'" data-code="'+s.service_code+'" data-name="'+s.service_name+'" data-time="'+(s.estimated_time_minutes||0)+'" style="animation-delay:'+(idx*0.06)+'s">'+
+      '<div class="card-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></div>'+
+      '<div class="card-label">'+s.service_name+'</div>'+
+      (s.estimated_time_minutes?'<div class="card-sub">~'+s.estimated_time_minutes+' min</div>':'')+
+    '</div>';
+  }).join('')+'</div>';
+  grid.innerHTML=html;
+  grid.querySelectorAll('.select-card').forEach(function(card){
+    card.addEventListener('click', function(){
+      grid.querySelectorAll('.select-card').forEach(function(c){ c.classList.remove('selected'); });
       card.classList.add('selected');
-      card.setAttribute('aria-selected', 'true');
-      _selService = {
-        id: +card.dataset.id,
-        code: card.dataset.code,
-        name: card.dataset.name,
-        estimated_time: +card.dataset.time
+      selectedService={
+        id:+card.dataset.id, code:card.dataset.code,
+        name:card.dataset.name, estimated_time:+card.dataset.time
       };
-      $('nextToStep3Btn').disabled = false;
-    };
-    card.addEventListener('click', selectCard);
-    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectCard(); } });
+      document.getElementById('nextToStep3Btn').disabled=false;
+    });
   });
 }
 
-/* ── STEP NAV ────────────────────────────────────────────────────── */
-window.goToStep = function(step) {
-  if (step === 2 && !_selOffice) { showError('Please select an office first.'); return; }
-  if (step === 3 && !_selService) { showError('Please select a service first.'); return; }
+/* ── STEP NAVIGATION ── */
+function goToStep(step){
+  if(step===2 && !selectedOffice){ showError('Please select an office first.'); return; }
+  if(step===3 && !selectedService){ showError('Please select a service first.'); return; }
 
-  showStep(step);
+  document.querySelectorAll('.step-content').forEach(function(el){ el.classList.remove('active'); });
+  document.getElementById('step'+step).classList.add('active');
+  currentStep=step;
+  updateStepIndicator(step);
+  clearError();
 
-  if (step === 2) {
-    const pill = $('officeSummary');
-    $('officeSummaryText').textContent = 'Office: ' + _selOffice.name;
-    pill.classList.add('show');
+  if(step===2){
+    const pill=document.getElementById('officeSummary');
+    document.getElementById('officeSummaryText').textContent='Office: '+selectedOffice.name;
+    pill.style.display='flex';
     renderServices();
   }
 
-  if (step === 3) {
-    const pill = $('serviceSummary');
-    $('serviceSummaryText').textContent = _selOffice.name + '  →  ' + _selService.name;
-    pill.classList.add('show');
+  if(step===3){
+    const pill=document.getElementById('serviceSummary');
+    document.getElementById('serviceSummaryText').textContent=selectedOffice.name+' → '+selectedService.name;
+    pill.style.display='flex';
 
-    $('nameTitle').style.display = 'none';
-    $('nameFieldWrap').style.display = 'none';
-    $('step3Btns').style.display = 'none';
+    const nameTitle=document.getElementById('nameTitle');
+    const nameWrap=document.getElementById('nameFieldWrap');
+    const btns=document.getElementById('step3Btns');
+    nameTitle.style.display='none';
+    nameWrap.style.display='none';
+    btns.style.display='none';
 
     typeMessage('aiBubble3',
-      "Almost there! You've chosen " + _selService.name + " at " + _selOffice.name + ". Just one last thing — what's your full name?",
-      function() {
-        $('nameTitle').style.display = 'block';
-        $('nameFieldWrap').style.display = 'block';
-        $('step3Btns').style.display = 'flex';
-        setTimeout(() => $('studentName').focus(), 200);
+      "Almost there! You've chosen "+selectedService.name+" at "+selectedOffice.name+". Just one last thing — what's your full name?",
+      function(){
+        nameTitle.style.display='block';
+        nameWrap.style.display='block';
+        btns.style.display='flex';
+        setTimeout(function(){ document.getElementById('studentName').focus(); }, 200);
       },
       0
     );
   }
-};
+}
 
-/* ── GENERATE TOKEN ──────────────────────────────────────────────── */
-window.generateToken = function() {
-  const rawName = $('studentName').value;
-  const name = _sanitise(rawName);
-
-  // Client-side validation
-  if (!name || name.length < 2) {
-    showError('Please enter your full name (at least 2 characters).');
-    $('studentName').focus();
-    $('studentName').classList.add('err');
-    return;
+function updateStepIndicator(active){
+  for(let i=1;i<=3;i++){
+    const dot=document.getElementById('dot'+i);
+    const lbl=document.getElementById('lbl'+i);
+    dot.className='step-dot';
+    lbl.className='step-label';
+    if(i<active){
+      dot.classList.add('done');
+      dot.innerHTML='<svg viewBox="0 0 12 12" width="12" height="12"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/></svg>';
+    } else if(i===active){
+      dot.classList.add('active');
+      dot.textContent=i;
+      lbl.classList.add('active');
+    } else {
+      dot.textContent=i;
+    }
   }
-  $('studentName').classList.remove('err');
+  document.getElementById('line1').className='step-line'+(active>1?' done':'');
+  document.getElementById('line2').className='step-line'+(active>2?' done':'');
+}
 
-  const btn = $('getTokenBtn');
-  btn.disabled = true;
+/* ── GENERATE TOKEN ── */
+async function generateToken(){
+  const name = document.getElementById('studentName').value.trim();
+  if(!name){ showError('Please enter your full name.'); document.getElementById('studentName').focus(); return; }
 
-  $('step3').classList.remove('active');
-  $('stepIndicator').style.display = 'none';
+  const btn=document.getElementById('getTokenBtn');
+  btn.disabled=true;
 
-  // Temporary AI "generating" panel
-  const tempPanel = document.createElement('div');
-  tempPanel.innerHTML =
-    '<div class="ai-panel" style="margin-bottom:24px;">' +
-      '<div class="ai-avatar">' +
-        '<div class="ai-dot-wrap">' +
-          '<div class="ai-dot"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div>' +
-          '<div class="ai-status"></div>' +
-        '</div>' +
-        '<div class="ai-info"><div class="ai-name">Queue Assistant</div><div class="ai-caption">Makerere University · Online</div></div>' +
-      '</div>' +
-      '<div class="ai-bubble" id="aiBubbleGen" aria-live="polite"><div class="ai-typing"><span></span><span></span><span></span></div></div>' +
+  // AI says "generating…" then shows loader
+  document.getElementById('step3').classList.remove('active');
+  const loadingOverlay=document.getElementById('loadingOverlay');
+  document.getElementById('stepIndicator').style.display='none';
+
+  // Show a temporary AI panel while generating
+  const tempPanel=document.createElement('div');
+  tempPanel.innerHTML=
+    '<div class="ai-panel" style="margin-bottom:24px;">'+
+      '<div class="ai-avatar">'+
+        '<div class="ai-dot"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div>'+
+        '<div><div class="ai-name">Queue Assistant <span>· Makerere University</span></div></div>'+
+      '</div>'+
+      '<div class="ai-bubble" id="aiBubbleGen"><div class="ai-typing"><span></span><span></span><span></span></div></div>'+
     '</div>';
+  document.querySelector('.card').insertBefore(tempPanel, loadingOverlay);
+  tempPanel.style.animation='fadeUp 0.3s ease';
 
-  const card = document.querySelector('.card');
-  card.insertBefore(tempPanel, $('loadingOverlay'));
   clearError();
 
-  const firstName = _escHtml(name.split(' ')[0]);
   typeMessage('aiBubbleGen',
-    "You're almost done, " + firstName + "! I'm now generating your queue token — this will only take a moment…",
-    function() {
-      setTimeout(function() {
+    "You're almost done, "+name.split(' ')[0]+"! I'm now generating your queue token — this will only take a moment…",
+    function(){
+      setTimeout(function(){
         tempPanel.remove();
-        $('loadingOverlay').style.display = 'block';
+        loadingOverlay.style.display='block';
         doApiCall(name);
       }, 800);
     },
     0
   );
-};
+}
 
-/* ── API CALL ────────────────────────────────────────────────────── */
-async function doApiCall(name) {
-  try {
-    const data = await _apiFetch('/api/student/token', {
-      method: 'POST',
-      body: {
-        office_id    : _selOffice.id,
-        service_id   : _selService.id,
-        service_code : _selService.code,
-        student_name : name,
-        student_id   : null,
-        student_phone: null,
-      }
+async function doApiCall(name){
+  const loadingOverlay=document.getElementById('loadingOverlay');
+  try{
+    const res=await fetch(API_BASE_URL+'/api/student/token',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        office_id:selectedOffice.id,
+        service_id:selectedService.id,
+        service_code:selectedService.code,
+        student_name:name,
+        student_id:null,
+        student_phone:null
+      })
     });
+    const data=await res.json();
+    loadingOverlay.style.display='none';
 
-    $('loadingOverlay').style.display = 'none';
+    if(data.success){
+      const now=new Date();
+      const timeStr=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+      const dateStr=now.toLocaleDateString('en-UG',{day:'2-digit',month:'short',year:'numeric'});
 
-    if (data.success) {
-      const now     = new Date();
-      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const dateStr = now.toLocaleDateString('en-UG', { day: '2-digit', month: 'short', year: 'numeric' });
-
-      $('tokenDisplay').innerHTML =
-        '<div class="token-result" id="printArea">' +
-          '<div class="receipt-header">' +
-            '<h2>MAKERERE UNIVERSITY</h2>' +
-            '<p>Queue Management System &nbsp;|&nbsp; ' + _escHtml(dateStr) + ' ' + _escHtml(timeStr) + '</p>' +
-          '</div>' +
-
-          '<div class="token-badge">' +
-            '<div class="token-label">Queue Token</div>' +
-            '<div class="token-number">' + _escHtml(String(data.token_number)) + '</div>' +
-            '<div class="token-meta">' + _escHtml(data.office_name) + '</div>' +
-          '</div>' +
-
-          '<div class="token-details">' +
-            '<div class="token-row"><span class="lbl">Name</span><span class="val">' + _escHtml(name) + '</span></div>' +
-            '<div class="token-row"><span class="lbl">Office</span><span class="val">' + _escHtml(data.office_name) + '</span></div>' +
-            '<div class="token-row"><span class="lbl">Service</span><span class="val">' + _escHtml(data.service_name) + '</span></div>' +
-            '<div class="token-row"><span class="lbl">Location</span><span class="val">' + _escHtml(data.location) + '</span></div>' +
-            '<div class="token-row"><span class="lbl">Position in queue</span><span class="val green">' + _escHtml(String(data.queue_position)) + '</span></div>' +
-            '<div class="token-row"><span class="lbl">Est. wait</span><span class="val">' + _escHtml(String(data.estimated_wait)) + ' minutes</span></div>' +
-            '<div class="token-row"><span class="lbl">Issued at</span><span class="val">' + _escHtml(timeStr) + '</span></div>' +
-          '</div>' +
-
-          '<div class="token-notice">Please remain nearby and listen for your token number to be called.</div>' +
-
-          '<div class="token-actions">' +
-            '<button class="btn-print" onclick="window.print()" aria-label="Print this receipt">' +
-              '<svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>' +
-              'Print Receipt' +
-            '</button>' +
-            '<button class="btn-new" onclick="location.reload()" aria-label="Get a new token">New Token</button>' +
-          '</div>' +
+      document.getElementById('tokenDisplay').innerHTML=
+        '<div class="token-result" id="printArea">'+
+          '<div class="receipt-header">'+
+            '<h2>MAKERERE UNIVERSITY</h2>'+
+            '<p>Queue Management System &nbsp;|&nbsp; '+dateStr+' '+timeStr+'</p>'+
+          '</div>'+
+          '<div class="token-badge">'+
+            '<div class="token-label">Queue Token</div>'+
+            '<div class="token-number">'+data.token_number+'</div>'+
+            '<div class="token-meta">'+escapeHtml(data.office_name)+'</div>'+
+          '</div>'+
+          '<div class="token-details">'+
+            '<div class="token-row"><span class="lbl">Name</span><span class="val">'+escapeHtml(name)+'</span></div>'+
+            '<div class="token-row"><span class="lbl">Office</span><span class="val">'+escapeHtml(data.office_name)+'</span></div>'+
+            '<div class="token-row"><span class="lbl">Service</span><span class="val">'+escapeHtml(data.service_name)+'</span></div>'+
+            '<div class="token-row"><span class="lbl">Location</span><span class="val">'+escapeHtml(data.location)+'</span></div>'+
+            '<div class="token-row"><span class="lbl">Position in queue</span><span class="val green">'+data.queue_position+'</span></div>'+
+            '<div class="token-row"><span class="lbl">Estimated wait</span><span class="val">'+data.estimated_wait+' minutes</span></div>'+
+            '<div class="token-row"><span class="lbl">Issued at</span><span class="val">'+timeStr+'</span></div>'+
+          '</div>'+
+          '<div class="token-notice">Please remain nearby and listen for your token number to be called.</div>'+
+          '<div class="token-actions">'+
+            '<button class="btn-print" onclick="window.print()">'+
+              '<svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>'+
+              'Print Receipt'+
+            '</button>'+
+            '<button class="btn-new" onclick="location.reload()">New Token</button>'+
+          '</div>'+
         '</div>';
     } else {
-      _restoreStep3((data.message) ? _sanitise(data.message) : 'Failed to generate token. Please try again.');
+      restoreStep3(data.message||'Failed to generate token. Please try again.');
     }
-  } catch (_) {
-    $('loadingOverlay').style.display = 'none';
-    _restoreStep3('Network error. Please check your connection and try again.');
+  } catch(err){
+    loadingOverlay.style.display='none';
+    restoreStep3('Network error. Please check your connection and try again.');
   }
 }
 
-function _restoreStep3(errMsg) {
-  $('stepIndicator').style.display = 'flex';
-  $('step3').classList.add('active');
-  $('getTokenBtn').disabled = false;
+function restoreStep3(errMsg){
+  document.getElementById('stepIndicator').style.display='flex';
+  document.getElementById('step3').classList.add('active');
+  const btn=document.getElementById('getTokenBtn');
+  btn.disabled=false;
   showError(errMsg);
 }
 
-}());
+/* ── HELPERS ── */
+function showGridError(gridId, msg){
+  document.getElementById(gridId).innerHTML='<p style="color:#f44336;font-size:13px;padding:8px 0;">'+msg+'</p>';
+}
+
+function escapeHtml(text){
+  if(!text) return '';
+  const d=document.createElement('div');
+  d.textContent=text;
+  return d.innerHTML;
+}
+
+function showError(msg){
+  const bar=document.getElementById('errorBar');
+  bar.textContent=msg;
+  bar.style.display='block';
+  clearTimeout(showError._t);
+  showError._t=setTimeout(function(){ bar.style.display='none'; }, 5000);
+}
+
+function clearError(){
+  document.getElementById('errorBar').style.display='none';
+}
 </script>
 </body>
 </html>
