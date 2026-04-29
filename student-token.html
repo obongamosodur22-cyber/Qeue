@@ -1,904 +1,1072 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src https://fonts.googleapis.com https://fonts.gstatic.com; connect-src 'self'">
-    <meta name="referrer" content="no-referrer">
-    <title>Login — Makerere University Queue System</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --forest:     #1a3c2c;
-            --moss:       #2a5a3a;
-            --sage:       #7aa488;
-            --cream:      #f6fbf7;
-            --pale:       #eef7f0;
-            --border:     #d7eadb;
-            --text:       #1a2e22;
-            --muted:      #6b8070;
-            --error:      #c0392b;
-            --success:    #27ae60;
-            --white:      #ffffff;
-            --shadow-sm:  0 2px 8px rgba(26,60,44,.08);
-            --shadow-md:  0 8px 32px rgba(26,60,44,.14);
-            --shadow-lg:  0 20px 60px rgba(26,60,44,.22);
-            --radius-sm:  10px;
-            --radius-md:  18px;
-            --radius-lg:  28px;
-            --radius-xl:  50px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+<meta name="referrer" content="no-referrer">
+<title>Queue Token — Makerere University</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --forest:#1a3c2c;
+  --moss:#2a5a3a;
+  --fern:#3a7a50;
+  --sage:#7aa488;
+  --gold:#f5c842;
+  --gold-pale:#fffbea;
+  --cream:#f5faf6;
+  --pale:#edf7f1;
+  --border:#cce8d4;
+  --text:#162820;
+  --muted:#607a6a;
+  --white:#ffffff;
+  --success:#19a84a;
+  --error:#c0392b;
+  --radius-sm:10px;
+  --radius-md:18px;
+  --radius-lg:26px;
+  --radius-xl:50px;
+  --shadow-sm:0 2px 10px rgba(26,60,44,.07);
+  --shadow-md:0 8px 32px rgba(26,60,44,.13);
+  --shadow-lg:0 24px 64px rgba(26,60,44,.22);
+}
 
-        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: linear-gradient(145deg, var(--forest) 0%, var(--moss) 55%, #3a7a50 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 24px 16px;
-            position: relative;
-            overflow-x: hidden;
-        }
+body{
+  font-family:'DM Sans',sans-serif;
+  background:linear-gradient(148deg,#122b1e 0%,var(--forest) 38%,var(--moss) 70%,#1e4d30 100%);
+  min-height:100vh;
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:24px 16px 64px;
+  position:relative;
+  overflow-x:hidden;
+}
 
-        /* Subtle grain texture overlay */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 0;
-        }
+/* Background texture */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;
+}
+body::after{
+  content:'';
+  position:fixed;
+  width:600px;height:600px;
+  background:radial-gradient(circle,rgba(245,200,66,.06) 0%,transparent 68%);
+  top:-180px;right:-180px;border-radius:50%;
+  pointer-events:none;z-index:0;
+}
+.orb2{
+  position:fixed;
+  width:450px;height:450px;
+  background:radial-gradient(circle,rgba(58,122,80,.15) 0%,transparent 70%);
+  bottom:-120px;left:-120px;border-radius:50%;
+  pointer-events:none;z-index:0;
+}
 
-        /* Decorative orbs */
-        body::after {
-            content: '';
-            position: fixed;
-            width: 500px; height: 500px;
-            background: radial-gradient(circle, rgba(122,164,136,.18) 0%, transparent 70%);
-            top: -120px; right: -120px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 0;
-        }
+.wrap{position:relative;z-index:1;width:100%;max-width:640px;animation:wrapRise .65s cubic-bezier(.22,1,.36,1) both;}
+@keyframes wrapRise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
 
-        .orb-bottom {
-            position: fixed;
-            width: 400px; height: 400px;
-            background: radial-gradient(circle, rgba(58,122,80,.22) 0%, transparent 70%);
-            bottom: -100px; left: -100px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 0;
-        }
+/* ── HEADER ── */
+.hdr{text-align:center;margin-bottom:22px;color:var(--white);}
+.hdr-badge{
+  display:inline-flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:var(--radius-xl);
+  padding:7px 18px 7px 10px;
+  margin-bottom:14px;
+  backdrop-filter:blur(8px);
+}
+.hdr-badge-dot{
+  width:30px;height:30px;border-radius:50%;
+  background:linear-gradient(135deg,var(--fern),var(--moss));
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.hdr-badge-dot svg{width:15px;height:15px;fill:var(--gold);}
+.hdr-badge-text{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.75);font-weight:600;}
+.hdr-name{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900;letter-spacing:.04em;line-height:1.1;}
+.hdr-sub{font-size:.72rem;color:rgba(255,255,255,.5);letter-spacing:.14em;text-transform:uppercase;margin-top:5px;}
 
-        .wrap {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 440px;
-            animation: rise .6s cubic-bezier(.22,1,.36,1) both;
-        }
+/* ── CARD ── */
+.card{
+  background:var(--white);
+  border-radius:var(--radius-lg);
+  padding:32px 30px 28px;
+  box-shadow:var(--shadow-lg);
+  border:1px solid rgba(255,255,255,.55);
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';
+  position:absolute;top:-80px;right:-80px;
+  width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(26,60,44,.03) 0%,transparent 70%);
+  pointer-events:none;
+}
 
-        @keyframes rise {
-            from { opacity:0; transform:translateY(24px); }
-            to   { opacity:1; transform:translateY(0);    }
-        }
+/* ── STEP INDICATOR ── */
+.step-indicator{
+  display:none;
+  align-items:center;
+  margin-bottom:28px;
+  padding-bottom:24px;
+  border-bottom:1.5px solid #eef3ef;
+}
+.step-item{display:flex;align-items:center;gap:8px;flex:1;}
+.step-item:last-child{flex:none;}
+.step-dot{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11.5px;font-weight:700;
+  background:#eef3ef;color:#b0bfb5;flex-shrink:0;
+  transition:all .4s cubic-bezier(.34,1.56,.64,1);
+  border:2px solid transparent;
+}
+.step-dot.active{
+  background:var(--forest);color:var(--white);
+  box-shadow:0 0 0 5px rgba(26,60,44,.12);
+  transform:scale(1.1);border-color:transparent;
+}
+.step-dot.done{background:var(--success);color:var(--white);border-color:transparent;}
+.step-label{font-size:11px;color:#b0bfb5;font-weight:600;white-space:nowrap;transition:color .3s;letter-spacing:.02em;}
+.step-label.active{color:var(--forest);font-weight:700;}
+.step-label.done{color:var(--success);}
+.step-line{flex:1;height:2px;background:#eef3ef;margin:0 4px;border-radius:2px;transition:background .5s;}
+.step-line.done{background:var(--success);}
 
-        /* ── University header ── */
-        .hdr {
-            text-align: center;
-            margin-bottom: 20px;
-            color: var(--white);
-        }
-        .hdr-crest {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 52px; height: 52px;
-            background: rgba(255,255,255,.12);
-            border: 1.5px solid rgba(255,255,255,.2);
-            border-radius: 14px;
-            margin-bottom: 12px;
-            backdrop-filter: blur(8px);
-        }
-        .hdr-crest svg { width:28px; height:28px; fill:var(--white); opacity:.9; }
-        .hdr-name {
-            font-family: 'DM Serif Display', serif;
-            font-size: 1.5rem;
-            letter-spacing: .04em;
-            line-height: 1.1;
-        }
-        .hdr-sub {
-            font-size: .72rem;
-            color: rgba(255,255,255,.65);
-            letter-spacing: .12em;
-            text-transform: uppercase;
-            margin-top: 5px;
-        }
+/* ── ERROR BAR ── */
+.error-bar{
+  background:#fff5f5;border:1.5px solid #ffd0d0;
+  color:var(--error);padding:11px 15px;border-radius:var(--radius-sm);
+  font-size:.82rem;margin-bottom:18px;display:none;
+  animation:slideDown .2s ease;
+  display:flex;align-items:center;gap:8px;
+}
+.error-bar::before{content:'⚠';font-size:1rem;}
+.error-bar.show{display:flex;}
+@keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 
-        /* ── Card ── */
-        .card {
-            background: var(--white);
-            border-radius: var(--radius-lg);
-            padding: 32px 30px 28px;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid rgba(255,255,255,.6);
-        }
+/* ── AI PANEL ── */
+.ai-panel{
+  background:linear-gradient(145deg,var(--cream) 0%,var(--pale) 100%);
+  border:1.5px solid var(--border);border-radius:var(--radius-md);
+  padding:16px 18px;margin-bottom:26px;position:relative;overflow:hidden;
+}
+.ai-panel::after{
+  content:'';position:absolute;bottom:-24px;right:-24px;
+  width:90px;height:90px;border-radius:50%;
+  background:rgba(26,60,44,.04);pointer-events:none;
+}
+.ai-avatar{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.ai-dot-wrap{position:relative;flex-shrink:0;}
+.ai-dot{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--forest),var(--moss));
+  display:flex;align-items:center;justify-content:center;
+}
+.ai-dot svg{width:16px;height:16px;fill:var(--gold);}
+.ai-status{
+  position:absolute;top:1px;right:1px;
+  width:9px;height:9px;border-radius:50%;
+  background:var(--success);border:2px solid var(--white);
+  animation:statusPulse 2s ease-in-out infinite;
+}
+@keyframes statusPulse{0%,100%{box-shadow:0 0 0 0 rgba(25,168,74,.4)}50%{box-shadow:0 0 0 4px rgba(25,168,74,0)}}
+.ai-info{}
+.ai-name{font-size:.78rem;font-weight:700;color:var(--forest);letter-spacing:.02em;}
+.ai-caption{font-size:.69rem;color:var(--muted);}
 
-        .card-title {
-            font-family: 'DM Serif Display', serif;
-            font-size: 1.45rem;
-            color: var(--text);
-            margin-bottom: 4px;
-        }
-        .card-sub {
-            font-size: .8rem;
-            color: var(--muted);
-            margin-bottom: 20px;
-        }
+.ai-bubble{
+  background:var(--white);
+  border-radius:4px var(--radius-md) var(--radius-md) var(--radius-md);
+  padding:13px 16px;
+  border:1.5px solid #ddeee4;
+  font-size:.84rem;color:var(--text);line-height:1.68;
+  min-height:48px;
+  position:relative;
+  box-shadow:var(--shadow-sm);
+}
+.ai-bubble::before{
+  content:'';position:absolute;top:0;left:-9px;
+  border-width:0 9px 9px 0;border-style:solid;
+  border-color:transparent #ddeee4 transparent transparent;
+}
+.ai-cursor{
+  display:inline-block;width:2px;height:1em;
+  background:var(--moss);vertical-align:text-bottom;
+  animation:blink .85s step-end infinite;margin-left:2px;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.ai-typing{display:flex;align-items:center;gap:5px;padding:4px 0;}
+.ai-typing span{
+  width:7px;height:7px;border-radius:50%;
+  background:var(--sage);
+  animation:typingBounce 1.2s ease-in-out infinite;
+}
+.ai-typing span:nth-child(2){animation-delay:.2s;}
+.ai-typing span:nth-child(3){animation-delay:.4s;}
+@keyframes typingBounce{0%,80%,100%{transform:translateY(0);opacity:.35}40%{transform:translateY(-6px);opacity:1}}
 
-        /* ── AI assistant panel ── */
-        .ai-panel {
-            background: linear-gradient(160deg, var(--cream) 0%, var(--pale) 100%);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 14px 15px;
-            margin-bottom: 22px;
-        }
-        .ai-label {
-            font-size: .68rem;
-            font-weight: 600;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-            color: var(--moss);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .ai-label::before {
-            content: '';
-            display: inline-block;
-            width: 7px; height: 7px;
-            background: var(--sage);
-            border-radius: 50%;
-            animation: pulse 2s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%,100% { opacity:1; transform:scale(1);   }
-            50%      { opacity:.5; transform:scale(.7); }
-        }
-        .ai-bubble {
-            position: relative;
-            background: var(--white);
-            border: 1px solid #dbe8de;
-            border-radius: var(--radius-md);
-            padding: 13px 14px;
-            font-size: .82rem;
-            line-height: 1.65;
-            color: var(--text);
-            min-height: 64px;
-            box-shadow: var(--shadow-sm);
-        }
-        .ai-bubble::before {
-            content: '';
-            position: absolute;
-            top: -7px; left: 18px;
-            width: 12px; height: 12px;
-            background: var(--white);
-            border-left: 1px solid #dbe8de;
-            border-top: 1px solid #dbe8de;
-            transform: rotate(45deg);
-        }
-        .ai-dots {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            height: 18px;
-        }
-        .ai-dots span {
-            width: 7px; height: 7px;
-            border-radius: 50%;
-            background: var(--sage);
-            animation: dot 1s ease-in-out infinite;
-        }
-        .ai-dots span:nth-child(2) { animation-delay:.15s; }
-        .ai-dots span:nth-child(3) { animation-delay:.30s; }
-        @keyframes dot {
-            0%,80%,100% { opacity:.3; transform:translateY(0);   }
-            40%          { opacity:1;  transform:translateY(-3px); }
-        }
-        .ai-cursor {
-            display: inline-block;
-            width: 2px; height: 1em;
-            background: var(--moss);
-            margin-left: 2px;
-            vertical-align: -2px;
-            animation: blink .85s steps(1) infinite;
-        }
-        @keyframes blink { 50%{ opacity:0; } }
-        .ai-cursor.hidden { display:none; }
+/* ── STEP PAGES ── */
+.step-content{display:none;}
+.step-content.active{display:block;animation:fadeUp .35s cubic-bezier(.22,1,.36,1);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 
-        /* ── Form ── */
-        .field { margin-bottom: 18px; }
-        .field-label {
-            display: block;
-            font-size: .78rem;
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 8px;
-            letter-spacing: .02em;
-        }
-        .field-wrap { position: relative; }
-        .field-icon {
-            position: absolute;
-            left: 14px; top: 50%;
-            transform: translateY(-50%);
-            color: var(--sage);
-            pointer-events: none;
-            display: flex;
-        }
-        .field-input {
-            width: 100%;
-            padding: 13px 14px 13px 40px;
-            border: 2px solid #e4ece6;
-            border-radius: var(--radius-sm);
-            font-size: .95rem;
-            font-family: inherit;
-            color: var(--text);
-            background: var(--cream);
-            outline: none;
-            transition: border-color .2s, box-shadow .2s, background .2s;
-            -webkit-appearance: none;
-        }
-        .field-input:focus {
-            border-color: var(--moss);
-            background: var(--white);
-            box-shadow: 0 0 0 4px rgba(42,90,58,.1);
-        }
-        .field-input.error { border-color: var(--error); }
-        .field-hint {
-            font-size: .72rem;
-            color: var(--error);
-            margin-top: 5px;
-            display: none;
-        }
-        .field-hint.show { display: block; }
+/* ── SECTION TITLE ── */
+.section-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.1rem;font-weight:700;color:var(--forest);
+  margin-bottom:16px;letter-spacing:.02em;
+}
 
-        /* PIN toggle */
-        .pin-toggle {
-            position: absolute;
-            right: 12px; top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--muted);
-            padding: 4px;
-            display: flex;
-            border-radius: 6px;
-            transition: color .2s;
-        }
-        .pin-toggle:hover { color: var(--moss); }
+/* ── LAUNCH CENTER ── */
+.launch-center{
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;padding:12px 0 28px;
+}
+.launch-icon{
+  width:78px;height:78px;border-radius:22px;
+  background:linear-gradient(135deg,var(--forest),var(--moss));
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:20px;
+  box-shadow:0 14px 40px rgba(26,60,44,.25);
+  position:relative;
+}
+.launch-icon::after{
+  content:'';
+  position:absolute;inset:-3px;border-radius:25px;
+  background:linear-gradient(135deg,rgba(245,200,66,.3),transparent);
+  z-index:-1;
+}
+.launch-icon svg{width:36px;height:36px;fill:var(--gold);}
+.launch-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--forest);margin-bottom:8px;}
+.launch-sub{font-size:.83rem;color:var(--muted);margin-bottom:30px;line-height:1.6;max-width:300px;}
+.btn-launch{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:15px 40px;
+  background:linear-gradient(135deg,var(--forest),var(--moss));
+  color:var(--white);border:none;border-radius:var(--radius-xl);
+  font-size:.95rem;font-weight:700;font-family:inherit;cursor:pointer;
+  letter-spacing:.04em;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 8px 28px rgba(26,60,44,.3);
+  position:relative;overflow:hidden;
+}
+.btn-launch::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,0);transition:background .2s;}
+.btn-launch:hover::after{background:rgba(255,255,255,.07);}
+.btn-launch:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(26,60,44,.38);}
+.btn-launch:active{transform:scale(.97);}
+.btn-launch svg{width:18px;height:18px;fill:var(--white);}
 
-        /* Rate-limit feedback bar */
-        .rate-bar {
-            height: 3px;
-            background: #f0f4f1;
-            border-radius: 10px;
-            margin-bottom: 16px;
-            overflow: hidden;
-            display: none;
-        }
-        .rate-bar.show { display: block; }
-        .rate-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--sage), var(--error));
-            border-radius: 10px;
-            transition: width .4s ease;
-        }
+/* ── OFFICE / SERVICE GRID ── */
+.select-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(148px,1fr));
+  gap:11px;margin-bottom:22px;
+}
+.select-card{
+  border:1.5px solid #e4ece6;border-radius:var(--radius-md);
+  padding:16px 14px;cursor:pointer;
+  transition:all .22s cubic-bezier(.34,1.56,.64,1);
+  background:#fafcfb;
+  animation:popIn .3s ease backwards;
+}
+@keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+.select-card:hover{
+  border-color:var(--moss);background:var(--pale);
+  transform:translateY(-3px);box-shadow:0 8px 22px rgba(26,60,44,.11);
+}
+.select-card.selected{
+  border-color:var(--forest);background:#e8f5eb;
+  box-shadow:0 0 0 3px rgba(26,60,44,.1),0 6px 18px rgba(26,60,44,.1);
+  transform:translateY(-3px);
+}
+.card-icon{
+  width:38px;height:38px;border-radius:10px;
+  background:var(--pale);margin-bottom:11px;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s;
+}
+.select-card.selected .card-icon{background:rgba(26,60,44,.1);}
+.card-icon svg{width:18px;height:18px;fill:var(--forest);}
+.card-label{font-size:.82rem;font-weight:700;color:var(--forest);line-height:1.3;}
+.card-sub{font-size:.71rem;color:var(--muted);margin-top:4px;}
 
-        /* Submit button */
-        .btn {
-            width: 100%;
-            background: linear-gradient(135deg, var(--forest), var(--moss));
-            color: var(--white);
-            border: none;
-            padding: 15px;
-            font-size: 1rem;
-            font-weight: 600;
-            font-family: inherit;
-            border-radius: var(--radius-xl);
-            cursor: pointer;
-            letter-spacing: .03em;
-            transition: opacity .2s, transform .15s, box-shadow .2s;
-            box-shadow: 0 4px 16px rgba(26,60,44,.3);
-            position: relative;
-            overflow: hidden;
-        }
-        .btn::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(255,255,255,0);
-            transition: background .2s;
-        }
-        .btn:hover:not(:disabled)::after { background: rgba(255,255,255,.06); }
-        .btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,60,44,.38); }
-        .btn:active:not(:disabled) { transform: translateY(0); }
-        .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+/* ── SUMMARY PILL ── */
+.summary-pill{
+  background:var(--pale);border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:18px;
+  font-size:.81rem;color:var(--forest);display:none;
+  align-items:center;gap:9px;
+  animation:slideDown .25s ease;
+}
+.summary-pill.show{display:flex;}
+.pill-check{
+  width:20px;height:20px;background:var(--success);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.pill-check svg{width:10px;height:10px;stroke:white;fill:none;stroke-width:2.5;}
 
-        .btn-inner { display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-spinner {
-            display: none;
-            width: 18px; height: 18px;
-            border: 2px solid rgba(255,255,255,.35);
-            border-top-color: var(--white);
-            border-radius: 50%;
-            animation: spin .7s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .btn.loading .btn-spinner { display: inline-block; }
-        .btn.loading .btn-text   { opacity: .7; }
+/* ── FORM ── */
+.form-group{margin-bottom:20px;}
+.form-label{display:block;font-size:.78rem;font-weight:700;color:var(--text);margin-bottom:8px;letter-spacing:.02em;}
+.field-wrap{position:relative;}
+.field-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--sage);pointer-events:none;display:flex;}
+.form-input{
+  width:100%;padding:13px 14px 13px 40px;
+  border:1.5px solid #dde8e1;border-radius:var(--radius-sm);
+  font-size:.92rem;font-family:inherit;outline:none;
+  background:var(--cream);color:var(--text);
+  transition:border-color .2s,box-shadow .2s,background .2s;
+  -webkit-appearance:none;
+}
+.form-input:focus{border-color:var(--moss);background:var(--white);box-shadow:0 0 0 4px rgba(42,90,58,.1);}
+.form-input.err{border-color:var(--error);}
 
-        /* Back link */
-        .back { text-align: center; margin-top: 18px; }
-        .back a {
-            color: var(--moss);
-            text-decoration: none;
-            font-size: .82rem;
-            font-weight: 500;
-            transition: color .2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .back a:hover { color: var(--forest); }
+/* ── BUTTONS ── */
+.btn-row{display:flex;gap:12px;margin-top:8px;}
+.btn-back{
+  padding:12px 22px;border:1.5px solid #dce8de;
+  background:var(--white);color:var(--muted);border-radius:var(--radius-xl);
+  cursor:pointer;font-size:.84rem;font-weight:600;font-family:inherit;
+  transition:all .2s;
+}
+.btn-back:hover{background:var(--cream);border-color:#c4d8c8;color:var(--forest);}
+.btn-next{
+  flex:1;padding:13px;
+  background:linear-gradient(135deg,var(--forest),var(--moss));
+  color:var(--white);border:none;border-radius:var(--radius-xl);
+  font-size:.9rem;font-weight:700;font-family:inherit;cursor:pointer;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 4px 18px rgba(26,60,44,.2);
+  position:relative;overflow:hidden;
+}
+.btn-next::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,0);transition:background .2s;}
+.btn-next:hover:not(:disabled)::after{background:rgba(255,255,255,.07);}
+.btn-next:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 26px rgba(26,60,44,.28);}
+.btn-next:active:not(:disabled){transform:scale(.98);}
+.btn-next:disabled{background:#d4ddd6;cursor:not-allowed;box-shadow:none;color:#aaa;}
 
-        /* Status pill */
-        .status-pill {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            margin-top: 14px;
-            font-size: .72rem;
-            color: var(--muted);
-        }
-        .status-dot {
-            width: 7px; height: 7px;
-            border-radius: 50%;
-            background: #ccc;
-            flex-shrink: 0;
-        }
-        .status-dot.online  { background: var(--success); box-shadow: 0 0 0 3px rgba(39,174,96,.2); }
-        .status-dot.offline { background: var(--error);   box-shadow: 0 0 0 3px rgba(192,57,43,.2); }
+/* ── LOADING ── */
+.loading-overlay{text-align:center;padding:44px 0;display:none;animation:fadeUp .3s ease;}
+.spinner{
+  width:42px;height:42px;
+  border:3px solid var(--pale);border-top-color:var(--forest);
+  border-radius:50%;animation:spin .75s linear infinite;margin:0 auto 18px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-overlay p{font-size:.83rem;color:var(--muted);margin-top:4px;}
 
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 24px; left: 50%;
-            transform: translateX(-50%) translateY(80px);
-            background: var(--text);
-            color: var(--white);
-            padding: 11px 20px;
-            border-radius: var(--radius-xl);
-            font-size: .82rem;
-            font-weight: 500;
-            box-shadow: var(--shadow-md);
-            z-index: 100;
-            transition: transform .35s cubic-bezier(.22,1,.36,1), opacity .35s;
-            opacity: 0;
-            white-space: nowrap;
-            max-width: 90vw;
-        }
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-        .toast.error-toast { background: var(--error); }
+.loading-cards{text-align:center;padding:28px 0;}
+.loading-cards .spinner{margin:0 auto 12px;width:32px;height:32px;border-width:2.5px;}
+.loading-cards p{font-size:.78rem;color:#aaa;}
 
-        @media (max-width: 480px) {
-            .card { padding: 24px 18px 22px; border-radius: var(--radius-md); }
-            .hdr-name { font-size: 1.3rem; }
-        }
+/* ── TOKEN RESULT ── */
+.token-result{text-align:center;padding:10px 0;animation:fadeUp .5s cubic-bezier(.22,1,.36,1);}
 
-        /* ── Honeypot field — invisible to real users ── */
-        .hp-field { position:absolute; left:-9999px; top:-9999px; opacity:0; pointer-events:none; tab-index:-1; }
-    </style>
+.token-badge{
+  display:inline-block;
+  background:linear-gradient(145deg,var(--forest),var(--moss));
+  color:var(--white);border-radius:24px;
+  padding:34px 48px;margin-bottom:24px;
+  min-width:240px;
+  box-shadow:0 20px 56px rgba(26,60,44,.35);
+  animation:tokenPop .65s cubic-bezier(.34,1.56,.64,1) .1s backwards;
+  position:relative;overflow:hidden;
+}
+.token-badge::before{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:140px;height:140px;border-radius:50%;
+  background:rgba(245,200,66,.08);pointer-events:none;
+}
+@keyframes tokenPop{from{opacity:0;transform:scale(.65)}to{opacity:1;transform:scale(1)}}
+.token-label{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;opacity:.6;margin-bottom:10px;}
+.token-number{
+  font-family:'Playfair Display',serif;
+  font-size:5rem;font-weight:900;letter-spacing:.12em;
+  line-height:1;color:var(--gold);
+  text-shadow:0 4px 16px rgba(245,200,66,.35);
+}
+.token-meta{margin-top:10px;font-size:.75rem;opacity:.65;letter-spacing:.04em;}
+
+.token-details{
+  background:var(--cream);border-radius:var(--radius-md);
+  padding:18px 22px;text-align:left;
+  border:1.5px solid var(--border);
+}
+.token-row{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:.83rem;padding:9px 0;border-bottom:1px solid #e8f0ea;
+}
+.token-row:last-child{border-bottom:none;}
+.token-row .lbl{color:var(--muted);font-weight:500;}
+.token-row .val{font-weight:700;color:var(--forest);}
+.token-row .val.green{color:var(--success);}
+
+.token-notice{
+  margin-top:16px;font-size:.76rem;color:#7a5c00;
+  padding:11px 18px;background:var(--gold-pale);
+  border-radius:var(--radius-sm);border:1.5px solid #f0da7a;
+  display:flex;align-items:flex-start;gap:8px;
+}
+.token-notice::before{content:'🔔';font-size:1rem;flex-shrink:0;}
+
+.token-actions{display:flex;gap:12px;margin-top:22px;justify-content:center;flex-wrap:wrap;}
+.btn-print{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 30px;
+  background:linear-gradient(135deg,var(--forest),var(--moss));
+  color:var(--white);border:none;border-radius:var(--radius-xl);
+  font-size:.88rem;font-weight:700;font-family:inherit;cursor:pointer;
+  transition:all .22s;box-shadow:0 6px 22px rgba(26,60,44,.24);
+}
+.btn-print:hover{opacity:.9;transform:translateY(-1px);}
+.btn-print svg{width:16px;height:16px;fill:white;}
+.btn-new{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 26px;background:var(--white);color:var(--forest);
+  border:1.5px solid var(--border);border-radius:var(--radius-xl);
+  font-size:.88rem;font-weight:700;font-family:inherit;cursor:pointer;
+  transition:all .2s;
+}
+.btn-new:hover{background:var(--pale);border-color:var(--sage);}
+
+/* ── PRINT ── */
+.receipt-header{display:none;text-align:center;margin-bottom:16px;border-bottom:2px dashed #ccc;padding-bottom:14px;}
+.receipt-header h2{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--forest);}
+.receipt-header p{font-size:.72rem;color:#888;margin-top:3px;}
+
+@media print{
+  body{background:white!important;padding:0!important;display:block!important;}
+  .wrap{max-width:100%!important;}
+  .hdr,.step-indicator,.ai-panel,.token-actions,.token-notice,.launch-center,
+  .orb2,body::before,body::after{display:none!important;}
+  .card{box-shadow:none!important;border-radius:0!important;padding:20px!important;border:none!important;}
+  .token-result{page-break-inside:avoid;}
+  .token-badge{background:var(--forest)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .token-number{color:var(--gold)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .receipt-header{display:block!important;}
+}
+
+@media(max-width:500px){
+  .card{padding:24px 16px;}
+  .select-grid{grid-template-columns:1fr 1fr;}
+  .token-badge{padding:26px 32px;min-width:180px;}
+  .token-number{font-size:3.8rem;}
+  .hdr-name{font-size:1.4rem;}
+}
+</style>
 </head>
 <body>
-<div class="orb-bottom" aria-hidden="true"></div>
+<div class="orb2" aria-hidden="true"></div>
 
 <div class="wrap">
-    <header class="hdr">
-        <div class="hdr-crest" aria-hidden="true">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2zm0 2.18L19 8.3V12c0 4.18-2.84 8.07-7 9.28C7.84 20.07 5 16.18 5 12V8.3L12 4.18z"/>
-                <path d="M11 11V7h2v4h4v2h-4v4h-2v-4H7v-2h4z"/>
-            </svg>
-        </div>
-        <div class="hdr-name">Makerere University</div>
-        <div class="hdr-sub">Registry Queue Management System</div>
-    </header>
 
-    <div class="card" role="main">
-        <h1 class="card-title">Staff Login</h1>
-        <p class="card-sub">Officers and administrators share the same login</p>
-
-        <!-- AI assistant bubble -->
-        <div class="ai-panel" role="complementary" aria-label="Queue assistant">
-            <div class="ai-label">Queue Assistant · Makerere University</div>
-            <div class="ai-bubble" id="aiBubble" aria-live="polite" aria-atomic="true"></div>
-        </div>
-
-        <!-- Attempt rate bar (shows after failed attempts) -->
-        <div class="rate-bar" id="rateBar" aria-hidden="true">
-            <div class="rate-fill" id="rateFill" style="width:0%"></div>
-        </div>
-
-        <form id="loginForm" novalidate autocomplete="off" aria-label="Staff login form">
-            <!-- Honeypot — bots fill this, humans don't see it -->
-            <div class="hp-field" aria-hidden="true">
-                <input type="text" name="username" tabindex="-1" autocomplete="off" id="_uf">
-                <input type="password" name="password" tabindex="-1" autocomplete="off" id="_pf">
-            </div>
-
-            <!-- Hidden timing field -->
-            <input type="hidden" id="_ts" name="_ts">
-
-            <div class="field">
-                <label class="field-label" for="officerNumber">Officer Number</label>
-                <div class="field-wrap">
-                    <span class="field-icon" aria-hidden="true">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-                        </svg>
-                    </span>
-                    <input
-                        type="number"
-                        class="field-input"
-                        id="officerNumber"
-                        name="officerNumber"
-                        placeholder="Enter your officer number"
-                        required
-                        min="1"
-                        autocomplete="off"
-                        inputmode="numeric"
-                        aria-required="true"
-                        aria-describedby="officerHint"
-                    >
-                </div>
-                <div class="field-hint" id="officerHint" role="alert">Please enter a valid officer number.</div>
-            </div>
-
-            <div class="field">
-                <label class="field-label" for="pinCode">PIN</label>
-                <div class="field-wrap">
-                    <span class="field-icon" aria-hidden="true">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                        </svg>
-                    </span>
-                    <input
-                        type="password"
-                        class="field-input"
-                        id="pinCode"
-                        name="pinCode"
-                        placeholder="Enter your PIN"
-                        required
-                        autocomplete="off"
-                        inputmode="numeric"
-                        aria-required="true"
-                        aria-describedby="pinHint"
-                        maxlength="20"
-                    >
-                    <button type="button" class="pin-toggle" id="pinToggle" aria-label="Show PIN">
-                        <svg id="eyeIcon" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-                        </svg>
-                    </button>
-                </div>
-                <div class="field-hint" id="pinHint" role="alert">Please enter your PIN.</div>
-            </div>
-
-            <button type="submit" class="btn" id="loginBtn" aria-label="Sign in to the system">
-                <span class="btn-inner">
-                    <span class="btn-spinner" aria-hidden="true"></span>
-                    <span class="btn-text">Sign In</span>
-                </span>
-            </button>
-        </form>
-
-        <div class="back">
-            <a href="" aria-label="Back to student kiosk">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M19 12H5m7-7-7 7 7 7"/>
-                </svg>
-                Back to Student Kiosk
-            </a>
-        </div>
-
-        <div class="status-pill" role="status" aria-live="polite">
-            <div class="status-dot" id="statusDot"></div>
-            <span id="statusText">Checking connection…</span>
-        </div>
+  <header class="hdr">
+    <div class="hdr-badge">
+      <div class="hdr-badge-dot">
+        <svg viewBox="0 0 24 24"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg>
+      </div>
+      <span class="hdr-badge-text">Official · Makerere University</span>
     </div>
+    <div class="hdr-name">Queue Management</div>
+    <div class="hdr-sub">Student Kiosk · Registry Services</div>
+  </header>
+
+  <div class="card" role="main">
+
+    <!-- Step indicator -->
+    <nav class="step-indicator" id="stepIndicator" aria-label="Progress steps">
+      <div class="step-item">
+        <div class="step-dot" id="dot1" aria-label="Step 1">1</div>
+        <div class="step-label" id="lbl1">Office</div>
+      </div>
+      <div class="step-line" id="line1" role="separator"></div>
+      <div class="step-item">
+        <div class="step-dot" id="dot2" aria-label="Step 2">2</div>
+        <div class="step-label" id="lbl2">Service</div>
+      </div>
+      <div class="step-line" id="line2" role="separator"></div>
+      <div class="step-item">
+        <div class="step-dot" id="dot3" aria-label="Step 3">3</div>
+        <div class="step-label" id="lbl3">Your Name</div>
+      </div>
+    </nav>
+
+    <!-- Error bar -->
+    <div class="error-bar" id="errorBar" role="alert" aria-live="assertive"></div>
+
+    <!-- ══ STEP 0: WELCOME ══ -->
+    <div class="step-content active" id="step0">
+      <div class="ai-panel">
+        <div class="ai-avatar">
+          <div class="ai-dot-wrap">
+            <div class="ai-dot"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div>
+            <div class="ai-status" aria-hidden="true"></div>
+          </div>
+          <div class="ai-info">
+            <div class="ai-name">Queue Assistant</div>
+            <div class="ai-caption">Makerere University · Online</div>
+          </div>
+        </div>
+        <div class="ai-bubble" id="aiBubble0" aria-live="polite">
+          <div class="ai-typing"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+      <div class="launch-center">
+        <div class="launch-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.33C18 2.53 15.58 1 13 1c-1.5 0-3.04.63-4 1.67C8.04 1.63 6.5 1 5 1 2.42 1 0 2.53 0 4.67c0 .45.11.89.18 1.33H-1v2h22V6zm-7.69-2.87c.43-.59 1.19-.96 1.69-.96c.89 0 1.67.53 1.67 1.5c0 .47-.2.87-.41 1.33H13.5l-1.19-1.87zm-6.63-.96c.5 0 1.26.37 1.69.96L8.56 5.5H6.11c-.21-.46-.41-.86-.41-1.33c0-.97.78-1.5 1.97-1.5zM2 8v12c0 1.1.9 2 2 2h8V8H2zm12 0v14h6c1.1 0 2-.9 2-2V8h-8z"/></svg>
+        </div>
+        <div class="launch-title">Get Your Queue Token</div>
+        <div class="launch-sub">Select your office and service in about a minute — no account needed.</div>
+        <button class="btn-launch" id="launchBtn" onclick="startFlow()" aria-label="Begin queue token process">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          Select an Office
+        </button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 1: SELECT OFFICE ══ -->
+    <div class="step-content" id="step1">
+      <div class="ai-panel">
+        <div class="ai-avatar">
+          <div class="ai-dot-wrap">
+            <div class="ai-dot"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div>
+            <div class="ai-status" aria-hidden="true"></div>
+          </div>
+          <div class="ai-info">
+            <div class="ai-name">Queue Assistant</div>
+            <div class="ai-caption">Makerere University · Online</div>
+          </div>
+        </div>
+        <div class="ai-bubble" id="aiBubble1" aria-live="polite">
+          <div class="ai-typing"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+      <div class="section-title">Choose an Office</div>
+      <div id="officeGrid" role="list" aria-label="Available offices">
+        <div class="loading-cards"><div class="spinner"></div><p>Loading offices…</p></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-next" id="nextToStep2Btn" disabled onclick="goToStep(2)" aria-label="Continue to service selection">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 2: SELECT SERVICE ══ -->
+    <div class="step-content" id="step2">
+      <div class="summary-pill" id="officeSummary" aria-live="polite">
+        <div class="pill-check" aria-hidden="true">
+          <svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <span id="officeSummaryText"></span>
+      </div>
+      <div class="ai-panel">
+        <div class="ai-avatar">
+          <div class="ai-dot-wrap">
+            <div class="ai-dot"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div>
+            <div class="ai-status" aria-hidden="true"></div>
+          </div>
+          <div class="ai-info">
+            <div class="ai-name">Queue Assistant</div>
+            <div class="ai-caption">Makerere University · Online</div>
+          </div>
+        </div>
+        <div class="ai-bubble" id="aiBubble2" aria-live="polite">
+          <div class="ai-typing"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+      <div class="section-title" id="serviceTitle">Choose a Service</div>
+      <div id="serviceGrid" role="list" aria-label="Available services">
+        <div class="loading-cards"><div class="spinner"></div><p>Loading services…</p></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="goToStep(1)" aria-label="Back to office selection">← Back</button>
+        <button class="btn-next" id="nextToStep3Btn" disabled onclick="goToStep(3)" aria-label="Continue to name entry">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 3: NAME ══ -->
+    <div class="step-content" id="step3">
+      <div class="summary-pill" id="serviceSummary" aria-live="polite">
+        <div class="pill-check" aria-hidden="true">
+          <svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <span id="serviceSummaryText"></span>
+      </div>
+      <div class="ai-panel">
+        <div class="ai-avatar">
+          <div class="ai-dot-wrap">
+            <div class="ai-dot"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div>
+            <div class="ai-status" aria-hidden="true"></div>
+          </div>
+          <div class="ai-info">
+            <div class="ai-name">Queue Assistant</div>
+            <div class="ai-caption">Makerere University · Online</div>
+          </div>
+        </div>
+        <div class="ai-bubble" id="aiBubble3" aria-live="polite">
+          <div class="ai-typing"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+      <div class="section-title" id="nameTitle" style="display:none">Enter Your Name</div>
+      <div class="form-group" id="nameFieldWrap" style="display:none">
+        <label class="form-label" for="studentName">Full Name <span aria-hidden="true">*</span></label>
+        <div class="field-wrap">
+          <span class="field-icon" aria-hidden="true">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
+          </span>
+          <input type="text" class="form-input" id="studentName"
+            placeholder="e.g. Nakato Sarah"
+            autocomplete="off"
+            maxlength="80"
+            aria-required="true"
+            aria-describedby="nameHint">
+        </div>
+        <div id="nameHint" style="font-size:.72rem;color:var(--muted);margin-top:5px;">Enter your full name as it appears on your student ID.</div>
+      </div>
+      <div class="btn-row" id="step3Btns" style="display:none">
+        <button class="btn-back" onclick="goToStep(2)" aria-label="Back to service selection">← Back</button>
+        <button class="btn-next" id="getTokenBtn" onclick="generateToken()" aria-label="Generate my queue token">Get My Token →</button>
+      </div>
+    </div>
+
+    <!-- ══ LOADING ══ -->
+    <div class="loading-overlay" id="loadingOverlay" aria-live="polite" aria-label="Generating token">
+      <div class="spinner" aria-hidden="true"></div>
+      <p id="loadingMsg">Generating your token…</p>
+    </div>
+
+    <!-- ══ TOKEN RESULT ══ -->
+    <div id="tokenDisplay" aria-live="polite"></div>
+
+  </div>
 </div>
 
-<div class="toast" id="toast" role="alert" aria-live="assertive"></div>
-
 <script>
-/**
- * Makerere University — Queue Management System
- * Staff Login Module  v2.1
- *
- * Security model:
- *  • All authentication is server-side only.
- *  • Client receives only a session cookie (httpOnly/Secure/SameSite=Strict).
- *  • CSRF token fetched per-session before any mutation request.
- *  • Client-side rate limiting: exponential back-off + attempt counter.
- *  • Honeypot field traps automated form fillers.
- *  • Timing check rejects submissions that arrive too fast (bots).
- *  • Sensitive input values are wiped from memory after submission.
- *  • All redirects are server-driven; no role data is stored client-side.
- */
+(function(){
+'use strict';
 
-(function () {
-    'use strict';
+/* ── Config ── All endpoints unchanged ─────────────────────────── */
+const _CFG = (function(){
+  // Base URL split so it's not a single scannable string
+  const _p = ['https://', 'web-production-', 'eeaf2', '.up.railway.app'];
+  return { base: _p.join('') };
+})();
 
-    /* ── Tiny obfuscation helpers ─────────────────────────────────────────
-       Strings that matter to attackers are split/reversed/rot13'd so they
-       don't appear verbatim in a quick source scan or string-search dump.
-       This is a defence-in-depth layer, not a replacement for server security.
-    ────────────────────────────────────────────────────────────────────── */
-    const _r  = s => s.split('').reverse().join('');
-    const _j  = a => a.join('');
-    const _rc = (s,n) => s.replace(/[a-z]/gi, c => {
-        const b = c <= 'Z' ? 65 : 97;
-        return String.fromCharCode(((c.charCodeAt(0) - b + n) % 26) + b);
-    });
+/* ── State ──────────────────────────────────────────────────────── */
+let _offices = [], _services = [];
+let _selOffice = null, _selService = null;
+let _step = 0;
 
-    // Endpoint strings — split and reassembled at call-time only
-    const EP = {
-        // /api/auth/login
-        login : () => _j([_r('ipa'), '/', _r('htua'), '/', _r('nigol')]),
-        // /api/auth/csrf
-        csrf  : () => _j([_r('ipa'), '/', _r('htua'), '/', _r('frsc')]),
-        // /api/health
-        health: () => _j([_r('ipa'), '/', _r('htlaeh')]),
+/* ── DOM helpers ─────────────────────────────────────────────────── */
+const $ = id => document.getElementById(id);
+
+/* ── Input sanitisation ──────────────────────────────────────────── */
+function _sanitise(str) {
+  if (!str) return '';
+  // Trim, strip control characters, limit length
+  return str.replace(/[\x00-\x1F\x7F]/g, '').trim().slice(0, 120);
+}
+
+function _escHtml(s) {
+  if (!s) return '';
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+/* ── Error display ───────────────────────────────────────────────── */
+let _errTimer;
+function showError(msg) {
+  const bar = $('errorBar');
+  bar.textContent = _sanitise(msg);
+  bar.classList.add('show');
+  clearTimeout(_errTimer);
+  _errTimer = setTimeout(() => bar.classList.remove('show'), 5000);
+}
+function clearError() { $('errorBar').classList.remove('show'); }
+
+/* ── Grid error ──────────────────────────────────────────────────── */
+function showGridError(gridId, msg) {
+  $(gridId).innerHTML = '<p style="color:var(--error);font-size:.8rem;padding:10px 0;">' + _escHtml(msg) + '</p>';
+}
+
+/* ── Typewriter ──────────────────────────────────────────────────── */
+function typeMessage(bubbleId, text, onDone, delay) {
+  delay = (delay === undefined) ? 550 : delay;
+  const bubble = $(bubbleId);
+  if (!bubble) return;
+  bubble.innerHTML = '<div class="ai-typing"><span></span><span></span><span></span></div>';
+  setTimeout(function() {
+    bubble.innerHTML = '';
+    let i = 0;
+    const cursor = document.createElement('span');
+    cursor.className = 'ai-cursor';
+    bubble.appendChild(cursor);
+    const iv = setInterval(function() {
+      if (i < text.length) {
+        bubble.insertBefore(document.createTextNode(text[i]), cursor);
+        i++;
+      } else {
+        clearInterval(iv);
+        cursor.remove();
+        if (onDone) onDone();
+      }
+    }, 15);
+  }, delay);
+}
+
+/* ── Step indicator ──────────────────────────────────────────────── */
+function updateSteps(active) {
+  for (let i = 1; i <= 3; i++) {
+    const dot = $('dot' + i);
+    const lbl = $('lbl' + i);
+    dot.className = 'step-dot';
+    lbl.className = 'step-label';
+    if (i < active) {
+      dot.classList.add('done');
+      dot.innerHTML = '<svg width="13" height="13" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg>';
+      lbl.classList.add('done');
+    } else if (i === active) {
+      dot.classList.add('active');
+      dot.textContent = i;
+      lbl.classList.add('active');
+    } else {
+      dot.textContent = i;
+    }
+  }
+  $('line1').className = 'step-line' + (active > 1 ? ' done' : '');
+  $('line2').className = 'step-line' + (active > 2 ? ' done' : '');
+}
+
+/* ── Show a step ─────────────────────────────────────────────────── */
+function showStep(n) {
+  document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+  $('step' + n).classList.add('active');
+  _step = n;
+  updateSteps(n);
+  clearError();
+}
+
+/* ── API fetch wrapper ───────────────────────────────────────────── */
+async function _apiFetch(path, opts) {
+  const defaults = { credentials: 'omit', headers: { 'Content-Type': 'application/json' } };
+  const merged = Object.assign({}, defaults, opts || {});
+  if (merged.body && typeof merged.body === 'object') {
+    merged.body = JSON.stringify(merged.body);
+  }
+  const url = _CFG.base + path;
+  const resp = await fetch(url, merged);
+  if (!resp.ok) throw new Error('HTTP ' + resp.status);
+  return resp.json();
+}
+
+/* ── INIT ────────────────────────────────────────────────────────── */
+typeMessage('aiBubble0',
+  "Hello! 👋 Welcome to Makerere University's Queue System. I'll help you get your token quickly. Tap the button below to get started — it only takes about a minute.",
+  null, 400
+);
+
+$('studentName').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') generateToken();
+});
+
+// Strip dangerous characters on input
+$('studentName').addEventListener('input', function() {
+  this.value = this.value.replace(/[<>"'`;&\\]/g, '');
+});
+
+/* ── START FLOW ──────────────────────────────────────────────────── */
+window.startFlow = function() {
+  $('step0').classList.remove('active');
+  $('stepIndicator').style.display = 'flex';
+  showStep(1);
+  typeMessage('aiBubble1',
+    "Great, let's get started! Which office are you visiting today? Select the one that matches your purpose.",
+    null, 300
+  );
+  loadOffices();
+};
+
+/* ── LOAD OFFICES ────────────────────────────────────────────────── */
+async function loadOffices() {
+  try {
+    const data = await _apiFetch('/api/offices');
+    if (data.success) { _offices = data.offices; renderOffices(); }
+    else showGridError('officeGrid', 'Could not load offices. Please refresh.');
+  } catch (_) {
+    showGridError('officeGrid', 'Failed to connect. Please check your network.');
+  }
+}
+
+function renderOffices() {
+  const grid = $('officeGrid');
+  if (!_offices.length) {
+    grid.innerHTML = '<p style="color:var(--muted);font-size:.82rem;padding:10px 0;">No offices available right now.</p>';
+    return;
+  }
+  const html = '<div class="select-grid">' + _offices.map(function(o, idx) {
+    return '<div class="select-card" role="listitem" tabindex="0"' +
+      ' data-id="' + (+o.id) + '"' +
+      ' data-code="' + _escHtml(o.office_code) + '"' +
+      ' data-name="' + _escHtml(o.office_name) + '"' +
+      ' data-loc="' + _escHtml(o.location || '') + '"' +
+      ' style="animation-delay:' + (idx * 0.06) + 's"' +
+      ' aria-label="' + _escHtml(o.office_name) + '">' +
+      '<div class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 7V3H2v18h20V7H12zm-2 12H4v-2h6v2zm0-4H4v-2h6v2zm0-4H4V9h6v2zm0-4H4V5h6v2zm8 12h-6v-2h6v2zm0-4h-6v-2h6v2zm0-4h-6V9h6v2z"/></svg></div>' +
+      '<div class="card-label">' + _escHtml(o.office_name) + '</div>' +
+      '<div class="card-sub">' + _escHtml(o.location || 'Main Campus') + '</div>' +
+      '</div>';
+  }).join('') + '</div>';
+  grid.innerHTML = html;
+
+  grid.querySelectorAll('.select-card').forEach(function(card) {
+    const selectCard = function() {
+      grid.querySelectorAll('.select-card').forEach(c => { c.classList.remove('selected'); c.removeAttribute('aria-selected'); });
+      card.classList.add('selected');
+      card.setAttribute('aria-selected', 'true');
+      _selOffice = {
+        id: +card.dataset.id,
+        code: card.dataset.code,
+        name: card.dataset.name,
+        location: card.dataset.loc
+      };
+      $('nextToStep2Btn').disabled = false;
+      loadServicesForOffice(_selOffice.id);
     };
+    card.addEventListener('click', selectCard);
+    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectCard(); } });
+  });
+}
 
-    // DOM refs
-    const $  = id => document.getElementById(id);
-    const form       = $('loginForm');
-    const btnEl      = $('loginBtn');
-    const aiEl       = $('aiBubble');
-    const toastEl    = $('toast');
-    const rateBar    = $('rateBar');
-    const rateFill   = $('rateFill');
-    const statusDot  = $('statusDot');
-    const statusText = $('statusText');
-    const tsField    = $('_ts');
-    const pinToggle  = $('pinToggle');
-    const eyeIcon    = $('eyeIcon');
-    const pinInput   = $('pinCode');
-    const numInput   = $('officerNumber');
+/* ── LOAD SERVICES ───────────────────────────────────────────────── */
+async function loadServicesForOffice(officeId) {
+  $('serviceGrid').innerHTML = '<div class="loading-cards"><div class="spinner"></div><p>Loading services…</p></div>';
+  _selService = null;
+  $('nextToStep3Btn').disabled = true;
+  try {
+    const data = await _apiFetch('/api/offices/' + (+officeId) + '/services');
+    _services = data.success ? data.services : [];
+  } catch (_) { _services = []; }
+}
 
-    /* ── State ────────────────────────────────────────────────────────── */
-    let _attempts  = 0;
-    let _locked    = false;
-    let _lockTimer = null;
-    let _csrfToken = '';
-    const MAX_ATTEMPTS = 5;
-    const LOCK_MS      = 30_000;   // 30 s client-side lockout
-    const MIN_FILL_MS  = 800;      // fastest a real human can fill the form
+function renderServices() {
+  const grid = $('serviceGrid');
+  const title = $('serviceTitle');
+  if (!_services.length) {
+    grid.innerHTML = '';
+    title.style.display = 'none';
+    typeMessage('aiBubble2',
+      "Hmm, it looks like " + _escHtml(_selOffice.name) + " doesn't have any services listed right now. Please go back and try a different office.",
+      null, 0
+    );
+    return;
+  }
+  title.style.display = 'block';
+  typeMessage('aiBubble2',
+    "You've selected " + _selOffice.name + ". Now, which service do you need today?",
+    null, 0
+  );
+  const html = '<div class="select-grid">' + _services.map(function(s, idx) {
+    return '<div class="select-card" role="listitem" tabindex="0"' +
+      ' data-id="' + (+s.id) + '"' +
+      ' data-code="' + _escHtml(s.service_code) + '"' +
+      ' data-name="' + _escHtml(s.service_name) + '"' +
+      ' data-time="' + (+s.estimated_time_minutes || 0) + '"' +
+      ' style="animation-delay:' + (idx * 0.06) + 's"' +
+      ' aria-label="' + _escHtml(s.service_name) + '">' +
+      '<div class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></div>' +
+      '<div class="card-label">' + _escHtml(s.service_name) + '</div>' +
+      (s.estimated_time_minutes ? '<div class="card-sub">~' + (+s.estimated_time_minutes) + ' min</div>' : '') +
+      '</div>';
+  }).join('') + '</div>';
+  grid.innerHTML = html;
 
-    /* ── AI typewriter ────────────────────────────────────────────────── */
-    const MSGS = [
-        'Welcome back. Enter your officer number and PIN to access the queue dashboard.',
-        'Need help? Contact the registry office or your system administrator.',
-        'Your session is protected. Always sign out when leaving your workstation.',
-    ];
-    let _msgIdx = 0, _charIdx = 0, _typing = true, _pauseTimer = null;
+  grid.querySelectorAll('.select-card').forEach(function(card) {
+    const selectCard = function() {
+      grid.querySelectorAll('.select-card').forEach(c => { c.classList.remove('selected'); c.removeAttribute('aria-selected'); });
+      card.classList.add('selected');
+      card.setAttribute('aria-selected', 'true');
+      _selService = {
+        id: +card.dataset.id,
+        code: card.dataset.code,
+        name: card.dataset.name,
+        estimated_time: +card.dataset.time
+      };
+      $('nextToStep3Btn').disabled = false;
+    };
+    card.addEventListener('click', selectCard);
+    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectCard(); } });
+  });
+}
 
-    function typeNext() {
-        const msg = MSGS[_msgIdx];
-        if (_typing) {
-            aiEl.innerHTML = _escHtml(msg.slice(0, ++_charIdx)) + '<span class="ai-cursor"></span>';
-            if (_charIdx < msg.length) {
-                setTimeout(typeNext, 28 + Math.random() * 22);
-            } else {
-                _typing = false;
-                _pauseTimer = setTimeout(() => {
-                    _typing = true;
-                    _charIdx = 0;
-                    _msgIdx  = (_msgIdx + 1) % MSGS.length;
-                    eraseAll();
-                }, 3400);
-            }
-        }
-    }
+/* ── STEP NAV ────────────────────────────────────────────────────── */
+window.goToStep = function(step) {
+  if (step === 2 && !_selOffice) { showError('Please select an office first.'); return; }
+  if (step === 3 && !_selService) { showError('Please select a service first.'); return; }
 
-    function eraseAll() {
-        const msg = MSGS[(_msgIdx === 0 ? MSGS.length : _msgIdx) - 1];
-        const cur = aiEl.textContent.length;
-        if (cur > 0) {
-            aiEl.innerHTML = _escHtml(msg.slice(0, cur - 1)) + '<span class="ai-cursor"></span>';
-            setTimeout(eraseAll, 18);
-        } else {
-            typeNext();
-        }
-    }
+  showStep(step);
 
-    function _escHtml(s) {
-        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
+  if (step === 2) {
+    const pill = $('officeSummary');
+    $('officeSummaryText').textContent = 'Office: ' + _selOffice.name;
+    pill.classList.add('show');
+    renderServices();
+  }
 
-    aiEl.innerHTML = '<span class="ai-dots"><span></span><span></span><span></span></span>';
-    setTimeout(typeNext, 900);
+  if (step === 3) {
+    const pill = $('serviceSummary');
+    $('serviceSummaryText').textContent = _selOffice.name + '  →  ' + _selService.name;
+    pill.classList.add('show');
 
-    /* ── Server health check ──────────────────────────────────────────── */
-    async function checkHealth() {
-        try {
-            const r = await fetch(EP.health(), { method: 'GET', cache: 'no-store', credentials: 'same-origin' });
-            if (r.ok) {
-                statusDot.className  = 'status-dot online';
-                statusText.textContent = 'System online';
-            } else { throw new Error(); }
-        } catch {
-            statusDot.className  = 'status-dot offline';
-            statusText.textContent = 'System unavailable';
-        }
-    }
-    checkHealth();
+    $('nameTitle').style.display = 'none';
+    $('nameFieldWrap').style.display = 'none';
+    $('step3Btns').style.display = 'none';
 
-    /* ── CSRF token fetch ─────────────────────────────────────────────── */
-    async function fetchCsrf() {
-        try {
-            const r = await fetch(EP.csrf(), { method: 'GET', cache: 'no-store', credentials: 'same-origin' });
-            if (!r.ok) return '';
-            const d = await r.json();
-            return d && d.token ? String(d.token) : '';
-        } catch { return ''; }
-    }
+    typeMessage('aiBubble3',
+      "Almost there! You've chosen " + _selService.name + " at " + _selOffice.name + ". Just one last thing — what's your full name?",
+      function() {
+        $('nameTitle').style.display = 'block';
+        $('nameFieldWrap').style.display = 'block';
+        $('step3Btns').style.display = 'flex';
+        setTimeout(() => $('studentName').focus(), 200);
+      },
+      0
+    );
+  }
+};
 
-    /* ── Honeypot check ──────────────────────────────────────────────── */
-    function _honeypotTripped() {
-        const hpU = $('_uf');
-        const hpP = $('_pf');
-        return (hpU && hpU.value.length > 0) || (hpP && hpP.value.length > 0);
-    }
+/* ── GENERATE TOKEN ──────────────────────────────────────────────── */
+window.generateToken = function() {
+  const rawName = $('studentName').value;
+  const name = _sanitise(rawName);
 
-    /* ── Timing check ────────────────────────────────────────────────── */
-    function _tooFast() {
-        const t0 = parseInt(tsField.value || '0', 10);
-        return (Date.now() - t0) < MIN_FILL_MS;
-    }
+  // Client-side validation
+  if (!name || name.length < 2) {
+    showError('Please enter your full name (at least 2 characters).');
+    $('studentName').focus();
+    $('studentName').classList.add('err');
+    return;
+  }
+  $('studentName').classList.remove('err');
 
-    /* ── Rate-limit UI ───────────────────────────────────────────────── */
-    function _updateRateBar() {
-        const pct = Math.min((_attempts / MAX_ATTEMPTS) * 100, 100);
-        rateBar.classList.add('show');
-        rateFill.style.width = pct + '%';
-    }
+  const btn = $('getTokenBtn');
+  btn.disabled = true;
 
-    /* ── Client-side lockout ─────────────────────────────────────────── */
-    function _lockOut() {
-        _locked = true;
-        setBtn(true, 'Locked — wait 30 s');
-        showToast('Too many attempts. Please wait 30 seconds.', true);
-        _lockTimer = setTimeout(() => {
-            _locked    = false;
-            _attempts  = 0;
-            rateFill.style.width = '0%';
-            rateBar.classList.remove('show');
-            setBtn(false);
-        }, LOCK_MS);
-    }
+  $('step3').classList.remove('active');
+  $('stepIndicator').style.display = 'none';
 
-    /* ── Validation ─────────────────────────────────────────────────── */
-    function _validate() {
-        let ok = true;
-        const n = numInput.value.trim();
-        const p = pinInput.value;
+  // Temporary AI "generating" panel
+  const tempPanel = document.createElement('div');
+  tempPanel.innerHTML =
+    '<div class="ai-panel" style="margin-bottom:24px;">' +
+      '<div class="ai-avatar">' +
+        '<div class="ai-dot-wrap">' +
+          '<div class="ai-dot"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div>' +
+          '<div class="ai-status"></div>' +
+        '</div>' +
+        '<div class="ai-info"><div class="ai-name">Queue Assistant</div><div class="ai-caption">Makerere University · Online</div></div>' +
+      '</div>' +
+      '<div class="ai-bubble" id="aiBubbleGen" aria-live="polite"><div class="ai-typing"><span></span><span></span><span></span></div></div>' +
+    '</div>';
 
-        const oHint = $('officerHint');
-        const pHint = $('pinHint');
+  const card = document.querySelector('.card');
+  card.insertBefore(tempPanel, $('loadingOverlay'));
+  clearError();
 
-        // Officer number
-        if (!n || isNaN(Number(n)) || Number(n) < 1) {
-            numInput.classList.add('error');
-            oHint.classList.add('show');
-            ok = false;
-        } else {
-            numInput.classList.remove('error');
-            oHint.classList.remove('show');
-        }
+  const firstName = _escHtml(name.split(' ')[0]);
+  typeMessage('aiBubbleGen',
+    "You're almost done, " + firstName + "! I'm now generating your queue token — this will only take a moment…",
+    function() {
+      setTimeout(function() {
+        tempPanel.remove();
+        $('loadingOverlay').style.display = 'block';
+        doApiCall(name);
+      }, 800);
+    },
+    0
+  );
+};
 
-        // PIN — at least 4 chars, max 20
-        if (!p || p.length < 4) {
-            pinInput.classList.add('error');
-            pHint.classList.add('show');
-            ok = false;
-        } else {
-            pinInput.classList.remove('error');
-            pHint.classList.remove('show');
-        }
-
-        return ok;
-    }
-
-    /* ── Button state ────────────────────────────────────────────────── */
-    function setBtn(disabled, label) {
-        btnEl.disabled = disabled;
-        btnEl.classList.toggle('loading', disabled && !label);
-        $('loginBtn').querySelector('.btn-text').textContent = label || 'Sign In';
-        if (!disabled) btnEl.classList.remove('loading');
-    }
-
-    /* ── Toast ───────────────────────────────────────────────────────── */
-    let _toastTimer;
-    function showToast(msg, isErr = false) {
-        clearTimeout(_toastTimer);
-        toastEl.textContent = msg;
-        toastEl.className   = 'toast' + (isErr ? ' error-toast' : '');
-        requestAnimationFrame(() => {
-            toastEl.classList.add('show');
-            _toastTimer = setTimeout(() => toastEl.classList.remove('show'), 3800);
-        });
-    }
-
-    /* ── PIN visibility toggle ───────────────────────────────────────── */
-    pinToggle.addEventListener('click', () => {
-        const show = pinInput.type === 'password';
-        pinInput.type = show ? 'text' : 'password';
-        pinToggle.setAttribute('aria-label', show ? 'Hide PIN' : 'Show PIN');
-        eyeIcon.innerHTML = show
-            ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>'
-            : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+/* ── API CALL ────────────────────────────────────────────────────── */
+async function doApiCall(name) {
+  try {
+    const data = await _apiFetch('/api/student/token', {
+      method: 'POST',
+      body: {
+        office_id    : _selOffice.id,
+        service_id   : _selService.id,
+        service_code : _selService.code,
+        student_name : name,
+        student_id   : null,
+        student_phone: null,
+      }
     });
 
-    /* ── Wipe sensitive values from memory ───────────────────────────── */
-    function _wipeInputs() {
-        numInput.value = '';
-        pinInput.value = '';
-        tsField.value  = '';
+    $('loadingOverlay').style.display = 'none';
+
+    if (data.success) {
+      const now     = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const dateStr = now.toLocaleDateString('en-UG', { day: '2-digit', month: 'short', year: 'numeric' });
+
+      $('tokenDisplay').innerHTML =
+        '<div class="token-result" id="printArea">' +
+          '<div class="receipt-header">' +
+            '<h2>MAKERERE UNIVERSITY</h2>' +
+            '<p>Queue Management System &nbsp;|&nbsp; ' + _escHtml(dateStr) + ' ' + _escHtml(timeStr) + '</p>' +
+          '</div>' +
+
+          '<div class="token-badge">' +
+            '<div class="token-label">Queue Token</div>' +
+            '<div class="token-number">' + _escHtml(String(data.token_number)) + '</div>' +
+            '<div class="token-meta">' + _escHtml(data.office_name) + '</div>' +
+          '</div>' +
+
+          '<div class="token-details">' +
+            '<div class="token-row"><span class="lbl">Name</span><span class="val">' + _escHtml(name) + '</span></div>' +
+            '<div class="token-row"><span class="lbl">Office</span><span class="val">' + _escHtml(data.office_name) + '</span></div>' +
+            '<div class="token-row"><span class="lbl">Service</span><span class="val">' + _escHtml(data.service_name) + '</span></div>' +
+            '<div class="token-row"><span class="lbl">Location</span><span class="val">' + _escHtml(data.location) + '</span></div>' +
+            '<div class="token-row"><span class="lbl">Position in queue</span><span class="val green">' + _escHtml(String(data.queue_position)) + '</span></div>' +
+            '<div class="token-row"><span class="lbl">Est. wait</span><span class="val">' + _escHtml(String(data.estimated_wait)) + ' minutes</span></div>' +
+            '<div class="token-row"><span class="lbl">Issued at</span><span class="val">' + _escHtml(timeStr) + '</span></div>' +
+          '</div>' +
+
+          '<div class="token-notice">Please remain nearby and listen for your token number to be called.</div>' +
+
+          '<div class="token-actions">' +
+            '<button class="btn-print" onclick="window.print()" aria-label="Print this receipt">' +
+              '<svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>' +
+              'Print Receipt' +
+            '</button>' +
+            '<button class="btn-new" onclick="location.reload()" aria-label="Get a new token">New Token</button>' +
+          '</div>' +
+        '</div>';
+    } else {
+      _restoreStep3((data.message) ? _sanitise(data.message) : 'Failed to generate token. Please try again.');
     }
+  } catch (_) {
+    $('loadingOverlay').style.display = 'none';
+    _restoreStep3('Network error. Please check your connection and try again.');
+  }
+}
 
-    /* ── Main submit handler ─────────────────────────────────────────── */
-    form.addEventListener('submit', async function (ev) {
-        ev.preventDefault();
-
-        if (_locked) return;
-
-        // Honeypot — silent reject, don't alert the attacker
-        if (_honeypotTripped()) {
-            _wipeInputs();
-            return;
-        }
-
-        // Timing guard — too fast = bot
-        if (_tooFast()) {
-            _wipeInputs();
-            showToast('Please fill the form completely.', true);
-            return;
-        }
-
-        if (!_validate()) return;
-
-        // Snapshot values immediately, then clear DOM
-        const officerVal = parseInt(numInput.value.trim(), 10);
-        const pinVal     = pinInput.value;
-        _wipeInputs();
-
-        setBtn(true);
-        btnEl.classList.add('loading');
-
-        // Fetch a fresh CSRF token each time
-        _csrfToken = await fetchCsrf();
-
-        try {
-            const body = JSON.stringify({
-                officer_number : officerVal,
-                pin_code       : pinVal,
-                // Decoy fields confuse scrapers reading the payload structure
-                _v : _rc('frphevgl', 13),   // rot13 of something innocuous
-                _k : Math.random().toString(36).slice(2),
-            });
-
-            const resp = await fetch(EP.login(), {
-                method      : 'POST',
-                credentials : 'same-origin',
-                headers     : {
-                    'Content-Type'     : 'application/json',
-                    // CSRF header — server must validate this
-                    'X-CSRF-Token'     : _csrfToken,
-                    // Decoy header to frustrate replay tooling
-                    'X-Request-Nonce'  : Date.now().toString(36) + Math.random().toString(36).slice(2),
-                },
-                body,
-            });
-
-            const data = await resp.json();
-
-            if (data && data.success) {
-                // ── SUCCESS: server sets httpOnly session cookie.
-                // We do NOT store role/token in sessionStorage or localStorage.
-                // The server redirect tells us where to go based on role.
-                _attempts = 0;
-                rateFill.style.width = '0%';
-                rateBar.classList.remove('show');
-                showToast('Signing you in…');
-                setBtn(true, 'Redirecting…');
-
-                // Server-driven redirect — role logic stays server-side
-                if (data.user && data.user.role === 'admin') {
-                    window.location.href = '/admin/dashboard';
-                } else {
-                    window.location.href = '/officer/dashboard';
-                }
-            } else {
-                // Failed attempt
-                _attempts++;
-                _updateRateBar();
-
-                const msg = (data && data.message) ? data.message : 'Invalid credentials. Please try again.';
-
-                if (_attempts >= MAX_ATTEMPTS) {
-                    _lockOut();
-                } else {
-                    showToast(msg, true);
-                    setBtn(false);
-                    btnEl.classList.remove('loading');
-                    // Reset form load time so timing check resets
-                    tsField.value = Date.now().toString();
-                }
-            }
-
-        } catch (_err) {
-            // Network or parse error — don't leak details
-            showToast('Unable to reach the server. Please try again.', true);
-            setBtn(false);
-            btnEl.classList.remove('loading');
-            tsField.value = Date.now().toString();
-        }
-    });
-
-    /* ── Set load timestamp (for timing check) ───────────────────────── */
-    tsField.value = Date.now().toString();
-
-    /* ── Real-time input sanitisation ───────────────────────────────── */
-    numInput.addEventListener('input', function () {
-        // Strip anything that isn't a digit
-        this.value = this.value.replace(/\D/g, '');
-    });
-
-    pinInput.addEventListener('input', function () {
-        // Max length enforced in HTML; strip NUL bytes and control chars
-        this.value = this.value.replace(/[\x00-\x1F\x7F]/g, '');
-    });
-
-    /* ── Prevent context-menu on PIN field (minor deterrent) ─────────── */
-    pinInput.addEventListener('contextmenu', ev => ev.preventDefault());
-
-    /* ── Clear error states on re-focus ──────────────────────────────── */
-    [numInput, pinInput].forEach(el => {
-        el.addEventListener('focus', () => {
-            el.classList.remove('error');
-        });
-    });
-
-    /* ── Periodic health re-check ─────────────────────────────────────── */
-    setInterval(checkHealth, 60_000);
+function _restoreStep3(errMsg) {
+  $('stepIndicator').style.display = 'flex';
+  $('step3').classList.add('active');
+  $('getTokenBtn').disabled = false;
+  showError(errMsg);
+}
 
 }());
 </script>
