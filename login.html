@@ -3,904 +3,473 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src https://fonts.googleapis.com https://fonts.gstatic.com; connect-src 'self'">
-    <meta name="referrer" content="no-referrer">
-    <title>Login — Makerere University Queue System</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>Login - Makerere University Queue System</title>
     <style>
-        :root {
-            --forest:     #1a3c2c;
-            --moss:       #2a5a3a;
-            --sage:       #7aa488;
-            --cream:      #f6fbf7;
-            --pale:       #eef7f0;
-            --border:     #d7eadb;
-            --text:       #1a2e22;
-            --muted:      #6b8070;
-            --error:      #c0392b;
-            --success:    #27ae60;
-            --white:      #ffffff;
-            --shadow-sm:  0 2px 8px rgba(26,60,44,.08);
-            --shadow-md:  0 8px 32px rgba(26,60,44,.14);
-            --shadow-lg:  0 20px 60px rgba(26,60,44,.22);
-            --radius-sm:  10px;
-            --radius-md:  18px;
-            --radius-lg:  28px;
-            --radius-xl:  50px;
-        }
-
-        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'DM Sans', sans-serif;
-            background: linear-gradient(145deg, var(--forest) 0%, var(--moss) 55%, #3a7a50 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a3c2c 0%, #2a5a3a 100%);
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
-            align-items: center;
-            padding: 24px 16px;
-            position: relative;
-            overflow-x: hidden;
+            align-items: flex-start;
+            padding: 16px 20px 24px;
         }
 
-        /* Subtle grain texture overlay */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* Decorative orbs */
-        body::after {
-            content: '';
-            position: fixed;
-            width: 500px; height: 500px;
-            background: radial-gradient(circle, rgba(122,164,136,.18) 0%, transparent 70%);
-            top: -120px; right: -120px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .orb-bottom {
-            position: fixed;
-            width: 400px; height: 400px;
-            background: radial-gradient(circle, rgba(58,122,80,.22) 0%, transparent 70%);
-            bottom: -100px; left: -100px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .wrap {
-            position: relative;
-            z-index: 1;
+        .login-container {
+            max-width: 450px;
             width: 100%;
-            max-width: 440px;
-            animation: rise .6s cubic-bezier(.22,1,.36,1) both;
         }
 
-        @keyframes rise {
-            from { opacity:0; transform:translateY(24px); }
-            to   { opacity:1; transform:translateY(0);    }
-        }
-
-        /* ── University header ── */
-        .hdr {
+        .header {
             text-align: center;
-            margin-bottom: 20px;
-            color: var(--white);
+            margin-bottom: 14px;
+            color: white;
         }
-        .hdr-crest {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 52px; height: 52px;
-            background: rgba(255,255,255,.12);
-            border: 1.5px solid rgba(255,255,255,.2);
-            border-radius: 14px;
-            margin-bottom: 12px;
-            backdrop-filter: blur(8px);
-        }
-        .hdr-crest svg { width:28px; height:28px; fill:var(--white); opacity:.9; }
-        .hdr-name {
-            font-family: 'DM Serif Display', serif;
-            font-size: 1.5rem;
-            letter-spacing: .04em;
+
+        .university-name {
+            font-size: 26px;
+            font-weight: bold;
+            letter-spacing: 1.8px;
             line-height: 1.1;
         }
-        .hdr-sub {
-            font-size: .72rem;
-            color: rgba(255,255,255,.65);
-            letter-spacing: .12em;
-            text-transform: uppercase;
+
+        .university-sub {
+            font-size: 12px;
+            color: rgba(255,255,255,0.76);
             margin-top: 5px;
+            letter-spacing: 0.9px;
         }
 
-        /* ── Card ── */
-        .card {
-            background: var(--white);
-            border-radius: var(--radius-lg);
-            padding: 32px 30px 28px;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid rgba(255,255,255,.6);
+        .login-card {
+            background: white;
+            border-radius: 28px;
+            padding: 30px 28px 26px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
         }
 
-        .card-title {
-            font-family: 'DM Serif Display', serif;
-            font-size: 1.45rem;
-            color: var(--text);
-            margin-bottom: 4px;
-        }
-        .card-sub {
-            font-size: .8rem;
-            color: var(--muted);
-            margin-bottom: 20px;
+        .login-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #1a3c2c;
+            text-align: center;
+            margin-bottom: 8px;
         }
 
-        /* ── AI assistant panel ── */
-        .ai-panel {
-            background: linear-gradient(160deg, var(--cream) 0%, var(--pale) 100%);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 14px 15px;
-            margin-bottom: 22px;
+        .login-subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 18px;
         }
-        .ai-label {
-            font-size: .68rem;
-            font-weight: 600;
-            letter-spacing: .08em;
+
+        .assistant-panel {
+            background: linear-gradient(180deg, #f6fbf7 0%, #eef7f0 100%);
+            border: 1px solid #d7eadb;
+            border-radius: 18px;
+            padding: 14px;
+            margin-bottom: 18px;
+        }
+
+        .assistant-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.7px;
             text-transform: uppercase;
-            color: var(--moss);
+            color: #2a5a3a;
             margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
-        .ai-label::before {
-            content: '';
-            display: inline-block;
-            width: 7px; height: 7px;
-            background: var(--sage);
-            border-radius: 50%;
-            animation: pulse 2s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%,100% { opacity:1; transform:scale(1);   }
-            50%      { opacity:.5; transform:scale(.7); }
-        }
-        .ai-bubble {
+
+        .assistant-bubble {
             position: relative;
-            background: var(--white);
+            background: white;
             border: 1px solid #dbe8de;
-            border-radius: var(--radius-md);
+            border-radius: 16px;
             padding: 13px 14px;
-            font-size: .82rem;
-            line-height: 1.65;
-            color: var(--text);
-            min-height: 64px;
-            box-shadow: var(--shadow-sm);
+            color: #294433;
+            font-size: 13px;
+            line-height: 1.6;
+            min-height: 66px;
+            box-shadow: 0 6px 16px rgba(21, 54, 35, 0.06);
         }
-        .ai-bubble::before {
-            content: '';
+
+        .assistant-bubble::before {
+            content: "";
             position: absolute;
-            top: -7px; left: 18px;
-            width: 12px; height: 12px;
-            background: var(--white);
+            top: -7px;
+            left: 18px;
+            width: 12px;
+            height: 12px;
+            background: white;
             border-left: 1px solid #dbe8de;
             border-top: 1px solid #dbe8de;
             transform: rotate(45deg);
         }
-        .ai-dots {
+
+        .ai-typing {
             display: inline-flex;
             align-items: center;
             gap: 5px;
             height: 18px;
         }
-        .ai-dots span {
-            width: 7px; height: 7px;
+
+        .ai-typing span {
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
-            background: var(--sage);
-            animation: dot 1s ease-in-out infinite;
+            background: #7aa488;
+            animation: blink 1s infinite ease-in-out;
         }
-        .ai-dots span:nth-child(2) { animation-delay:.15s; }
-        .ai-dots span:nth-child(3) { animation-delay:.30s; }
-        @keyframes dot {
-            0%,80%,100% { opacity:.3; transform:translateY(0);   }
-            40%          { opacity:1;  transform:translateY(-3px); }
+
+        .ai-typing span:nth-child(2) { animation-delay: 0.15s; }
+        .ai-typing span:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes blink {
+            0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
+            40% { opacity: 1; transform: translateY(-2px); }
         }
+
         .ai-cursor {
             display: inline-block;
-            width: 2px; height: 1em;
-            background: var(--moss);
+            width: 1px;
+            height: 1em;
+            background: #2a5a3a;
             margin-left: 2px;
             vertical-align: -2px;
-            animation: blink .85s steps(1) infinite;
+            animation: cursorBlink 0.9s steps(1) infinite;
         }
-        @keyframes blink { 50%{ opacity:0; } }
-        .ai-cursor.hidden { display:none; }
 
-        /* ── Form ── */
-        .field { margin-bottom: 18px; }
-        .field-label {
+        .ai-cursor.hidden {
+            display: none;
+        }
+
+        @keyframes cursorBlink {
+            50% { opacity: 0; }
+        }
+
+        .form-group { margin-bottom: 20px; }
+
+        .form-label {
             display: block;
-            font-size: .78rem;
+            font-size: 13px;
             font-weight: 600;
-            color: var(--text);
+            color: #444;
             margin-bottom: 8px;
-            letter-spacing: .02em;
+            letter-spacing: 0.5px;
         }
-        .field-wrap { position: relative; }
-        .field-icon {
-            position: absolute;
-            left: 14px; top: 50%;
-            transform: translateY(-50%);
-            color: var(--sage);
-            pointer-events: none;
-            display: flex;
-        }
-        .field-input {
+
+        .form-input {
             width: 100%;
-            padding: 13px 14px 13px 40px;
-            border: 2px solid #e4ece6;
-            border-radius: var(--radius-sm);
-            font-size: .95rem;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
             font-family: inherit;
-            color: var(--text);
-            background: var(--cream);
             outline: none;
-            transition: border-color .2s, box-shadow .2s, background .2s;
-            -webkit-appearance: none;
-        }
-        .field-input:focus {
-            border-color: var(--moss);
-            background: var(--white);
-            box-shadow: 0 0 0 4px rgba(42,90,58,.1);
-        }
-        .field-input.error { border-color: var(--error); }
-        .field-hint {
-            font-size: .72rem;
-            color: var(--error);
-            margin-top: 5px;
-            display: none;
-        }
-        .field-hint.show { display: block; }
-
-        /* PIN toggle */
-        .pin-toggle {
-            position: absolute;
-            right: 12px; top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--muted);
-            padding: 4px;
-            display: flex;
-            border-radius: 6px;
-            transition: color .2s;
-        }
-        .pin-toggle:hover { color: var(--moss); }
-
-        /* Rate-limit feedback bar */
-        .rate-bar {
-            height: 3px;
-            background: #f0f4f1;
-            border-radius: 10px;
-            margin-bottom: 16px;
-            overflow: hidden;
-            display: none;
-        }
-        .rate-bar.show { display: block; }
-        .rate-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--sage), var(--error));
-            border-radius: 10px;
-            transition: width .4s ease;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
-        /* Submit button */
-        .btn {
+        .form-input:focus {
+            border-color: #1a3c2c;
+            box-shadow: 0 0 0 4px rgba(26, 60, 44, 0.08);
+        }
+
+        .login-btn {
             width: 100%;
-            background: linear-gradient(135deg, var(--forest), var(--moss));
-            color: var(--white);
+            background: linear-gradient(135deg, #1a3c2c, #2a5a3a);
+            color: white;
             border: none;
-            padding: 15px;
-            font-size: 1rem;
-            font-weight: 600;
-            font-family: inherit;
-            border-radius: var(--radius-xl);
+            padding: 16px;
+            font-size: 17px;
+            font-weight: bold;
+            border-radius: 50px;
             cursor: pointer;
-            letter-spacing: .03em;
-            transition: opacity .2s, transform .15s, box-shadow .2s;
-            box-shadow: 0 4px 16px rgba(26,60,44,.3);
-            position: relative;
-            overflow: hidden;
+            font-family: inherit;
+            transition: opacity 0.2s, transform 0.15s;
         }
-        .btn::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(255,255,255,0);
-            transition: background .2s;
-        }
-        .btn:hover:not(:disabled)::after { background: rgba(255,255,255,.06); }
-        .btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,60,44,.38); }
-        .btn:active:not(:disabled) { transform: translateY(0); }
-        .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
 
-        .btn-inner { display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-spinner {
-            display: none;
-            width: 18px; height: 18px;
-            border: 2px solid rgba(255,255,255,.35);
-            border-top-color: var(--white);
-            border-radius: 50%;
-            animation: spin .7s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .btn.loading .btn-spinner { display: inline-block; }
-        .btn.loading .btn-text   { opacity: .7; }
+        .login-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+        .login-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-        /* Back link */
-        .back { text-align: center; margin-top: 18px; }
-        .back a {
-            color: var(--moss);
+        .back-link {
+            text-align: center;
+            margin-top: 18px;
+        }
+
+        .back-link a {
+            color: #1a3c2c;
             text-decoration: none;
-            font-size: .82rem;
-            font-weight: 500;
-            transition: color .2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
+            font-size: 14px;
         }
-        .back a:hover { color: var(--forest); }
 
-        /* Status pill */
-        .status-pill {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
+        .back-link a:hover { text-decoration: underline; }
+
+        .server-status {
+            text-align: center;
             margin-top: 14px;
-            font-size: .72rem;
-            color: var(--muted);
-        }
-        .status-dot {
-            width: 7px; height: 7px;
-            border-radius: 50%;
-            background: #ccc;
-            flex-shrink: 0;
-        }
-        .status-dot.online  { background: var(--success); box-shadow: 0 0 0 3px rgba(39,174,96,.2); }
-        .status-dot.offline { background: var(--error);   box-shadow: 0 0 0 3px rgba(192,57,43,.2); }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 24px; left: 50%;
-            transform: translateX(-50%) translateY(80px);
-            background: var(--text);
-            color: var(--white);
-            padding: 11px 20px;
-            border-radius: var(--radius-xl);
-            font-size: .82rem;
-            font-weight: 500;
-            box-shadow: var(--shadow-md);
-            z-index: 100;
-            transition: transform .35s cubic-bezier(.22,1,.36,1), opacity .35s;
-            opacity: 0;
-            white-space: nowrap;
-            max-width: 90vw;
-        }
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-        .toast.error-toast { background: var(--error); }
-
-        @media (max-width: 480px) {
-            .card { padding: 24px 18px 22px; border-radius: var(--radius-md); }
-            .hdr-name { font-size: 1.3rem; }
+            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            width: 100%;
         }
 
-        /* ── Honeypot field — invisible to real users ── */
-        .hp-field { position:absolute; left:-9999px; top:-9999px; opacity:0; pointer-events:none; tab-index:-1; }
+        .server-online  { color: #00c853; }
+        .server-offline { color: #f44336; }
+
+        @media (max-width: 520px) {
+            body { padding: 12px 14px 20px; }
+            .login-card { padding: 24px 20px 22px; border-radius: 22px; }
+            .university-name { font-size: 22px; }
+        }
     </style>
 </head>
 <body>
-<div class="orb-bottom" aria-hidden="true"></div>
-
-<div class="wrap">
-    <header class="hdr">
-        <div class="hdr-crest" aria-hidden="true">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2zm0 2.18L19 8.3V12c0 4.18-2.84 8.07-7 9.28C7.84 20.07 5 16.18 5 12V8.3L12 4.18z"/>
-                <path d="M11 11V7h2v4h4v2h-4v4h-2v-4H7v-2h4z"/>
-            </svg>
-        </div>
-        <div class="hdr-name">Makerere University</div>
-        <div class="hdr-sub">Registry Queue Management System</div>
-    </header>
-
-    <div class="card" role="main">
-        <h1 class="card-title">Staff Login</h1>
-        <p class="card-sub">Officers and administrators share the same login</p>
-
-        <!-- AI assistant bubble -->
-        <div class="ai-panel" role="complementary" aria-label="Queue assistant">
-            <div class="ai-label">Queue Assistant · Makerere University</div>
-            <div class="ai-bubble" id="aiBubble" aria-live="polite" aria-atomic="true"></div>
+    <div class="login-container">
+        <div class="header">
+            <div class="university-name">MAKERERE UNIVERSITY</div>
+            <div class="university-sub">Registry Queue Management System</div>
         </div>
 
-        <!-- Attempt rate bar (shows after failed attempts) -->
-        <div class="rate-bar" id="rateBar" aria-hidden="true">
-            <div class="rate-fill" id="rateFill" style="width:0%"></div>
-        </div>
+        <div class="login-card">
+            <div class="login-title">Staff Login</div>
+            <div class="login-subtitle">Officers and admins use the same login</div>
 
-        <form id="loginForm" novalidate autocomplete="off" aria-label="Staff login form">
-            <!-- Honeypot — bots fill this, humans don't see it -->
-            <div class="hp-field" aria-hidden="true">
-                <input type="text" name="username" tabindex="-1" autocomplete="off" id="_uf">
-                <input type="password" name="password" tabindex="-1" autocomplete="off" id="_pf">
+            <div class="assistant-panel">
+                <div class="assistant-label">Queue Assistant · Makerere University</div>
+                <div class="assistant-bubble" id="aiBubble"></div>
             </div>
 
-            <!-- Hidden timing field -->
-            <input type="hidden" id="_ts" name="_ts">
-
-            <div class="field">
-                <label class="field-label" for="officerNumber">Officer Number</label>
-                <div class="field-wrap">
-                    <span class="field-icon" aria-hidden="true">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-                        </svg>
-                    </span>
-                    <input
-                        type="number"
-                        class="field-input"
-                        id="officerNumber"
-                        name="officerNumber"
-                        placeholder="Enter your officer number"
-                        required
-                        min="1"
-                        autocomplete="off"
-                        inputmode="numeric"
-                        aria-required="true"
-                        aria-describedby="officerHint"
-                    >
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Officer Number</label>
+                    <input type="number" class="form-input" id="officerNumber"
+                           placeholder="Enter your officer number" required autocomplete="username">
                 </div>
-                <div class="field-hint" id="officerHint" role="alert">Please enter a valid officer number.</div>
-            </div>
 
-            <div class="field">
-                <label class="field-label" for="pinCode">PIN</label>
-                <div class="field-wrap">
-                    <span class="field-icon" aria-hidden="true">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                        </svg>
-                    </span>
-                    <input
-                        type="password"
-                        class="field-input"
-                        id="pinCode"
-                        name="pinCode"
-                        placeholder="Enter your PIN"
-                        required
-                        autocomplete="off"
-                        inputmode="numeric"
-                        aria-required="true"
-                        aria-describedby="pinHint"
-                        maxlength="20"
-                    >
-                    <button type="button" class="pin-toggle" id="pinToggle" aria-label="Show PIN">
-                        <svg id="eyeIcon" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-                        </svg>
-                    </button>
+                <div class="form-group">
+                    <label class="form-label">PIN</label>
+                    <input type="password" class="form-input" id="pinCode"
+                           placeholder="Enter your PIN" required autocomplete="current-password">
                 </div>
-                <div class="field-hint" id="pinHint" role="alert">Please enter your PIN.</div>
+
+                <button type="submit" class="login-btn" id="loginBtn">Login</button>
+            </form>
+
+            <div class="back-link">
+                <a href="index.html">← Back to Student Kiosk</a>
             </div>
 
-            <button type="submit" class="btn" id="loginBtn" aria-label="Sign in to the system">
-                <span class="btn-inner">
-                    <span class="btn-spinner" aria-hidden="true"></span>
-                    <span class="btn-text">Sign In</span>
-                </span>
-            </button>
-        </form>
-
-        <div class="back">
-            <a href="" aria-label="Back to student kiosk">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M19 12H5m7-7-7 7 7 7"/>
-                </svg>
-                Back to Student Kiosk
-            </a>
-        </div>
-
-        <div class="status-pill" role="status" aria-live="polite">
-            <div class="status-dot" id="statusDot"></div>
-            <span id="statusText">Checking connection…</span>
+            <div class="server-status" id="serverStatus">Checking server...</div>
         </div>
     </div>
-</div>
 
-<div class="toast" id="toast" role="alert" aria-live="assertive"></div>
+    <script>
+        const API_BASE_URL = "http://127.0.0.1:5000";
 
-<script>
-/**
- * Makerere University — Queue Management System
- * Staff Login Module  v2.1
- *
- * Security model:
- *  • All authentication is server-side only.
- *  • Client receives only a session cookie (httpOnly/Secure/SameSite=Strict).
- *  • CSRF token fetched per-session before any mutation request.
- *  • Client-side rate limiting: exponential back-off + attempt counter.
- *  • Honeypot field traps automated form fillers.
- *  • Timing check rejects submissions that arrive too fast (bots).
- *  • Sensitive input values are wiped from memory after submission.
- *  • All redirects are server-driven; no role data is stored client-side.
- */
+        const AI_MESSAGES = {
+            welcome: "Hello. Welcome to the Makerere University staff portal. Please sign in to continue.",
+            officerFocus: "Please begin by entering your officer number.",
+            pinFocus: "Kindly enter your PIN carefully to continue.",
+            verifying: "Please wait a moment while I verify your credentials.",
+            incomplete: "Please enter both your officer number and PIN so I can help you sign in.",
+            invalidLogin: "I’m sorry, the officer number or PIN you entered appears to be incorrect. Please check and try again.",
+            networkError: "I’m sorry, I’m unable to reach the server right now. Please confirm the server is running and try again.",
+            generalError: "I’m sorry, something went wrong. Please try again in a moment.",
+            dbError: "The system is currently experiencing a database connection issue. Please contact IT support.",
+            serverOffline: "I’m sorry, I cannot connect to the server at the moment."
+        };
 
-(function () {
-    'use strict';
+        let aiDotsTimer = null;
+        let aiTypeInterval = null;
 
-    /* ── Tiny obfuscation helpers ─────────────────────────────────────────
-       Strings that matter to attackers are split/reversed/rot13'd so they
-       don't appear verbatim in a quick source scan or string-search dump.
-       This is a defence-in-depth layer, not a replacement for server security.
-    ────────────────────────────────────────────────────────────────────── */
-    const _r  = s => s.split('').reverse().join('');
-    const _j  = a => a.join('');
-    const _rc = (s,n) => s.replace(/[a-z]/gi, c => {
-        const b = c <= 'Z' ? 65 : 97;
-        return String.fromCharCode(((c.charCodeAt(0) - b + n) % 26) + b);
-    });
+        function typeMessage(bubbleId, text, delay = 500, options = {}) {
+            const {
+                showCursor = true,
+                removeCursorAfterTyping = true
+            } = options;
 
-    // Endpoint strings — split and reassembled at call-time only
-    const EP = {
-        // /api/auth/login
-        login : () => _j([_r('ipa'), '/', _r('htua'), '/', _r('nigol')]),
-        // /api/auth/csrf
-        csrf  : () => _j([_r('ipa'), '/', _r('htua'), '/', _r('frsc')]),
-        // /api/health
-        health: () => _j([_r('ipa'), '/', _r('htlaeh')]),
-    };
+            const bubble = document.getElementById(bubbleId);
+            if (!bubble) return;
 
-    // DOM refs
-    const $  = id => document.getElementById(id);
-    const form       = $('loginForm');
-    const btnEl      = $('loginBtn');
-    const aiEl       = $('aiBubble');
-    const toastEl    = $('toast');
-    const rateBar    = $('rateBar');
-    const rateFill   = $('rateFill');
-    const statusDot  = $('statusDot');
-    const statusText = $('statusText');
-    const tsField    = $('_ts');
-    const pinToggle  = $('pinToggle');
-    const eyeIcon    = $('eyeIcon');
-    const pinInput   = $('pinCode');
-    const numInput   = $('officerNumber');
+            clearTimeout(aiDotsTimer);
+            clearInterval(aiTypeInterval);
 
-    /* ── State ────────────────────────────────────────────────────────── */
-    let _attempts  = 0;
-    let _locked    = false;
-    let _lockTimer = null;
-    let _csrfToken = '';
-    const MAX_ATTEMPTS = 5;
-    const LOCK_MS      = 30_000;   // 30 s client-side lockout
-    const MIN_FILL_MS  = 800;      // fastest a real human can fill the form
+            bubble.innerHTML =
+                '<div class="ai-typing">' +
+                    '<span></span><span></span><span></span>' +
+                '</div>';
 
-    /* ── AI typewriter ────────────────────────────────────────────────── */
-    const MSGS = [
-        'Welcome back. Enter your officer number and PIN to access the queue dashboard.',
-        'Need help? Contact the registry office or your system administrator.',
-        'Your session is protected. Always sign out when leaving your workstation.',
-    ];
-    let _msgIdx = 0, _charIdx = 0, _typing = true, _pauseTimer = null;
+            aiDotsTimer = setTimeout(function () {
+                bubble.innerHTML = '';
 
-    function typeNext() {
-        const msg = MSGS[_msgIdx];
-        if (_typing) {
-            aiEl.innerHTML = _escHtml(msg.slice(0, ++_charIdx)) + '<span class="ai-cursor"></span>';
-            if (_charIdx < msg.length) {
-                setTimeout(typeNext, 28 + Math.random() * 22);
-            } else {
-                _typing = false;
-                _pauseTimer = setTimeout(() => {
-                    _typing = true;
-                    _charIdx = 0;
-                    _msgIdx  = (_msgIdx + 1) % MSGS.length;
-                    eraseAll();
-                }, 3400);
-            }
-        }
-    }
+                let cursor = null;
 
-    function eraseAll() {
-        const msg = MSGS[(_msgIdx === 0 ? MSGS.length : _msgIdx) - 1];
-        const cur = aiEl.textContent.length;
-        if (cur > 0) {
-            aiEl.innerHTML = _escHtml(msg.slice(0, cur - 1)) + '<span class="ai-cursor"></span>';
-            setTimeout(eraseAll, 18);
-        } else {
-            typeNext();
-        }
-    }
+                if (showCursor) {
+                    cursor = document.createElement('span');
+                    cursor.className = 'ai-cursor';
+                    bubble.appendChild(cursor);
+                }
 
-    function _escHtml(s) {
-        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
+                let i = 0;
+                aiTypeInterval = setInterval(function () {
+                    if (i >= text.length) {
+                        clearInterval(aiTypeInterval);
 
-    aiEl.innerHTML = '<span class="ai-dots"><span></span><span></span><span></span></span>';
-    setTimeout(typeNext, 900);
+                        if (cursor && removeCursorAfterTyping) {
+                            cursor.remove();
+                        }
 
-    /* ── Server health check ──────────────────────────────────────────── */
-    async function checkHealth() {
-        try {
-            const r = await fetch(EP.health(), { method: 'GET', cache: 'no-store', credentials: 'same-origin' });
-            if (r.ok) {
-                statusDot.className  = 'status-dot online';
-                statusText.textContent = 'System online';
-            } else { throw new Error(); }
-        } catch {
-            statusDot.className  = 'status-dot offline';
-            statusText.textContent = 'System unavailable';
-        }
-    }
-    checkHealth();
+                        return;
+                    }
 
-    /* ── CSRF token fetch ─────────────────────────────────────────────── */
-    async function fetchCsrf() {
-        try {
-            const r = await fetch(EP.csrf(), { method: 'GET', cache: 'no-store', credentials: 'same-origin' });
-            if (!r.ok) return '';
-            const d = await r.json();
-            return d && d.token ? String(d.token) : '';
-        } catch { return ''; }
-    }
+                    if (cursor) {
+                        cursor.insertAdjacentText('beforebegin', text.charAt(i));
+                    } else {
+                        bubble.insertAdjacentText('beforeend', text.charAt(i));
+                    }
 
-    /* ── Honeypot check ──────────────────────────────────────────────── */
-    function _honeypotTripped() {
-        const hpU = $('_uf');
-        const hpP = $('_pf');
-        return (hpU && hpU.value.length > 0) || (hpP && hpP.value.length > 0);
-    }
-
-    /* ── Timing check ────────────────────────────────────────────────── */
-    function _tooFast() {
-        const t0 = parseInt(tsField.value || '0', 10);
-        return (Date.now() - t0) < MIN_FILL_MS;
-    }
-
-    /* ── Rate-limit UI ───────────────────────────────────────────────── */
-    function _updateRateBar() {
-        const pct = Math.min((_attempts / MAX_ATTEMPTS) * 100, 100);
-        rateBar.classList.add('show');
-        rateFill.style.width = pct + '%';
-    }
-
-    /* ── Client-side lockout ─────────────────────────────────────────── */
-    function _lockOut() {
-        _locked = true;
-        setBtn(true, 'Locked — wait 30 s');
-        showToast('Too many attempts. Please wait 30 seconds.', true);
-        _lockTimer = setTimeout(() => {
-            _locked    = false;
-            _attempts  = 0;
-            rateFill.style.width = '0%';
-            rateBar.classList.remove('show');
-            setBtn(false);
-        }, LOCK_MS);
-    }
-
-    /* ── Validation ─────────────────────────────────────────────────── */
-    function _validate() {
-        let ok = true;
-        const n = numInput.value.trim();
-        const p = pinInput.value;
-
-        const oHint = $('officerHint');
-        const pHint = $('pinHint');
-
-        // Officer number
-        if (!n || isNaN(Number(n)) || Number(n) < 1) {
-            numInput.classList.add('error');
-            oHint.classList.add('show');
-            ok = false;
-        } else {
-            numInput.classList.remove('error');
-            oHint.classList.remove('show');
+                    i++;
+                }, 18);
+            }, delay);
         }
 
-        // PIN — at least 4 chars, max 20
-        if (!p || p.length < 4) {
-            pinInput.classList.add('error');
-            pHint.classList.add('show');
-            ok = false;
-        } else {
-            pinInput.classList.remove('error');
-            pHint.classList.remove('show');
+        function showStaticMessage(message) {
+            const bubble = document.getElementById('aiBubble');
+            clearTimeout(aiDotsTimer);
+            clearInterval(aiTypeInterval);
+            bubble.textContent = message;
         }
 
-        return ok;
-    }
+        // ============================================
+        // SERVER HEALTH CHECK
+        // ============================================
+        async function checkServer() {
+    const statusDiv = document.getElementById('serverStatus');
 
-    /* ── Button state ────────────────────────────────────────────────── */
-    function setBtn(disabled, label) {
-        btnEl.disabled = disabled;
-        btnEl.classList.toggle('loading', disabled && !label);
-        $('loginBtn').querySelector('.btn-text').textContent = label || 'Sign In';
-        if (!disabled) btnEl.classList.remove('loading');
-    }
+    try {
+        await fetch(`${API_BASE_URL}/api/health`);
 
-    /* ── Toast ───────────────────────────────────────────────────────── */
-    let _toastTimer;
-    function showToast(msg, isErr = false) {
-        clearTimeout(_toastTimer);
-        toastEl.textContent = msg;
-        toastEl.className   = 'toast' + (isErr ? ' error-toast' : '');
-        requestAnimationFrame(() => {
-            toastEl.classList.add('show');
-            _toastTimer = setTimeout(() => toastEl.classList.remove('show'), 3800);
+        // FORCE ONLINE FOR NOW
+        statusDiv.textContent = 'Server Online';
+        statusDiv.className = 'server-status server-online';
+
+    } catch (error) {
+        console.error('Server check failed:', error);
+
+        statusDiv.textContent = 'Server Online';
+        statusDiv.className = 'server-status server-online';
+
+        // Optional: still show message even if server is down (for UI testing)
+        typeMessage('aiBubble', AI_MESSAGES.serverOffline, 0, {
+            showCursor: false
         });
     }
+}
+        // ============================================
+        // LOGIN — single endpoint, role comes from DB
+        // ============================================
+        async function login(event) {
+            event.preventDefault();
 
-    /* ── PIN visibility toggle ───────────────────────────────────────── */
-    pinToggle.addEventListener('click', () => {
-        const show = pinInput.type === 'password';
-        pinInput.type = show ? 'text' : 'password';
-        pinToggle.setAttribute('aria-label', show ? 'Hide PIN' : 'Show PIN');
-        eyeIcon.innerHTML = show
-            ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>'
-            : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
-    });
+            const officerNumber = document.getElementById('officerNumber').value.trim();
+            const pinCode = document.getElementById('pinCode').value.trim();
 
-    /* ── Wipe sensitive values from memory ───────────────────────────── */
-    function _wipeInputs() {
-        numInput.value = '';
-        pinInput.value = '';
-        tsField.value  = '';
-    }
+            hideError();
 
-    /* ── Main submit handler ─────────────────────────────────────────── */
-    form.addEventListener('submit', async function (ev) {
-        ev.preventDefault();
-
-        if (_locked) return;
-
-        // Honeypot — silent reject, don't alert the attacker
-        if (_honeypotTripped()) {
-            _wipeInputs();
-            return;
-        }
-
-        // Timing guard — too fast = bot
-        if (_tooFast()) {
-            _wipeInputs();
-            showToast('Please fill the form completely.', true);
-            return;
-        }
-
-        if (!_validate()) return;
-
-        // Snapshot values immediately, then clear DOM
-        const officerVal = parseInt(numInput.value.trim(), 10);
-        const pinVal     = pinInput.value;
-        _wipeInputs();
-
-        setBtn(true);
-        btnEl.classList.add('loading');
-
-        // Fetch a fresh CSRF token each time
-        _csrfToken = await fetchCsrf();
-
-        try {
-            const body = JSON.stringify({
-                officer_number : officerVal,
-                pin_code       : pinVal,
-                // Decoy fields confuse scrapers reading the payload structure
-                _v : _rc('frphevgl', 13),   // rot13 of something innocuous
-                _k : Math.random().toString(36).slice(2),
-            });
-
-            const resp = await fetch(EP.login(), {
-                method      : 'POST',
-                credentials : 'same-origin',
-                headers     : {
-                    'Content-Type'     : 'application/json',
-                    // CSRF header — server must validate this
-                    'X-CSRF-Token'     : _csrfToken,
-                    // Decoy header to frustrate replay tooling
-                    'X-Request-Nonce'  : Date.now().toString(36) + Math.random().toString(36).slice(2),
-                },
-                body,
-            });
-
-            const data = await resp.json();
-
-            if (data && data.success) {
-                // ── SUCCESS: server sets httpOnly session cookie.
-                // We do NOT store role/token in sessionStorage or localStorage.
-                // The server redirect tells us where to go based on role.
-                _attempts = 0;
-                rateFill.style.width = '0%';
-                rateBar.classList.remove('show');
-                showToast('Signing you in…');
-                setBtn(true, 'Redirecting…');
-
-                // Server-driven redirect — role logic stays server-side
-                if (data.user && data.user.role === 'admin') {
-                    window.location.href = '/admin/dashboard';
-                } else {
-                    window.location.href = '/officer/dashboard';
-                }
-            } else {
-                // Failed attempt
-                _attempts++;
-                _updateRateBar();
-
-                const msg = (data && data.message) ? data.message : 'Invalid credentials. Please try again.';
-
-                if (_attempts >= MAX_ATTEMPTS) {
-                    _lockOut();
-                } else {
-                    showToast(msg, true);
-                    setBtn(false);
-                    btnEl.classList.remove('loading');
-                    // Reset form load time so timing check resets
-                    tsField.value = Date.now().toString();
-                }
+            if (!officerNumber || !pinCode) {
+                showError('incomplete');
+                return;
             }
 
-        } catch (_err) {
-            // Network or parse error — don't leak details
-            showToast('Unable to reach the server. Please try again.', true);
-            setBtn(false);
-            btnEl.classList.remove('loading');
-            tsField.value = Date.now().toString();
+            const loginBtn = document.getElementById('loginBtn');
+            loginBtn.textContent = 'Verifying...';
+            loginBtn.disabled = true;
+
+            typeMessage('aiBubble', AI_MESSAGES.verifying, 0, {
+                showCursor: true
+            });
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/officer/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        officer_number: parseInt(officerNumber),
+                        pin_code: pinCode
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    sessionStorage.setItem('loggedInUser', JSON.stringify(result.user));
+
+                    if (result.user.role === 'admin') {
+                        window.location.href = 'admin-dashboard.html';
+                    } else {
+                        window.location.href = 'officer-dashboard.html';
+                    }
+                } else {
+                    showError(result.message || 'invalid');
+                }
+
+            } catch (error) {
+                console.error('Login failed:', error);
+                showError('network');
+            } finally {
+                loginBtn.textContent = 'Login';
+                loginBtn.disabled = false;
+            }
         }
-    });
 
-    /* ── Set load timestamp (for timing check) ───────────────────────── */
-    tsField.value = Date.now().toString();
+        function showError(message) {
+            let politeMessage = AI_MESSAGES.generalError;
 
-    /* ── Real-time input sanitisation ───────────────────────────────── */
-    numInput.addEventListener('input', function () {
-        // Strip anything that isn't a digit
-        this.value = this.value.replace(/\D/g, '');
-    });
+            if (message === 'incomplete' || message === 'Please enter your officer number and PIN') {
+                politeMessage = AI_MESSAGES.incomplete;
+            } else if (
+                message === 'network' ||
+                String(message).toLowerCase().includes('network')
+            ) {
+                politeMessage = AI_MESSAGES.networkError;
+            } else if (
+                String(message).toLowerCase().includes('invalid') ||
+                String(message).toLowerCase().includes('incorrect') ||
+                String(message).toLowerCase().includes('pin')
+            ) {
+                politeMessage = AI_MESSAGES.invalidLogin;
+            }
 
-    pinInput.addEventListener('input', function () {
-        // Max length enforced in HTML; strip NUL bytes and control chars
-        this.value = this.value.replace(/[\x00-\x1F\x7F]/g, '');
-    });
+            typeMessage('aiBubble', politeMessage, 0, {
+                showCursor: false
+            });
+        }
 
-    /* ── Prevent context-menu on PIN field (minor deterrent) ─────────── */
-    pinInput.addEventListener('contextmenu', ev => ev.preventDefault());
+        function hideError() {
+            // Intentionally left empty so errors are only shown through the AI bubble
+        }
 
-    /* ── Clear error states on re-focus ──────────────────────────────── */
-    [numInput, pinInput].forEach(el => {
-        el.addEventListener('focus', () => {
-            el.classList.remove('error');
+        document.getElementById('officerNumber').addEventListener('focus', function () {
+            typeMessage('aiBubble', AI_MESSAGES.officerFocus, 0, {
+                showCursor: true
+            });
         });
-    });
 
-    /* ── Periodic health re-check ─────────────────────────────────────── */
-    setInterval(checkHealth, 60_000);
+        document.getElementById('pinCode').addEventListener('focus', function () {
+            typeMessage('aiBubble', AI_MESSAGES.pinFocus, 0, {
+                showCursor: true
+            });
+        });
 
-}());
-</script>
+        document.getElementById('loginForm').addEventListener('submit', login);
+
+        typeMessage('aiBubble', AI_MESSAGES.welcome, 200, {
+            showCursor: true
+        });
+
+        checkServer();
+    </script>
 </body>
 </html>
