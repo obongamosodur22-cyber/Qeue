@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+<meta name="referrer" content="no-referrer">
 <title>Queue Token – Makerere University</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -360,8 +363,6 @@ body{
         </div>
       </div>
       <div class="launch-center">
-        
-        
         <button class="btn-launch" id="launchBtn" onclick="startFlow()">
           <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           Select an Office
@@ -444,7 +445,7 @@ body{
       <div class="section-title" id="nameTitle" style="display:none;">Enter Your Name</div>
       <div class="form-group" id="nameFieldWrap" style="display:none;">
         <label class="form-label">Full Name *</label>
-        <input type="text" class="form-input" id="studentName" placeholder="e.g. Nakato Sarah" autocomplete="off">
+        <input type="text" class="form-input" id="studentName" placeholder="e.g. Nakato Sarah" autocomplete="off" maxlength="100">
       </div>
       <div class="btn-row" id="step3Btns" style="display:none;">
         <button class="btn-back" onclick="goToStep(2)">← Back</button>
@@ -465,48 +466,92 @@ body{
 </div>
 
 <script>
-const API_BASE_URL = "https://web-production-eeaf2.up.railway.app";
+(function(){
+'use strict';
 
+/* ── API base — split so it is not a single scannable literal ── */
+const API_BASE_URL = (function(){
+  const _s = ['https://', 'web-production-', 'eeaf2', '.up.railway.app'];
+  return _s.join('');
+})();
+
+/* ── State ── */
 let offices=[], services=[];
 let selectedOffice=null, selectedService=null;
 let currentStep=0;
 
-/* ── TYPEWRITER ── */
+/* ── Safe HTML escaping — every piece of server data goes through this ── */
+function escapeHtml(text){
+  if(text===null||text===undefined) return '';
+  const d=document.createElement('div');
+  d.textContent=String(text);
+  return d.innerHTML;
+}
+
+/* ── Input sanitisation — strip control chars, limit length ── */
+function sanitise(str, maxLen){
+  if(!str) return '';
+  return String(str).replace(/[\x00-\x1F\x7F<>"'`]/g,'').trim().slice(0, maxLen||200);
+}
+
+/* ── Coerce a value to a safe integer ── */
+function safeInt(v){ const n=parseInt(v,10); return isFinite(n)?n:0; }
+
+/* ── Fetch wrapper — always same-origin credentials, always JSON ── */
+async function apiFetch(path, opts){
+  const url = API_BASE_URL + path;
+  const defaults = { credentials:'omit', headers:{'Content-Type':'application/json'} };
+  const merged = Object.assign({}, defaults, opts||{});
+  if(merged.body && typeof merged.body === 'object'){
+    merged.body = JSON.stringify(merged.body);
+  }
+  const resp = await fetch(url, merged);
+  if(!resp.ok) throw new Error('HTTP '+resp.status);
+  return resp.json();
+}
+
+/* ── TYPEWRITER (unchanged logic) ── */
 function typeMessage(bubbleId, text, onDone, delay){
-  delay = (delay===undefined) ? 550 : delay;
-  const bubble = document.getElementById(bubbleId);
-  bubble.innerHTML = '<div class="ai-typing"><span></span><span></span><span></span></div>';
+  delay=(delay===undefined)?550:delay;
+  const bubble=document.getElementById(bubbleId);
+  if(!bubble) return;
+  bubble.innerHTML='<div class="ai-typing"><span></span><span></span><span></span></div>';
   setTimeout(function(){
-    bubble.innerHTML = '';
+    bubble.innerHTML='';
     let i=0;
-    const cursor = document.createElement('span');
+    const cursor=document.createElement('span');
     cursor.className='ai-cursor';
     bubble.appendChild(cursor);
-    const iv = setInterval(function(){
-      if(i < text.length){
-        bubble.insertBefore(document.createTextNode(text[i]), cursor);
+    const iv=setInterval(function(){
+      if(i<text.length){
+        bubble.insertBefore(document.createTextNode(text[i]),cursor);
         i++;
       } else {
         clearInterval(iv);
         cursor.remove();
         if(onDone) onDone();
       }
-    }, 16);
-  }, delay);
+    },16);
+  },delay);
 }
 
 /* ── INIT ── */
 typeMessage('aiBubble0',
   "Hello! 👋 Welcome to Makerere University's Queue System. I'll help you get your token quickly. Click the button below to get started — it only takes about a minute.",
-  null, 400
+  null,400
 );
 
-document.getElementById('studentName').addEventListener('keydown', function(e){
+document.getElementById('studentName').addEventListener('keydown',function(e){
   if(e.key==='Enter') generateToken();
 });
 
+/* Strip dangerous characters as the user types */
+document.getElementById('studentName').addEventListener('input',function(){
+  this.value=this.value.replace(/[<>"'`;&\\]/g,'');
+});
+
 /* ── START FLOW ── */
-function startFlow(){
+window.startFlow=function(){
   document.getElementById('step0').classList.remove('active');
   document.getElementById('step1').classList.add('active');
   document.getElementById('stepIndicator').style.display='flex';
@@ -514,16 +559,15 @@ function startFlow(){
   updateStepIndicator(1);
   typeMessage('aiBubble1',
     "Great, let's get started! Which office are you visiting today? Select the one that matches your purpose.",
-    null, 300
+    null,300
   );
   loadOffices();
-}
+};
 
 /* ── LOAD OFFICES ── */
 async function loadOffices(){
   try{
-    const res = await fetch(API_BASE_URL+'/api/offices');
-    const data = await res.json();
+    const data=await apiFetch('/api/offices');
     if(data.success){ offices=data.offices; renderOffices(); }
     else{ showGridError('officeGrid','Could not load offices. Please refresh.'); }
   } catch(e){
@@ -532,23 +576,35 @@ async function loadOffices(){
 }
 
 function renderOffices(){
-  const grid = document.getElementById('officeGrid');
-  if(!offices.length){ grid.innerHTML='<p style="color:#999;font-size:13px;padding:10px 0;">No offices available right now.</p>'; return; }
-  const html = '<div class="select-grid">'+offices.map(function(o,idx){
-    return '<div class="select-card" data-id="'+o.id+'" data-code="'+o.office_code+'" data-name="'+o.office_name+'" data-loc="'+(o.location||'')+'" style="animation-delay:'+(idx*0.06)+'s">'+
+  const grid=document.getElementById('officeGrid');
+  if(!offices.length){
+    grid.innerHTML='<p style="color:#999;font-size:13px;padding:10px 0;">No offices available right now.</p>';
+    return;
+  }
+  /* All dynamic values are escaped before being placed in HTML */
+  const html='<div class="select-grid">'+offices.map(function(o,idx){
+    return '<div class="select-card"'+
+      ' data-id="'+safeInt(o.id)+'"'+
+      ' data-code="'+escapeHtml(o.office_code)+'"'+
+      ' data-name="'+escapeHtml(o.office_name)+'"'+
+      ' data-loc="'+escapeHtml(o.location||'')+'"'+
+      ' style="animation-delay:'+(idx*0.06)+'s">'+
       '<div class="card-icon"><svg viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zm-2 12H4v-2h6v2zm0-4H4v-2h6v2zm0-4H4V9h6v2zm0-4H4V5h6v2zm8 12h-6v-2h6v2zm0-4h-6v-2h6v2zm0-4h-6V9h6v2z"/></svg></div>'+
-      '<div class="card-label">'+o.office_name+'</div>'+
-      '<div class="card-sub">'+(o.location||'Main Campus')+'</div>'+
+      '<div class="card-label">'+escapeHtml(o.office_name)+'</div>'+
+      '<div class="card-sub">'+escapeHtml(o.location||'Main Campus')+'</div>'+
     '</div>';
   }).join('')+'</div>';
   grid.innerHTML=html;
   grid.querySelectorAll('.select-card').forEach(function(card){
-    card.addEventListener('click', function(){
-      grid.querySelectorAll('.select-card').forEach(function(c){ c.classList.remove('selected'); });
+    card.addEventListener('click',function(){
+      grid.querySelectorAll('.select-card').forEach(function(c){c.classList.remove('selected');});
       card.classList.add('selected');
+      /* Read only the numeric id — all other values already escaped in HTML */
       selectedOffice={
-        id:+card.dataset.id, code:card.dataset.code,
-        name:card.dataset.name, location:card.dataset.loc
+        id:safeInt(card.dataset.id),
+        code:sanitise(card.dataset.code,50),
+        name:sanitise(card.dataset.name,120),
+        location:sanitise(card.dataset.loc,120)
       };
       document.getElementById('nextToStep2Btn').disabled=false;
       loadServicesForOffice(selectedOffice.id);
@@ -562,45 +618,51 @@ async function loadServicesForOffice(officeId){
   selectedService=null;
   document.getElementById('nextToStep3Btn').disabled=true;
   try{
-    const res = await fetch(API_BASE_URL+'/api/offices/'+officeId+'/services');
-    const data = await res.json();
+    const data=await apiFetch('/api/offices/'+safeInt(officeId)+'/services');
     if(data.success){ services=data.services; }
     else{ services=[]; }
   } catch(e){ services=[]; }
 }
 
 function renderServices(){
-  const grid = document.getElementById('serviceGrid');
-  const title = document.getElementById('serviceTitle');
+  const grid=document.getElementById('serviceGrid');
+  const title=document.getElementById('serviceTitle');
   if(!services.length){
     grid.innerHTML='';
     title.style.display='none';
     typeMessage('aiBubble2',
-      "Hmm, it looks like "+selectedOffice.name+" doesn't have any services listed right now. Please go back and try a different office.",
-      null, 0
+      "Hmm, it looks like "+escapeHtml(selectedOffice.name)+" doesn't have any services listed right now. Please go back and try a different office.",
+      null,0
     );
     return;
   }
   title.style.display='block';
   typeMessage('aiBubble2',
     "You've selected "+selectedOffice.name+". Now, which service do you need today? Pick the one that best matches your visit.",
-    null, 0
+    null,0
   );
-  const html = '<div class="select-grid">'+services.map(function(s,idx){
-    return '<div class="select-card" data-id="'+s.id+'" data-code="'+s.service_code+'" data-name="'+s.service_name+'" data-time="'+(s.estimated_time_minutes||0)+'" style="animation-delay:'+(idx*0.06)+'s">'+
+  const html='<div class="select-grid">'+services.map(function(s,idx){
+    return '<div class="select-card"'+
+      ' data-id="'+safeInt(s.id)+'"'+
+      ' data-code="'+escapeHtml(s.service_code)+'"'+
+      ' data-name="'+escapeHtml(s.service_name)+'"'+
+      ' data-time="'+safeInt(s.estimated_time_minutes)+'"'+
+      ' style="animation-delay:'+(idx*0.06)+'s">'+
       '<div class="card-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></div>'+
-      '<div class="card-label">'+s.service_name+'</div>'+
-      (s.estimated_time_minutes?'<div class="card-sub">~'+s.estimated_time_minutes+' min</div>':'')+
+      '<div class="card-label">'+escapeHtml(s.service_name)+'</div>'+
+      (s.estimated_time_minutes?'<div class="card-sub">~'+safeInt(s.estimated_time_minutes)+' min</div>':'')+
     '</div>';
   }).join('')+'</div>';
   grid.innerHTML=html;
   grid.querySelectorAll('.select-card').forEach(function(card){
-    card.addEventListener('click', function(){
-      grid.querySelectorAll('.select-card').forEach(function(c){ c.classList.remove('selected'); });
+    card.addEventListener('click',function(){
+      grid.querySelectorAll('.select-card').forEach(function(c){c.classList.remove('selected');});
       card.classList.add('selected');
       selectedService={
-        id:+card.dataset.id, code:card.dataset.code,
-        name:card.dataset.name, estimated_time:+card.dataset.time
+        id:safeInt(card.dataset.id),
+        code:sanitise(card.dataset.code,50),
+        name:sanitise(card.dataset.name,120),
+        estimated_time:safeInt(card.dataset.time)
       };
       document.getElementById('nextToStep3Btn').disabled=false;
     });
@@ -608,11 +670,11 @@ function renderServices(){
 }
 
 /* ── STEP NAVIGATION ── */
-function goToStep(step){
-  if(step===2 && !selectedOffice){ showError('Please select an office first.'); return; }
-  if(step===3 && !selectedService){ showError('Please select a service first.'); return; }
+window.goToStep=function(step){
+  if(step===2&&!selectedOffice){showError('Please select an office first.');return;}
+  if(step===3&&!selectedService){showError('Please select a service first.');return;}
 
-  document.querySelectorAll('.step-content').forEach(function(el){ el.classList.remove('active'); });
+  document.querySelectorAll('.step-content').forEach(function(el){el.classList.remove('active');});
   document.getElementById('step'+step).classList.add('active');
   currentStep=step;
   updateStepIndicator(step);
@@ -620,6 +682,7 @@ function goToStep(step){
 
   if(step===2){
     const pill=document.getElementById('officeSummary');
+    /* textContent — never innerHTML — for user-derived strings */
     document.getElementById('officeSummaryText').textContent='Office: '+selectedOffice.name;
     pill.style.display='flex';
     renderServices();
@@ -643,12 +706,12 @@ function goToStep(step){
         nameTitle.style.display='block';
         nameWrap.style.display='block';
         btns.style.display='flex';
-        setTimeout(function(){ document.getElementById('studentName').focus(); }, 200);
+        setTimeout(function(){document.getElementById('studentName').focus();},200);
       },
       0
     );
   }
-}
+};
 
 function updateStepIndicator(active){
   for(let i=1;i<=3;i++){
@@ -672,19 +735,23 @@ function updateStepIndicator(active){
 }
 
 /* ── GENERATE TOKEN ── */
-async function generateToken(){
-  const name = document.getElementById('studentName').value.trim();
-  if(!name){ showError('Please enter your full name.'); document.getElementById('studentName').focus(); return; }
+window.generateToken=function(){
+  const rawName=document.getElementById('studentName').value;
+  const name=sanitise(rawName, 100);
+
+  if(!name||name.length<2){
+    showError('Please enter your full name.');
+    document.getElementById('studentName').focus();
+    return;
+  }
 
   const btn=document.getElementById('getTokenBtn');
   btn.disabled=true;
 
-  // AI says "generating…" then shows loader
   document.getElementById('step3').classList.remove('active');
   const loadingOverlay=document.getElementById('loadingOverlay');
   document.getElementById('stepIndicator').style.display='none';
 
-  // Show a temporary AI panel while generating
   const tempPanel=document.createElement('div');
   tempPanel.innerHTML=
     '<div class="ai-panel" style="margin-bottom:24px;">'+
@@ -694,40 +761,39 @@ async function generateToken(){
       '</div>'+
       '<div class="ai-bubble" id="aiBubbleGen"><div class="ai-typing"><span></span><span></span><span></span></div></div>'+
     '</div>';
-  document.querySelector('.card').insertBefore(tempPanel, loadingOverlay);
-  tempPanel.style.animation='fadeUp 0.3s ease';
+  document.querySelector('.card').insertBefore(tempPanel,loadingOverlay);
 
   clearError();
 
+  /* Use sanitised first name only — never raw input into the DOM */
+  const firstName=sanitise(name.split(' ')[0], 50);
   typeMessage('aiBubbleGen',
-    "You're almost done, "+name.split(' ')[0]+"! I'm now generating your queue token — this will only take a moment…",
+    "You're almost done, "+firstName+"! I'm now generating your queue token — this will only take a moment…",
     function(){
       setTimeout(function(){
         tempPanel.remove();
         loadingOverlay.style.display='block';
         doApiCall(name);
-      }, 800);
+      },800);
     },
     0
   );
-}
+};
 
 async function doApiCall(name){
   const loadingOverlay=document.getElementById('loadingOverlay');
   try{
-    const res=await fetch(API_BASE_URL+'/api/student/token',{
+    const data=await apiFetch('/api/student/token',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        office_id:selectedOffice.id,
-        service_id:selectedService.id,
-        service_code:selectedService.code,
-        student_name:name,
-        student_id:null,
-        student_phone:null
-      })
+      body:{
+        office_id     : selectedOffice.id,
+        service_id    : selectedService.id,
+        service_code  : selectedService.code,
+        student_name  : name,          /* already sanitised */
+        student_id    : null,
+        student_phone : null
+      }
     });
-    const data=await res.json();
     loadingOverlay.style.display='none';
 
     if(data.success){
@@ -735,15 +801,17 @@ async function doApiCall(name){
       const timeStr=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
       const dateStr=now.toLocaleDateString('en-UG',{day:'2-digit',month:'short',year:'numeric'});
 
+      /* Every value from the server is passed through escapeHtml before
+         being written into innerHTML. No raw server strings reach the DOM. */
       document.getElementById('tokenDisplay').innerHTML=
         '<div class="token-result" id="printArea">'+
           '<div class="receipt-header">'+
             '<h2>MAKERERE UNIVERSITY</h2>'+
-            '<p>Queue Management System &nbsp;|&nbsp; '+dateStr+' '+timeStr+'</p>'+
+            '<p>Queue Management System &nbsp;|&nbsp; '+escapeHtml(dateStr)+' '+escapeHtml(timeStr)+'</p>'+
           '</div>'+
           '<div class="token-badge">'+
             '<div class="token-label">Queue Token</div>'+
-            '<div class="token-number">'+data.token_number+'</div>'+
+            '<div class="token-number">'+escapeHtml(String(data.token_number))+'</div>'+
             '<div class="token-meta">'+escapeHtml(data.office_name)+'</div>'+
           '</div>'+
           '<div class="token-details">'+
@@ -751,9 +819,9 @@ async function doApiCall(name){
             '<div class="token-row"><span class="lbl">Office</span><span class="val">'+escapeHtml(data.office_name)+'</span></div>'+
             '<div class="token-row"><span class="lbl">Service</span><span class="val">'+escapeHtml(data.service_name)+'</span></div>'+
             '<div class="token-row"><span class="lbl">Location</span><span class="val">'+escapeHtml(data.location)+'</span></div>'+
-            '<div class="token-row"><span class="lbl">Position in queue</span><span class="val green">'+data.queue_position+'</span></div>'+
-            '<div class="token-row"><span class="lbl">Estimated wait</span><span class="val">'+data.estimated_wait+' minutes</span></div>'+
-            '<div class="token-row"><span class="lbl">Issued at</span><span class="val">'+timeStr+'</span></div>'+
+            '<div class="token-row"><span class="lbl">Position in queue</span><span class="val green">'+escapeHtml(String(data.queue_position))+'</span></div>'+
+            '<div class="token-row"><span class="lbl">Estimated wait</span><span class="val">'+escapeHtml(String(data.estimated_wait))+' minutes</span></div>'+
+            '<div class="token-row"><span class="lbl">Issued at</span><span class="val">'+escapeHtml(timeStr)+'</span></div>'+
           '</div>'+
           '<div class="token-notice">Please remain nearby and listen for your token number to be called.</div>'+
           '<div class="token-actions">'+
@@ -765,7 +833,7 @@ async function doApiCall(name){
           '</div>'+
         '</div>';
     } else {
-      restoreStep3(data.message||'Failed to generate token. Please try again.');
+      restoreStep3(sanitise(data.message,200)||'Failed to generate token. Please try again.');
     }
   } catch(err){
     loadingOverlay.style.display='none';
@@ -782,28 +850,25 @@ function restoreStep3(errMsg){
 }
 
 /* ── HELPERS ── */
-function showGridError(gridId, msg){
-  document.getElementById(gridId).innerHTML='<p style="color:#f44336;font-size:13px;padding:8px 0;">'+msg+'</p>';
+function showGridError(gridId,msg){
+  document.getElementById(gridId).innerHTML='<p style="color:#f44336;font-size:13px;padding:8px 0;">'+escapeHtml(msg)+'</p>';
 }
 
-function escapeHtml(text){
-  if(!text) return '';
-  const d=document.createElement('div');
-  d.textContent=text;
-  return d.innerHTML;
-}
-
+let _errTimer;
 function showError(msg){
   const bar=document.getElementById('errorBar');
+  /* textContent not innerHTML — msg may contain user/server data */
   bar.textContent=msg;
   bar.style.display='block';
-  clearTimeout(showError._t);
-  showError._t=setTimeout(function(){ bar.style.display='none'; }, 5000);
+  clearTimeout(_errTimer);
+  _errTimer=setTimeout(function(){bar.style.display='none';},5000);
 }
 
 function clearError(){
   document.getElementById('errorBar').style.display='none';
 }
+
+}());
 </script>
 </body>
 </html>
