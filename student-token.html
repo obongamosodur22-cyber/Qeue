@@ -869,6 +869,19 @@ function clearError(){
 }
 
 }());
+  // Add this to automatically refresh offices every 10 seconds
+let refreshInterval;
+
+function startAutoRefresh() {
+  refreshInterval = setInterval(() => {
+    if (currentStep === 1) {
+      loadOffices();  // Refresh office list
+    }
+    if (currentStep === 2 && selectedOffice) {
+      loadServicesForOffice(selectedOffice.id);  // Refresh services
+    }
+  }, 10000);  // Every 10 seconds
+}
 </script>
 </body>
 </html>
