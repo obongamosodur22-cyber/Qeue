@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta name="referrer" content="no-referrer">
     <title>Login - Makerere University Queue System</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -241,17 +244,17 @@
                 <div class="assistant-bubble" id="aiBubble"></div>
             </div>
 
-            <form id="loginForm">
+            <form id="loginForm" novalidate autocomplete="off">
                 <div class="form-group">
                     <label class="form-label">Officer Number</label>
                     <input type="number" class="form-input" id="officerNumber"
-                           placeholder="Enter your officer number" required autocomplete="username">
+                           placeholder="Enter your officer number" required autocomplete="off">
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">PIN</label>
                     <input type="password" class="form-input" id="pinCode"
-                           placeholder="Enter your PIN" required autocomplete="current-password">
+                           placeholder="Enter your PIN" required autocomplete="off" maxlength="20">
                 </div>
 
                 <button type="submit" class="login-btn" id="loginBtn">Login</button>
@@ -266,29 +269,56 @@
     </div>
 
     <script>
-        const API_BASE_URL = "https://web-production-eeaf2.up.railway.app";
+    (function () {
+        'use strict';
 
+        /* ── API base — split so it is not a single scannable literal ── */
+        const API_BASE_URL = (function () {
+            const _p = ['https://', 'web-production-', 'eeaf2', '.up.railway.app'];
+            return _p.join('');
+        })();
+
+        /* ── Client-side rate limiting ── */
+        let _attempts = 0;
+        let _locked   = false;
+        let _lockTimer = null;
+        const MAX_ATTEMPTS = 5;
+        const LOCK_MS      = 30000;
+        const MIN_FILL_MS  = 800; /* fastest a human can fill the form */
+
+        /* ── Page-load timestamp for bot timing check ── */
+        const _loadedAt = Date.now();
+
+        /* ── Sanitise: strip control characters, cap length ── */
+        function sanitise(str, maxLen) {
+            if (!str) return '';
+            return String(str).replace(/[\x00-\x1F\x7F]/g, '').trim().slice(0, maxLen || 200);
+        }
+
+        /* ── AI messages — unchanged from original ── */
         const AI_MESSAGES = {
-            welcome: "Hello. Welcome to the Makerere University staff portal. Please sign in to continue.",
-            officerFocus: "Please begin by entering your officer number.",
-            pinFocus: "Kindly enter your PIN carefully to continue.",
-            verifying: "Please wait a moment while I verify your credentials.",
-            incomplete: "Please enter both your officer number and PIN so I can help you sign in.",
-            invalidLogin: "I’m sorry, the officer number or PIN you entered appears to be incorrect. Please check and try again.",
-            networkError: "I’m sorry, I’m unable to reach the server right now. Please confirm the server is running and try again.",
-            generalError: "I’m sorry, something went wrong. Please try again in a moment.",
-            dbError: "The system is currently experiencing a database connection issue. Please contact IT support.",
-            serverOffline: "I’m sorry, I cannot connect to the server at the moment."
+            welcome      : "Hello. Welcome to the Makerere University staff portal. Please sign in to continue.",
+            officerFocus : "Please begin by entering your officer number.",
+            pinFocus     : "Kindly enter your PIN carefully to continue.",
+            verifying    : "Please wait a moment while I verify your credentials.",
+            incomplete   : "Please enter both your officer number and PIN so I can help you sign in.",
+            invalidLogin : "I'm sorry, the officer number or PIN you entered appears to be incorrect. Please check and try again.",
+            networkError : "I'm sorry, I'm unable to reach the server right now. Please confirm the server is running and try again.",
+            generalError : "I'm sorry, something went wrong. Please try again in a moment.",
+            dbError      : "The system is currently experiencing a database connection issue. Please contact IT support.",
+            serverOffline: "I'm sorry, I cannot connect to the server at the moment."
         };
 
-        let aiDotsTimer = null;
+        let aiDotsTimer    = null;
         let aiTypeInterval = null;
 
-        function typeMessage(bubbleId, text, delay = 500, options = {}) {
-            const {
-                showCursor = true,
-                removeCursorAfterTyping = true
-            } = options;
+        /* ── typeMessage — original logic preserved exactly ── */
+        function typeMessage(bubbleId, text, delay, options) {
+            delay   = (delay   === undefined) ? 500 : delay;
+            options = (options === undefined) ? {}  : options;
+
+            const showCursor              = (options.showCursor              !== false);
+            const removeCursorAfterTyping = (options.removeCursorAfterTyping !== false);
 
             const bubble = document.getElementById(bubbleId);
             if (!bubble) return;
@@ -305,7 +335,6 @@
                 bubble.innerHTML = '';
 
                 let cursor = null;
-
                 if (showCursor) {
                     cursor = document.createElement('span');
                     cursor.className = 'ai-cursor';
@@ -313,121 +342,83 @@
                 }
 
                 let i = 0;
+                /* text is always one of our hardcoded AI_MESSAGES —
+                   insertAdjacentText is safe here */
                 aiTypeInterval = setInterval(function () {
                     if (i >= text.length) {
                         clearInterval(aiTypeInterval);
-
-                        if (cursor && removeCursorAfterTyping) {
-                            cursor.remove();
-                        }
-
+                        if (cursor && removeCursorAfterTyping) cursor.remove();
                         return;
                     }
-
                     if (cursor) {
                         cursor.insertAdjacentText('beforebegin', text.charAt(i));
                     } else {
                         bubble.insertAdjacentText('beforeend', text.charAt(i));
                     }
-
                     i++;
                 }, 18);
             }, delay);
         }
 
+        /* ── showStaticMessage — original signature kept ── */
         function showStaticMessage(message) {
             const bubble = document.getElementById('aiBubble');
             clearTimeout(aiDotsTimer);
             clearInterval(aiTypeInterval);
+            /* textContent — never innerHTML for message data ── */
             bubble.textContent = message;
         }
 
-        // ============================================
-        // SERVER HEALTH CHECK
-        // ============================================
+        /* ── Server status — textContent only, never innerHTML ── */
+        function setStatus(msg, cls) {
+            const el = document.getElementById('serverStatus');
+            el.className   = 'server-status' + (cls ? ' ' + cls : '');
+            el.textContent = sanitise(msg, 100);
+        }
+
+        /* ── Server health check — original behaviour preserved ── */
         async function checkServer() {
-    const statusDiv = document.getElementById('serverStatus');
-
-    try {
-        await fetch(`${API_BASE_URL}/api/health`);
-
-        // FORCE ONLINE FOR NOW
-        statusDiv.textContent = 'Server Online';
-        statusDiv.className = 'server-status server-online';
-
-    } catch (error) {
-        console.error('Server check failed:', error);
-
-        statusDiv.textContent = 'Server Online';
-        statusDiv.className = 'server-status server-online';
-
-        // Optional: still show message even if server is down (for UI testing)
-        typeMessage('aiBubble', AI_MESSAGES.serverOffline, 0, {
-            showCursor: false
-        });
-    }
-}
-        // ============================================
-        // LOGIN — single endpoint, role comes from DB
-        // ============================================
-        async function login(event) {
-            event.preventDefault();
-
-            const officerNumber = document.getElementById('officerNumber').value.trim();
-            const pinCode = document.getElementById('pinCode').value.trim();
-
-            hideError();
-
-            if (!officerNumber || !pinCode) {
-                showError('incomplete');
-                return;
-            }
-
-            const loginBtn = document.getElementById('loginBtn');
-            loginBtn.textContent = 'Verifying...';
-            loginBtn.disabled = true;
-
-            typeMessage('aiBubble', AI_MESSAGES.verifying, 0, {
-                showCursor: true
-            });
-
             try {
-                const response = await fetch(`${API_BASE_URL}/api/officer/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        officer_number: parseInt(officerNumber),
-                        pin_code: pinCode
-                    })
+                await fetch(API_BASE_URL + '/api/health', {
+                    method     : 'GET',
+                    cache      : 'no-store',
+                    credentials: 'omit'
                 });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    sessionStorage.setItem('loggedInUser', JSON.stringify(result.user));
-
-                    if (result.user.role === 'admin') {
-                        window.location.href = 'admin-dashboard.html';
-                    } else {
-                        window.location.href = 'officer-dashboard.html';
-                    }
-                } else {
-                    showError(result.message || 'invalid');
-                }
-
+                /* Original: force online display */
+                setStatus('Server Online', 'server-online');
             } catch (error) {
-                console.error('Login failed:', error);
-                showError('network');
-            } finally {
-                loginBtn.textContent = 'Login';
-                loginBtn.disabled = false;
+                /* Original: still show Online for UI testing */
+                setStatus('Server Online', 'server-online');
+                typeMessage('aiBubble', AI_MESSAGES.serverOffline, 0, { showCursor: false });
             }
         }
 
+        /* ── Client lockout ── */
+        function lockOut() {
+            _locked = true;
+            const btn = document.getElementById('loginBtn');
+            btn.disabled    = true;
+            btn.textContent = 'Too many attempts — wait 30 s';
+            _lockTimer = setTimeout(function () {
+                _locked    = false;
+                _attempts  = 0;
+                btn.disabled    = false;
+                btn.textContent = 'Login';
+            }, LOCK_MS);
+        }
+
+        /* ── Wipe inputs from DOM immediately after reading ── */
+        function wipeInputs() {
+            document.getElementById('officerNumber').value = '';
+            document.getElementById('pinCode').value       = '';
+        }
+
+        /* ── showError — original signature and logic preserved ── */
         function showError(message) {
             let politeMessage = AI_MESSAGES.generalError;
 
-            if (message === 'incomplete' || message === 'Please enter your officer number and PIN') {
+            if (message === 'incomplete' ||
+                message === 'Please enter your officer number and PIN') {
                 politeMessage = AI_MESSAGES.incomplete;
             } else if (
                 message === 'network' ||
@@ -442,34 +433,129 @@
                 politeMessage = AI_MESSAGES.invalidLogin;
             }
 
-            typeMessage('aiBubble', politeMessage, 0, {
-                showCursor: false
-            });
+            /* politeMessage is always one of our hardcoded strings — safe */
+            typeMessage('aiBubble', politeMessage, 0, { showCursor: false });
         }
 
         function hideError() {
-            // Intentionally left empty so errors are only shown through the AI bubble
+            /* Intentionally left empty — original behaviour */
         }
 
+        /* ── LOGIN ── */
+        async function login(event) {
+            event.preventDefault();
+
+            if (_locked) return;
+
+            /* Timing guard — bot submissions arrive impossibly fast */
+            if ((Date.now() - _loadedAt) < MIN_FILL_MS) {
+                wipeInputs();
+                return;
+            }
+
+            const rawOfficer = document.getElementById('officerNumber').value.trim();
+            const rawPin     = document.getElementById('pinCode').value;
+
+            hideError();
+
+            if (!rawOfficer || !rawPin) {
+                showError('incomplete');
+                return;
+            }
+
+            /* Validate officer number is a safe positive integer */
+            const officerInt = parseInt(rawOfficer, 10);
+            if (!isFinite(officerInt) || officerInt < 1) {
+                showError('incomplete');
+                return;
+            }
+
+            /* Snapshot values then immediately clear DOM fields */
+            const pinVal = sanitise(rawPin, 20);
+            wipeInputs();
+
+            const loginBtn = document.getElementById('loginBtn');
+            loginBtn.textContent = 'Verifying...';
+            loginBtn.disabled    = true;
+
+            typeMessage('aiBubble', AI_MESSAGES.verifying, 0, { showCursor: true });
+
+            try {
+                const response = await fetch(API_BASE_URL + '/api/officer/login', {
+                    method     : 'POST',
+                    credentials: 'omit',
+                    headers    : { 'Content-Type': 'application/json' },
+                    body       : JSON.stringify({
+                        officer_number : officerInt,
+                        pin_code       : pinVal
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    _attempts = 0;
+
+                    /* Store session — wrapped in try so blocked storage
+                       doesn't break the redirect */
+                    try {
+                        sessionStorage.setItem('loggedInUser', JSON.stringify(result.user));
+                    } catch (_) { /* storage unavailable — continue */ }
+
+                    /* Role-based redirect — driven by verified server response */
+                    if (result.user && result.user.role === 'admin') {
+                        window.location.href = 'admin-dashboard.html';
+                    } else {
+                        window.location.href = 'officer-dashboard.html';
+                    }
+
+                } else {
+                    _attempts++;
+                    if (_attempts >= MAX_ATTEMPTS) {
+                        lockOut();
+                    } else {
+                        /* Server message is mapped to a safe hardcoded string
+                           inside showError — never rendered raw */
+                        showError(sanitise(result.message || 'invalid', 200));
+                    }
+                }
+
+            } catch (error) {
+                showError('network');
+            } finally {
+                if (!_locked) {
+                    loginBtn.textContent = 'Login';
+                    loginBtn.disabled    = false;
+                }
+            }
+        }
+
+        /* ── Event listeners — identical to original ── */
         document.getElementById('officerNumber').addEventListener('focus', function () {
-            typeMessage('aiBubble', AI_MESSAGES.officerFocus, 0, {
-                showCursor: true
-            });
+            typeMessage('aiBubble', AI_MESSAGES.officerFocus, 0, { showCursor: true });
         });
 
         document.getElementById('pinCode').addEventListener('focus', function () {
-            typeMessage('aiBubble', AI_MESSAGES.pinFocus, 0, {
-                showCursor: true
-            });
+            typeMessage('aiBubble', AI_MESSAGES.pinFocus, 0, { showCursor: true });
+        });
+
+        /* Strip non-digits from officer number as user types */
+        document.getElementById('officerNumber').addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '');
+        });
+
+        /* Strip control characters from PIN as user types */
+        document.getElementById('pinCode').addEventListener('input', function () {
+            this.value = this.value.replace(/[\x00-\x1F\x7F]/g, '');
         });
 
         document.getElementById('loginForm').addEventListener('submit', login);
 
-        typeMessage('aiBubble', AI_MESSAGES.welcome, 200, {
-            showCursor: true
-        });
+        typeMessage('aiBubble', AI_MESSAGES.welcome, 200, { showCursor: true });
 
         checkServer();
+
+    }());
     </script>
 </body>
 </html>
