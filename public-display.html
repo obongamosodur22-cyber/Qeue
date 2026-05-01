@@ -1,26 +1,765 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Makerere University - Public Display</title>
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}body{font-family:'DM Sans','Segoe UI',sans-serif;background:#070d09;min-height:100vh;overflow:hidden}body::before{content:'';position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);background-size:60px 60px;pointer-events:none}.header{position:fixed;top:0;left:0;right:0;z-index:50;height:72px;background:rgba(7,13,9,.95);border-bottom:1px solid rgba(201,162,39,.3);display:flex;align-items:center;justify-content:space-between;padding:0 36px;backdrop-filter:blur(12px)}.header-left{display:flex;align-items:center;gap:16px}.uni-emblem{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#e8c547,#a07c18);border:2px solid rgba(201,162,39,.5);display:flex;align-items:center;justify-content:center;flex-shrink:0}.uni-emblem svg{width:22px;height:22px;fill:#0f2318}.uni-name{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;letter-spacing:1.5px}.uni-name span{color:#e8c547}.uni-sub{font-size:11px;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;margin-top:1px}.datetime{font-family:'DM Mono',monospace;font-size:13px;color:rgba(255,255,255,.5);text-align:right;line-height:1.5}.datetime-time{font-size:18px;color:#e8c547;font-weight:500}.screen{position:fixed;inset:0;padding:88px 32px 100px;display:flex;flex-direction:column;gap:20px;overflow:hidden}.office-name{font-size:clamp(14px,2.2vw,18px);color:rgba(255,255,255,.85);font-weight:500;margin-top:12px;letter-spacing:.5px}.serving-card .office-name{color:rgba(255,255,255,.95);font-weight:600}.active-grid{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px;align-content:center}.called-card{background:linear-gradient(145deg,#1a1200,#2a1e00);border-radius:20px;padding:30px 28px;text-align:center;border:2px solid #ff9800;box-shadow:0 0 24px rgba(255,152,0,.25),inset 0 1px 0 rgba(255,255,255,.05);animation:a 2s ease-in-out infinite}@keyframes a{0%,100%{box-shadow:0 0 20px rgba(255,152,0,.25)}50%{box-shadow:0 0 40px rgba(255,193,7,.5)}}.serving-card{background:#000d03;border-radius:20px;padding:30px 28px;text-align:center;position:relative;overflow:hidden;border:2px solid #00e676;animation:b 1.4s ease-in-out infinite}.serving-card::before{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(0,230,118,.12),transparent);animation:c 2s ease-in-out infinite;pointer-events:none}.serving-card::after{content:'';position:absolute;inset:-2px;border-radius:22px;background:linear-gradient(45deg,#00e676,#00c853,#69ff9c,#00e676);background-size:400% 400%;animation:d 2s ease infinite;z-index:-1}@keyframes b{0%,100%{box-shadow:0 0 30px rgba(0,230,118,.4),0 0 60px rgba(0,230,118,.15),inset 0 0 30px rgba(0,230,118,.05);border-color:#00e676}50%{box-shadow:0 0 60px rgba(0,255,136,.7),0 0 100px rgba(0,230,118,.3),inset 0 0 40px rgba(0,230,118,.1);border-color:#69ff9c}}@keyframes c{0%{left:-100%}100%{left:200%}}@keyframes d{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}.status-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:18px}.badge-dot{width:7px;height:7px;border-radius:50%}.badge-called{background:rgba(255,152,0,.18);color:#ffb74d;border:1px solid rgba(255,152,0,.4)}.badge-called .badge-dot{background:#ff9800}.badge-serving{background:rgba(0,230,118,.15);color:#69ff9c;border:1px solid rgba(0,230,118,.5)}.badge-serving .badge-dot{background:#00e676;animation:e .7s infinite}@keyframes e{0%,100%{opacity:1}50%{opacity:0}}.token-number{font-family:'DM Mono',monospace;font-size:clamp(52px,8vw,80px);font-weight:500;letter-spacing:10px;margin:10px 0 14px;line-height:1}.called-card .token-number{color:#ffb74d}.serving-card .token-number{color:#69ff9c;text-shadow:0 0 30px rgba(0,255,136,.8),0 0 60px rgba(0,230,118,.4);animation:f 1.4s ease-in-out infinite}@keyframes f{0%,100%{text-shadow:0 0 20px rgba(0,255,136,.6),0 0 40px rgba(0,230,118,.3)}50%{text-shadow:0 0 40px rgba(0,255,136,1),0 0 80px rgba(0,230,118,.6),0 0 120px rgba(0,200,100,.3)}}.student-name{font-size:clamp(18px,3vw,24px);font-weight:600;color:#e8c547;margin-top:8px;letter-spacing:1px}.serving-card .student-name{color:#69ff9c;text-shadow:0 0 10px rgba(0,255,136,.3)}.no-active{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;text-align:center}.no-active-ring{width:120px;height:120px;border-radius:50%;border:2px solid rgba(201,162,39,.2);display:flex;align-items:center;justify-content:center;margin-bottom:32px;position:relative}.no-active-ring::before{content:'';position:absolute;inset:-8px;border-radius:50%;border:1px solid rgba(201,162,39,.08)}.no-active-ring::after{content:'';position:absolute;inset:-18px;border-radius:50%;border:1px solid rgba(201,162,39,.04)}.no-active-ring svg{width:52px;height:52px;fill:rgba(201,162,39,.35)}.no-active-title{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,52px);font-weight:700;color:rgba(255,255,255,.85);letter-spacing:1px;margin-bottom:14px;line-height:1.1}.no-active-sub{font-size:clamp(15px,2.2vw,20px);color:rgba(255,255,255,.38);font-weight:300;letter-spacing:.3px}.no-active-kiosk{margin-top:36px;display:inline-flex;align-items:center;gap:10px;background:rgba(201,162,39,.08);border:1px solid rgba(201,162,39,.2);border-radius:40px;padding:11px 26px}.kiosk-dot{width:8px;height:8px;border-radius:50%;background:#e8c547;opacity:.7;animation:g 2s infinite}@keyframes g{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}.stats-bar{display:flex;gap:12px;flex-shrink:0}.stat-chip{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px}.stat-chip-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}.stat-chip-icon svg{width:16px;height:16px}.icon-waiting{background:rgba(255,152,0,.12)}.icon-waiting svg{fill:#ffb74d}.icon-called{background:rgba(255,193,7,.12)}.icon-called svg{fill:#ffd700}.icon-serving{background:rgba(0,230,118,.12)}.icon-serving svg{fill:#69ff9c}.stat-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:rgba(255,255,255,.85);line-height:1}.stat-lbl{font-size:11px;color:rgba(255,255,255,.35);margin-top:2px;letter-spacing:.5px}.news-ticker-wrap{position:fixed;bottom:40px;left:0;right:0;z-index:60;display:none;flex-direction:column;gap:0}.news-ticker-wrap.visible{display:flex}.ticker-top-bar{height:3px;background:linear-gradient(90deg,#e8c547,#ffec6e,#c9a227,#e8c547);background-size:200% 100%;animation:h 3s linear infinite}@keyframes h{0%{background-position:0% 0%}100%{background-position:200% 0%}}.ticker-body{display:flex;align-items:stretch;background:rgba(5,10,6,.97);border-top:1px solid rgba(201,162,39,.4);overflow:hidden;height:52px}.ticker-label{display:flex;align-items:center;gap:8px;padding:0 18px 0 20px;background:#c9a227;flex-shrink:0;position:relative;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,0 100%);padding-right:28px;min-width:120px}.ticker-label-dot{width:8px;height:8px;border-radius:50%;background:#0f2318;animation:g 1s infinite;flex-shrink:0}.ticker-label-text{font-size:11px;font-weight:800;color:#0f2318;letter-spacing:2px;text-transform:uppercase;white-space:nowrap}.ticker-scroll-track{flex:1;overflow:hidden;display:flex;align-items:center;position:relative}.ticker-scroll-inner{display:flex;align-items:center;gap:0;white-space:nowrap;animation:i 28s linear infinite;will-change:transform}.ticker-scroll-track:hover .ticker-scroll-inner{animation-play-state:paused}@keyframes i{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}.ticker-item{display:inline-flex;align-items:center;gap:0;padding:0 10px 0 0}.ticker-from{color:#fff;font-weight:500;margin-right:4px}.ticker-office-badge{display:inline-flex;align-items:center;background:rgba(201,162,39,.15);border:1px solid rgba(201,162,39,.35);color:#e8c547;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:4px;margin-right:10px;flex-shrink:0}.ticker-message-text{font-size:15px;color:rgba(255,255,255,.92);font-weight:400;letter-spacing:.1px}.ticker-sep{display:inline-block;color:#e8c547;font-size:16px;margin:0 28px;opacity:.7;flex-shrink:0}.ticker-scroll-track::after{content:'';position:absolute;top:0;right:0;width:80px;height:100%;background:linear-gradient(90deg,transparent,rgba(5,10,6,.97));pointer-events:none;z-index:2}.ticker-scroll-track::before{content:'';position:absolute;top:0;left:0;width:30px;height:100%;background:linear-gradient(90deg,rgba(5,10,6,.97),transparent);pointer-events:none;z-index:2}.ticker-time{display:flex;align-items:center;padding:0 16px;border-left:1px solid rgba(255,255,255,.08);flex-shrink:0;font-family:'DM Mono',monospace;font-size:11px;color:rgba(201,162,39,.6);white-space:nowrap}.footer{position:fixed;bottom:0;left:0;right:0;z-index:50;height:40px;background:rgba(7,13,9,.95);border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;gap:24px;backdrop-filter:blur(12px)}.footer-text{font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.4px}.footer-dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.15)}.voice-indicator{position:fixed;bottom:50px;left:20px;z-index:100;display:flex;align-items:center;gap:8px;background:rgba(7,13,9,.9);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:6px 14px;transition:all .3s}.voice-dot{width:7px;height:7px;border-radius:50%;background:#00e676;animation:e 1.2s infinite}.voice-text{font-size:11px;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace}.recall-banner{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#b54800,#ff6d00);color:#fff;padding:24px 52px;border-radius:60px;font-family:'DM Mono',monospace;font-size:clamp(24px,4vw,36px);font-weight:500;letter-spacing:5px;z-index:300;box-shadow:0 0 80px rgba(255,109,0,.6);animation:j 3s ease-in-out forwards;white-space:nowrap}@keyframes j{0%{opacity:0;transform:translate(-50%,-50%) scale(.8)}12%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}20%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1.1)}}@media(max-width:768px){.active-grid{grid-template-columns:1fr}.token-number{font-size:44px;letter-spacing:5px}.student-name{font-size:16px}.header{padding:0 16px}.screen{padding:80px 16px 110px}.ticker-label{min-width:90px}.ticker-message-text{font-size:13px}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Makerere University - Public Display</title>
+    
+    <!-- ENFORCEMENT #2: Cache-Control Meta Tags – Prevents HTML/CSS/JS caching -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', 'Segoe UI', sans-serif;
+            background: #070d09;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed; inset: 0; z-index: 0;
+            background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+        }
+
+        /* ── HEADER ── */
+        .header {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+            height: 72px;
+            background: rgba(7,13,9,0.95);
+            border-bottom: 1px solid rgba(201,162,39,0.3);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 36px;
+            backdrop-filter: blur(12px);
+        }
+        .header-left { display: flex; align-items: center; gap: 16px; }
+        .uni-emblem {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: radial-gradient(circle at 40% 35%, #e8c547, #a07c18);
+            border: 2px solid rgba(201,162,39,0.5);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .uni-emblem svg { width: 22px; height: 22px; fill: #0f2318; }
+        .uni-name { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 1.5px; }
+        .uni-name span { color: #e8c547; }
+        .uni-sub { font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 2px; text-transform: uppercase; margin-top: 1px; }
+        .datetime { font-family: 'DM Mono', monospace; font-size: 13px; color: rgba(255,255,255,0.5); text-align: right; line-height: 1.5; }
+        .datetime-time { font-size: 18px; color: #e8c547; font-weight: 500; }
+
+        /* ── MAIN SCREEN ── */
+        .screen {
+            position: fixed; inset: 0;
+            padding: 88px 32px 100px;
+            display: flex; flex-direction: column; gap: 20px;
+            overflow: hidden;
+        }
+
+        .office-name {
+            font-size: clamp(14px, 2.2vw, 18px);
+            color: rgba(255,255,255,0.85);
+            font-weight: 500;
+            margin-top: 12px;
+            letter-spacing: 0.5px;
+        }
+        .serving-card .office-name {
+            color: rgba(255,255,255,0.95);
+            font-weight: 600;
+        }
+
+        /* ── ACTIVE TOKENS GRID ── */
+        .active-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 20px;
+            align-content: center;
+        }
+
+        /* ── CALLED CARD ── */
+        .called-card {
+            background: linear-gradient(145deg, #1a1200, #2a1e00);
+            border-radius: 20px;
+            padding: 30px 28px;
+            text-align: center;
+            border: 2px solid #ff9800;
+            box-shadow: 0 0 24px rgba(255,152,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05);
+            animation: pulseAmber 2s ease-in-out infinite;
+        }
+        @keyframes pulseAmber {
+            0%,100% { box-shadow: 0 0 20px rgba(255,152,0,0.25); }
+            50% { box-shadow: 0 0 40px rgba(255,193,7,0.5); }
+        }
+
+        /* ── SERVING CARD ── */
+        .serving-card {
+            background: #000d03;
+            border-radius: 20px;
+            padding: 30px 28px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #00e676;
+            animation: servingPulse 1.4s ease-in-out infinite;
+        }
+        .serving-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,230,118,0.12), transparent);
+            animation: beamSweep 2s ease-in-out infinite;
+            pointer-events: none;
+        }
+        .serving-card::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 22px;
+            background: linear-gradient(45deg, #00e676, #00c853, #69ff9c, #00e676);
+            background-size: 400% 400%;
+            animation: gradientShift 2s ease infinite;
+            z-index: -1;
+        }
+
+        @keyframes servingPulse {
+            0%,100% {
+                box-shadow: 0 0 30px rgba(0,230,118,0.4), 0 0 60px rgba(0,230,118,0.15), inset 0 0 30px rgba(0,230,118,0.05);
+                border-color: #00e676;
+            }
+            50% {
+                box-shadow: 0 0 60px rgba(0,255,136,0.7), 0 0 100px rgba(0,230,118,0.3), inset 0 0 40px rgba(0,230,118,0.1);
+                border-color: #69ff9c;
+            }
+        }
+
+        @keyframes beamSweep {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+
+        @keyframes gradientShift {
+            0%,100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 5px 14px;
+            border-radius: 20px;
+            margin-bottom: 18px;
+        }
+        .badge-dot { width: 7px; height: 7px; border-radius: 50%; }
+        .badge-called { background: rgba(255,152,0,0.18); color: #ffb74d; border: 1px solid rgba(255,152,0,0.4); }
+        .badge-called .badge-dot { background: #ff9800; }
+        .badge-serving { background: rgba(0,230,118,0.15); color: #69ff9c; border: 1px solid rgba(0,230,118,0.5); }
+        .badge-serving .badge-dot { background: #00e676; animation: blinkDot 0.7s infinite; }
+        @keyframes blinkDot { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+        .token-number {
+            font-family: 'DM Mono', monospace;
+            font-size: clamp(52px, 8vw, 80px);
+            font-weight: 500;
+            letter-spacing: 10px;
+            margin: 10px 0 14px;
+            line-height: 1;
+        }
+        .called-card .token-number { color: #ffb74d; }
+        .serving-card .token-number {
+            color: #69ff9c;
+            text-shadow: 0 0 30px rgba(0,255,136,0.8), 0 0 60px rgba(0,230,118,0.4);
+            animation: tokenGlow 1.4s ease-in-out infinite;
+        }
+        @keyframes tokenGlow {
+            0%,100% { text-shadow: 0 0 20px rgba(0,255,136,0.6), 0 0 40px rgba(0,230,118,0.3); }
+            50% { text-shadow: 0 0 40px rgba(0,255,136,1), 0 0 80px rgba(0,230,118,0.6), 0 0 120px rgba(0,200,100,0.3); }
+        }
+
+        .student-name {
+            font-size: clamp(18px, 3vw, 24px);
+            font-weight: 600;
+            color: #e8c547;
+            margin-top: 8px;
+            letter-spacing: 1px;
+        }
+        .serving-card .student-name {
+            color: #69ff9c;
+            text-shadow: 0 0 10px rgba(0,255,136,0.3);
+        }
+
+        /* ── NO ACTIVE STATE ── */
+        .no-active {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            text-align: center;
+        }
+        .no-active-ring {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid rgba(201,162,39,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 32px;
+            position: relative;
+        }
+        .no-active-ring::before { content: ''; position: absolute; inset: -8px; border-radius: 50%; border: 1px solid rgba(201,162,39,0.08); }
+        .no-active-ring::after { content: ''; position: absolute; inset: -18px; border-radius: 50%; border: 1px solid rgba(201,162,39,0.04); }
+        .no-active-ring svg { width: 52px; height: 52px; fill: rgba(201,162,39,0.35); }
+        .no-active-title { font-family: 'Playfair Display', serif; font-size: clamp(32px, 5vw, 52px); font-weight: 700; color: rgba(255,255,255,0.85); letter-spacing: 1px; margin-bottom: 14px; line-height: 1.1; }
+        .no-active-sub { font-size: clamp(15px, 2.2vw, 20px); color: rgba(255,255,255,0.38); font-weight: 300; letter-spacing: 0.3px; }
+        .no-active-kiosk {
+            margin-top: 36px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(201,162,39,0.08);
+            border: 1px solid rgba(201,162,39,0.2);
+            border-radius: 40px;
+            padding: 11px 26px;
+        }
+        .kiosk-dot { width: 8px; height: 8px; border-radius: 50%; background: #e8c547; opacity: 0.7; animation: pulseDot 2s infinite; }
+        @keyframes pulseDot { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.4;transform:scale(1.4);} }
+        .no-active-kiosk span { font-size: 14px; color: rgba(201,162,39,0.7); letter-spacing: 0.5px; font-weight: 500; }
+
+        /* ── STATS BAR ── */
+        .stats-bar { display: flex; gap: 12px; flex-shrink: 0; }
+        .stat-chip { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
+        .stat-chip-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .stat-chip-icon svg { width: 16px; height: 16px; }
+        .icon-waiting { background: rgba(255,152,0,0.12); } .icon-waiting svg { fill: #ffb74d; }
+        .icon-called  { background: rgba(255,193,7,0.12); }  .icon-called svg  { fill: #ffd700; }
+        .icon-serving { background: rgba(0,230,118,0.12); }  .icon-serving svg { fill: #69ff9c; }
+        .stat-val { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500; color: rgba(255,255,255,0.85); line-height: 1; }
+        .stat-lbl { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; letter-spacing: 0.5px; }
+
+        /* ── TV NEWS TICKER ── */
+        .news-ticker-wrap {
+            position: fixed;
+            bottom: 40px;
+            left: 0;
+            right: 0;
+            z-index: 60;
+            display: none;
+            flex-direction: column;
+            gap: 0;
+        }
+        .news-ticker-wrap.visible { display: flex; }
+
+        .ticker-top-bar {
+            height: 3px;
+            background: linear-gradient(90deg, #e8c547, #ffec6e, #c9a227, #e8c547);
+            background-size: 200% 100%;
+            animation: barShimmer 3s linear infinite;
+        }
+        @keyframes barShimmer {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 200% 0%; }
+        }
+
+        .ticker-body {
+            display: flex;
+            align-items: stretch;
+            background: rgba(5,10,6,0.97);
+            border-top: 1px solid rgba(201,162,39,0.4);
+            overflow: hidden;
+            height: 52px;
+        }
+
+        .ticker-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0 18px 0 20px;
+            background: #c9a227;
+            flex-shrink: 0;
+            position: relative;
+            clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%);
+            padding-right: 28px;
+            min-width: 120px;
+        }
+        .ticker-label-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #0f2318;
+            animation: pulseDot 1s infinite;
+            flex-shrink: 0;
+        }
+        .ticker-label-text {
+            font-size: 11px;
+            font-weight: 800;
+            color: #0f2318;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .ticker-scroll-track {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .ticker-scroll-inner {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            white-space: nowrap;
+            animation: tickerScroll 28s linear infinite;
+            will-change: transform;
+        }
+        .ticker-scroll-track:hover .ticker-scroll-inner {
+            animation-play-state: paused;
+        }
+
+        @keyframes tickerScroll {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .ticker-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0;
+            padding: 0 10px 0 0;
+        }
+
+        .ticker-from {
+            color: #ffffff;
+            font-weight: 500;
+            margin-right: 4px;
+        }
+
+        .ticker-office-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(201,162,39,0.15);
+            border: 1px solid rgba(201,162,39,0.35);
+            color: #e8c547;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 3px 10px;
+            border-radius: 4px;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .ticker-message-text {
+            font-size: 15px;
+            color: rgba(255,255,255,0.92);
+            font-weight: 400;
+            letter-spacing: 0.1px;
+        }
+
+        .ticker-sep {
+            display: inline-block;
+            color: #e8c547;
+            font-size: 16px;
+            margin: 0 28px;
+            opacity: 0.7;
+            flex-shrink: 0;
+        }
+
+        .ticker-scroll-track::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(5,10,6,0.97));
+            pointer-events: none;
+            z-index: 2;
+        }
+        .ticker-scroll-track::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 30px;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(5,10,6,0.97), transparent);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .ticker-time {
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-left: 1px solid rgba(255,255,255,0.08);
+            flex-shrink: 0;
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            color: rgba(201,162,39,0.6);
+            white-space: nowrap;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            height: 40px;
+            background: rgba(7,13,9,0.95);
+            border-top: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            backdrop-filter: blur(12px);
+        }
+        .footer-text { font-size: 11px; color: rgba(255,255,255,0.3); letter-spacing: 0.4px; }
+        .footer-dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,0.15); }
+
+        .voice-indicator {
+            position: fixed;
+            bottom: 50px;
+            left: 20px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(7,13,9,0.9);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 6px 14px;
+            transition: all 0.3s;
+        }
+        .voice-dot { width: 7px; height: 7px; border-radius: 50%; background: #00e676; animation: blinkDot 1.2s infinite; }
+        .voice-text { font-size: 11px; color: rgba(255,255,255,0.4); font-family: 'DM Mono', monospace; }
+
+        .recall-banner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #b54800, #ff6d00);
+            color: white;
+            padding: 24px 52px;
+            border-radius: 60px;
+            font-family: 'DM Mono', monospace;
+            font-size: clamp(24px, 4vw, 36px);
+            font-weight: 500;
+            letter-spacing: 5px;
+            z-index: 300;
+            box-shadow: 0 0 80px rgba(255,109,0,0.6);
+            animation: recallAnim 3s ease-in-out forwards;
+            white-space: nowrap;
+        }
+        @keyframes recallAnim {
+            0%   { opacity:0; transform:translate(-50%,-50%) scale(0.8); }
+            12%  { opacity:1; transform:translate(-50%,-50%) scale(1.05); }
+            20%  { transform:translate(-50%,-50%) scale(1); }
+            80%  { opacity:1; }
+            100% { opacity:0; transform:translate(-50%,-50%) scale(1.1); }
+        }
+
+        @media (max-width: 768px) {
+            .active-grid { grid-template-columns: 1fr; }
+            .token-number { font-size: 44px; letter-spacing: 5px; }
+            .student-name { font-size: 16px; }
+            .header { padding: 0 16px; }
+            .screen { padding: 80px 16px 110px; }
+            .ticker-label { min-width: 90px; }
+            .ticker-message-text { font-size: 13px; }
+        }
+    </style>
 </head>
 <body>
-<div class="header"><div class="header-left"><div class="uni-emblem"><svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg></div><div><div class="uni-name">Smart Queue <span>Management System</span></div><div class="uni-sub">Student Service Board</div></div></div><div class="datetime"><div class="datetime-time" id="dtTime">00:00:00</div><div id="dtDate">Loading...</div></div></div>
-<div class="screen"><div class="active-grid" id="activeGrid" style="display:none"></div><div class="no-active" id="noActive"><div class="no-active-ring"><svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg></div><div class="no-active-title">No Active Services</div><div class="no-active-sub">Please take a token from the kiosk</div><div class="no-active-kiosk"><div class="kiosk-dot"></div><span>Kiosk available at the entrance</span></div></div>
-<div class="stats-bar"><div class="stat-chip"><div class="stat-chip-icon icon-waiting"><svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg></div><div><div class="stat-val" id="totalWaiting">0</div><div class="stat-lbl">Waiting</div></div></div><div class="stat-chip"><div class="stat-chip-icon icon-called"><svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.12-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg></div><div><div class="stat-val" id="totalCalled">0</div><div class="stat-lbl">Called</div></div></div><div class="stat-chip"><div class="stat-chip-icon icon-serving"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div><div><div class="stat-val" id="totalServing">0</div><div class="stat-lbl">Serving Now</div></div></div></div></div>
-<div class="news-ticker-wrap" id="newsTicker"><div class="ticker-top-bar"></div><div class="ticker-body"><div class="ticker-label"><div class="ticker-label-dot"></div><span class="ticker-label-text">NOTICE</span></div><div class="ticker-scroll-track"><div class="ticker-scroll-inner" id="tickerInner"></div></div><div class="ticker-time" id="tickerTime">--:--</div></div></div>
-<div class="footer"><div class="footer-text">Listen for your token announcement</div><div class="footer-dot"></div><div class="footer-text">Watch the screen for your turn</div><div class="footer-dot"></div><div class="footer-text">© 2026 Makerere University — Queue Management System</div></div>
-<div class="voice-indicator" id="voiceIndicator"><div class="voice-dot"></div><span class="voice-text" id="voiceText">Voice System Ready</span></div>
-<script>
-(function(){const _0x2b4f=['_cb=','./api/office/messages','./api/queue/recent-recalls','./api/public/queues','\x20—\x20','\x20—\x20','\x20at\x20','\x20is\x20now\x20ready\x20at\x20','\x20please\x20proceed\x20to\x20','\x20with\x20token\x20','\x20.','Now\x20serving\x20','\x20Please\x20proceed\x20to\x20','\x20with\x20token\x20','Now\x20calling\x20','\x20please,\x20','Attention\x20please,\x20','\x20is\x20now\x20ready\x20at\x20','\x20please\x20proceed\x20to\x20','\x20with\x20token\x20','\x20.','\x20at\x20','Now\x20serving\x20','\x20.','\x20Please\x20proceed\x20to\x20','\x20with\x20token\x20','Now\x20calling\x20','\x20.','\x20at\x20','Now\x20serving\x20','\x20.','\x20Please\x20proceed\x20to\x20','\x20with\x20token\x20','Now\x20calling\x20','GET','Content-Type','application/json','X-Goog-Api-Key','https://texttospeech.googleapis.com/v1/text:synthesize','audio/mpeg','en-US','en-US-Neural2-F','MP3',',\x20token\x20','\x20—\x20','\x20—\x20','\x20at\x20','\x20is\x20now\x20ready\x20at\x20','\x20please\x20proceed\x20to\x20','\x20with\x20token\x20','\x20.','Now\x20serving\x20','\x20Please\x20proceed\x20to\x20','\x20with\x20token\x20','Now\x20calling\x20','\x20please,\x20','Attention\x20please,\x20','\x20is\x20now\x20ready\x20at\x20','\x20please\x20proceed\x20to\x20','\x20with\x20token\x20','\x20.','\x20at\x20','Now\x20serving\x20','\x20.','\x20Please\x20proceed\x20to\x20','\x20with\x20token\x20','Now\x20calling\x20'];let _0x1a2b=function(_0x2c3d,_0x4e5f){_0x2c3d=_0x2c3d-0x0;let _0x6g7h=_0x2b4f[_0x2c3d];return _0x6g7h;};const _0x8i9j=_0x1a2b;const _0xklmn=_0x8i9j;let _0xopqr,_0xstuv,_0xwxyz,_0xabcd,_0xefgh,_0xijkl,_0xmnop,_0xqrst,_0xuvwx,_0_yzAB,_0_CDEF,_0_GHIJ,_0_KLMN,_0_OPQR,_0_STUV,_0_WXYZ,_0_0123,_0_4567,_0_89ab,_0_cdef,_0_ghij,_0_klmn,_0_opqr,_0_stuv,_0_wxyz,_0_ABCD,_0_EFGH,_0_IJKL,_0_MNOP,_0_QRST,_0_UVWX,_0_YZab,_0_cdefg,_0_ghijk;function _0_lmnop(){const _0_qrstu=new Date();document[_0_klmn(0x0)]('dtTime')[_0_klmn(0x1)]=_0_qrstu[_0_klmn(0x2)]('en-UG',{hour:'2-digit',minute:'2-digit',second:'2-digit'});document['getElementById']('dtDate')[_0_klmn(0x1)]=_0_qrstu['toLocaleDateString']('en-UG',{weekday:'long',day:'numeric',month:'long',year:'numeric'});document['getElementById']('tickerTime')['textContent']=_0_qrstu['toLocaleTimeString']('en-UG',{hour:'2-digit',minute:'2-digit'});}_0_lmnop();setInterval(_0_lmnop,0x3e8);function _0_mnopq(_0_rstuv,_0_wxyz,_0_abcd,_0_efgh){const _0_ijkl=document[_0_klmn(0x0)]('voiceIndicator');const _0_mnop=document[_0_klmn(0x0)]('voiceText');const _0_opqr=_0_rstuv[_0_klmn(0x3)]('')[_0_klmn(0x4)]('\x20');let _0_stuv='';const _0_wxyz_=_0_wxyz&&_0_wxyz[_0_klmn(0x5)]()!=='';if(_0_efgh===_0_klmn(0x6)){if(_0_wxyz_){_0_stuv=_0_klmn(0x7)+_0_wxyz+_0_klmn(0x8)+_0_rstuv+_0_klmn(0x9)+_0_abcd+_0_klmn(0xa);}else{_0_stuv=_0_klmn(0xb)+_0_rstuv+_0_klmn(0xc)+_0_abcd+_0_klmn(0xd);}}else if(_0_efgh===_0_klmn(0xe)){if(_0_wxyz_){_0_stuv=_0_klmn(0xf)+_0_wxyz+_0_klmn(0x10)+_0_rstuv+_0_klmn(0x11)+_0_abcd+_0_klmn(0x12);}else{_0_stuv=_0_klmn(0x13)+_0_rstuv+_0_klmn(0x14)+_0_abcd+_0_klmn(0x15);}}else{if(_0_wxyz_){_0_stuv=_0_klmn(0x16)+_0_wxyz+_0_klmn(0x17)+_0_rstuv+_0_klmn(0x18)+_0_abcd+_0_klmn(0x19);}else{_0_stuv=_0_klmn(0x1a)+_0_rstuv+_0_klmn(0x1b)+_0_abcd+_0_klmn(0x1c);}}_0_mnop[_0_klmn(0x1d)]=_0_klmn(0x1e)+_0_rstuv+_0_klmn(0x1f);_0_ijkl[_0_klmn(0x20)]['borderColor']='rgba(255,193,7,0.4)';try{const _0_uvwx=await fetch(_0_klmn(0x21),{method:_0_klmn(0x22),headers:{_0_klmn(0x23):_0_klmn(0x24),'X-Goog-Api-Key':_0_klmn(0x25)},body:JSON[_0_klmn(0x26)]({input:{text:_0_stuv},voice:{languageCode:_0_klmn(0x27),name:_0_klmn(0x28)},audioConfig:{audioEncoding:_0_klmn(0x29),speakingRate:0.95}})});if(_0_uvwx[_0_klmn(0x2a)]){const _0_yzAB=await _0_uvwx[_0_klmn(0x2b)]();const _0_CDEF=(function(_0_EFGH,_0_FGHI){const _0_GHIJ=atob(_0_EFGH);const _0_HIJK=[];for(let _0_IJKL=0x0;_0_IJKL<_0_GHIJ[_0_klmn(0x2c)];_0_IJKL+=0x200){const _0_JKLM=_0_GHIJ[_0_klmn(0x2d)](_0_IJKL,_0_IJKL+0x200);const _0_KLMN=new Uint8Array(_0_JKLM[_0_klmn(0x2c)]);for(let _0_LMNO=0x0;_0_LMNO<_0_JKLM[_0_klmn(0x2c)];_0_LMNO++){_0_KLMN[_0_LMNO]=_0_JKLM[_0_klmn(0x2e)](_0_LMNO);}_0_HIJK[_0_klmn(0x2f)](_0_KLMN);}return new Blob(_0_HIJK,{type:_0_FGHI});})(_0_yzAB[_0_klmn(0x30)],_0_klmn(0x31));const _0_MNOP=new Audio(URL[_0_klmn(0x32)](_0_CDEF));_0_opqr[_0_klmn(0x2f)](_0_MNOP);!function _0_NOPQ(){if(_0_abcd||!_0_opqr[_0_klmn(0x2c)])return;_0_abcd=!![];const _0_OPQR=_0_opqr[_0_klmn(0x33)]();_0_OPQR[_0_klmn(0x34)]=function(){_0_abcd=![];_0_NOPQ();};_0_OPQR[_0_klmn(0x35)]()[_0_klmn(0x36)](()=>{});}();_0_mnop[_0_klmn(0x1d)]=_0_klmn(0x37)+_0_rstuv;_0_ijkl[_0_klmn(0x20)]['borderColor']='rgba(0,230,118,0.3)';setTimeout(function(){_0_mnop[_0_klmn(0x1d)]=_0_klmn(0x38);_0_ijkl[_0_klmn(0x20)]['borderColor']='rgba(255,255,255,0.08)';},0x7d0);}}catch(_0_PQRS){console[_0_klmn(0x39)](_0_klmn(0x3a),_0_PQRS);_0_mnop[_0_klmn(0x1d)]=_0_klmn(0x3b);setTimeout(function(){_0_mnop[_0_klmn(0x1d)]=_0_klmn(0x38);},0x7d0);}}function _0_QRST(_0_RSTU,_0_STUV,_0_TUVW,_0_UVWX){document[_0_klmn(0x3c)]('recall-banner')?.[_0_klmn(0x3d)]();const _0_VWXY=document[_0_klmn(0x3e)]('div');_0_VWXY[_0_klmn(0x3f)]='recall-banner';_0_VWXY[_0_klmn(0x1d)]=(_0_TUVW&&_0_TUVW[_0_klmn(0x5)]()!=='')?_0_TUVW+_0_klmn(0x40)+_0_RSTU:_0_RSTU+_0_klmn(0x41)+_0_STUV;document[_0_klmn(0x42)][_0_klmn(0x43)](_0_VWXY);setTimeout(function(){_0_VWXY?.[_0_klmn(0x3d)]();},0xbb8);}function _0_WXYZ(_0_XYZ1){const _0_YZ12=document[_0_klmn(0x3e)]('div');_0_YZ12[_0_klmn(0x1d)]=_0_XYZ1;return _0_YZ12[_0_klmn(0x44)];}function _0_Z123(_0_1234,_0_2345=0x14){if(!_0_1234)return'';return _0_1234[_0_klmn(0x2c)]<=_0_2345?_0_1234:_0_1234[_0_klmn(0x2d)](0x0,_0_2345)+'...';}function _0_2345(_0_3456){const _0_4567=document[_0_klmn(0x0)]('tickerInner');if(!_0_3456||_0_3456[_0_klmn(0x2c)]===0x0){const _0_5678='<div class="ticker-item"><span class="ticker-office-badge">INFO</span><span class="ticker-message-text">No active queue. Please take a token from the kiosk at the entrance and wait for your number to be called.</span></div><span class="ticker-sep">›</span><div class="ticker-item"><span class="ticker-office-badge">INFO</span><span class="ticker-message-text">Watch this screen and listen for announcements when your token is ready.</span></div><span class="ticker-sep">›</span>';_0_4567[_0_klmn(0x44)]=_0_5678+_0_5678;return;}let _0_6789='';for(const _0_7890 of _0_3456){_0_6789+='<div class="ticker-item"><span class="ticker-from">From:</span><span class="ticker-office-badge">'+_0_WXYZ(_0_7890[_0_klmn(0x45)])+'</span><span class="ticker-message-text">'+_0_WXYZ(_0_7890[_0_klmn(0x46)])+'</span></div><span class="ticker-sep">›</span>';}_0_4567[_0_klmn(0x44)]=_0_6789+_0_6789;const _0_8901=_0_3456[_0_klmn(0x47)]((_0_9012,_0_ab12)=>_0_9012+_0_ab12[_0_klmn(0x46)][_0_klmn(0x2c)],0x0);const _0_bc12=Math[_0_klmn(0x48)](0x14,Math[_0_klmn(0x49)](0x3c,_0_8901*0.4));_0_4567[_0_klmn(0x20)][_0_klmn(0x4a)]=_0_bc12+'s';}async function _0_cdef(){if(!_0_GHIJ)return;try{const _0_defg=await fetch(_0_klmn(0x4b)+_0_klmn(0x4c)+Date[_0_klmn(0x4d)]());const _0_efgh=await _0_defg[_0_klmn(0x2b)]();const _0_fghi=(_0_efgh[_0_klmn(0x4e)]&&_0_efgh[_0_klmn(0x4f)]?.[_0_klmn(0x2c)])?_0_efgh[_0_klmn(0x4f)]:[];const _0_ghij=JSON[_0_klmn(0x26)](_0_fghi[_0_klmn(0x50)](_0_hijk=>_0_hijk[_0_klmn(0x51)]+_0_hijk[_0_klmn(0x46)]));if(_0_ghij!==_0_cdef[_0_klmn(0x52)]){_0_cdef[_0_klmn(0x52)]=_0_ghij;_0_KLMM=_0_fghi;_0_2345(_0_fghi);}}catch(_0_ijkl){console[_0_klmn(0x39)](_0_klmn(0x53),_0_ijkl);}}_0_cdef[_0_klmn(0x52)]=null;async function _0_jklm(){try{const _0_klmn=await fetch(_0_klmn(0x4b)+_0_klmn(0x54)+Date['now']());const _0_lmno=await _0_klmn[_0_klmn(0x2b)]();if(_0_lmno[_0_klmn(0x4e)]&&_0_lmno[_0_klmn(0x55)]?.[_0_klmn(0x2c)]){for(const _0_mnop of _0_lmno[_0_klmn(0x55)]){if(!_0_CDEF[_0_klmn(0x56)](_0_mnop[_0_klmn(0x51)])){_0_CDEF[_0_klmn(0x57)](_0_mnop[_0_klmn(0x51)]);_0_QRST(_0_mnop[_0_klmn(0x58)],_0_mnop[_0_klmn(0x45)],_0_mnop[_0_klmn(0x59)],'recall');await _0_mnopq(_0_mnop[_0_klmn(0x58)],_0_mnop[_0_klmn(0x59)],_0_mnop[_0_klmn(0x45)],'recall');}}if(_0_CDEF[_0_klmn(0x5a)][_0_klmn(0x5b)]>0x32){Array[_0_klmn(0x5c)](_0_CDEF[_0_klmn(0x5a)])[_0_klmn(0x2d)](0x0,_0_CDEF[_0_klmn(0x5a)][_0_klmn(0x5b)]-0x32)[_0_klmn(0x50)](_0_no=>_0_CDEF['delete'](_0_no));}}}catch(_0_opqr){console['error'](_0_klmn(0x5d),_0_opqr);}}function _0_pqrs(_0_qrst){_0_UVWX=Date[_0_klmn(0x4d)]();const _0_rstu=document[_0_klmn(0x0)]('activeGrid');const _0_stuv=document[_0_klmn(0x0)]('noActive');const _0_tuvw=document[_0_klmn(0x0)]('newsTicker');const _0_uvwx=[];let _0_vwxy=0x0,_0_wxyz=0x0,_0_xyza=0x0;for(const _0_yzab of _0_qrst){_0_xyza+=_0_yzab[_0_klmn(0x5e)]||0x0;if(_0_yzab[_0_klmn(0x5f)]){_0_uvwx[_0_klmn(0x2f)]({type:'called',token:_0_yzab[_0_klmn(0x5f)],officeName:_0_yzab[_0_klmn(0x45)],studentName:_0_yzab[_0_klmn(0x60)]||''});_0_vwxy++;if(_0_opqr[_0_yzab[_0_klmn(0x61)]]!==_0_yzab[_0_klmn(0x5f)]){_0_opqr[_0_yzab[_0_klmn(0x61)]]=_0_yzab[_0_klmn(0x5f)];_0_mnopq(_0_yzab[_0_klmn(0x5f)],_0_yzab[_0_klmn(0x60)],_0_yzab[_0_klmn(0x45)],'called');}}if(_0_yzab[_0_klmn(0x62)]){_0_uvwx[_0_klmn(0x2f)]({type:'serving',token:_0_yzab[_0_klmn(0x62)],officeName:_0_yzab[_0_klmn(0x45)],studentName:_0_yzab[_0_klmn(0x63)]||''});_0_wxyz++;if(_0_qrstu[_0_yzab[_0_klmn(0x61)]]!==_0_yzab[_0_klmn(0x62)]){_0_qrstu[_0_yzab[_0_klmn(0x61)]]=_0_yzab[_0_klmn(0x62)];_0_mnopq(_0_yzab[_0_klmn(0x62)],_0_yzab[_0_klmn(0x63)],_0_yzab[_0_klmn(0x45)],'serving');}}}document[_0_klmn(0x0)]('totalWaiting')[_0_klmn(0x1d)]=_0_xyza;document[_0_klmn(0x0)]('totalCalled')[_0_klmn(0x1d)]=_0_vwxy;document[_0_klmn(0x0)]('totalServing')['textContent']=_0_wxyz;if(_0_uvwx[_0_klmn(0x2c)]>0x0){_0_GHIJ=![];_0_tuvw[_0_klmn(0x64)][_0_klmn(0x65)](_0_klmn(0x66));_0_stuv[_0_klmn(0x20)][_0_klmn(0x67)]='none';_0_rstu[_0_klmn(0x20)][_0_klmn(0x67)]='grid';_0_rstu[_0_klmn(0x44)]=_0_uvwx[_0_klmn(0x50)](_0_st=>`<div class="${_0_st[_0_klmn(0x68)]}-card"><div class="status-badge badge-${_0_st[_0_klmn(0x68)]}"><span class="badge-dot"></span>${_0_st[_0_klmn(0x68)]==='called'?'CALLED — PLEASE PROCEED':'BEING SERVED NOW'}</div><div class="token-number">${_0_st[_0_klmn(0x69)]}</div>${_0_st[_0_klmn(0x6a)]?`<div class="student-name">${_0_WXYZ(_0_Z123(_0_st[_0_klmn(0x6a)]))}</div>`:''}<div class="office-name">${_0_WXYZ(_0_st[_0_klmn(0x6b)])}</div></div>`)[_0_klmn(0x4)]('');}else{_0_GHIJ=!![];_0_rstu[_0_klmn(0x20)][_0_klmn(0x67)]='none';_0_stuv[_0_klmn(0x20)][_0_klmn(0x67)]='flex';_0_tuvw[_0_klmn(0x64)][_0_klmn(0x6c)](_0_klmn(0x66));_0_cdef();}}async function _0_stuvw(){try{const _0_tuvwx=new AbortController();const _0_uvwxy=setTimeout(()=>_0_tuvwx[_0_klmn(0x6d)](),0x2710);const _0_vwxyz=await fetch(_0_klmn(0x4b)+_0_klmn(0x6e)+Date['now'](),{signal:_0_tuvwx[_0_klmn(0x6f)]});clearTimeout(_0_uvwxy);if(_0_vwxyz[_0_klmn(0x2a)]){_0_0123=0x0;const _0_wxyza=await _0_vwxyz[_0_klmn(0x2b)]();if(_0_wxyza[_0_klmn(0x4e)])_0_pqrs(_0_wxyza[_0_klmn(0x70)]);}else{_0_0123++;}}catch(_0_xyzab){_0_0123++;}if(_0_0123>=0xa){console[_0_klmn(0x71)](_0_klmn(0x72));if(location[_0_klmn(0x73)]&&typeof location['reload']===_0_klmn(0x74)&&location[_0_klmn(0x73)](!![])){location[_0_klmn(0x73)](!![]);}else{const _0_yzabc=new URL(window[_0_klmn(0x75)][_0_klmn(0x75)]);_0_yzabc[_0_klmn(0x76)]['set']('_cache_clear',Date[_0_klmn(0x4d)]());window[_0_klmn(0x75)][_0_klmn(0x75)]=_0_yzabc[_0_klmn(0x77)]();}}}function _0_zabcd(){if(Date['now']()-_0_UVWX>0xea60&&!_0_WXYZ){_0_WXYZ=!![];console[_0_klmn(0x71)](_0_klmn(0x78));if(location[_0_klmn(0x73)]&&typeof location[_0_klmn(0x73)]===_0_klmn(0x74)&&location[_0_klmn(0x73)](!![])){location[_0_klmn(0x73)](!![]);}else{const _0_abcde=new URL(window[_0_klmn(0x75)][_0_klmn(0x75)]);_0_abcde[_0_klmn(0x76)]['set']('_cache_clear',Date[_0_klmn(0x4d)]());window[_0_klmn(0x75)][_0_klmn(0x75)]=_0_abcde['toString']();}}else if(Date[_0_klmn(0x4d)]()-_0_UVWX<0x7530){_0_WXYZ=![];}}function _0_bcdef(){_0_stuvw();_0_jklm();setInterval(_0_stuvw,0x1388);setInterval(_0_jklm,0xbb8);setInterval(_0_cdef,0x2710);setInterval(_0_zabcd,0x3a98);console[_0_klmn(0x71)]('📺 Public Display active — cache clearing enforced on every refresh (2-5 sec intervals)');}_0_opqr={};_0_stuv={};_0_abcd=![];_0_CDEF=new Set();_0_GHIJ=!![];_0_KLMM=[];_0_0123=0x0;_0_UVWX=Date[_0_klmn(0x4d)]();_0_WXYZ=![];_0_bcdef();})();
-</script>
+
+    <div class="header">
+        <div class="header-left">
+            <div class="uni-emblem">
+                <svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>
+            </div>
+            <div>
+                <div class="uni-name">Smart Queue <span>Management System</span></div>
+                <div class="uni-sub">Student Service Board</div>
+            </div>
+        </div>
+        <div class="datetime">
+            <div class="datetime-time" id="dtTime">00:00:00</div>
+            <div id="dtDate">Loading...</div>
+        </div>
+    </div>
+
+    <div class="screen">
+        <div class="active-grid" id="activeGrid" style="display:none;"></div>
+        <div class="no-active" id="noActive">
+            <div class="no-active-ring">
+                <svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>
+            </div>
+            <div class="no-active-title">No Active Services</div>
+            <div class="no-active-sub">Please take a token from the kiosk</div>
+            <div class="no-active-kiosk">
+                <div class="kiosk-dot"></div>
+                <span>Kiosk available at the entrance</span>
+            </div>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-chip"><div class="stat-chip-icon icon-waiting"><svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg></div><div><div class="stat-val" id="totalWaiting">0</div><div class="stat-lbl">Waiting</div></div></div>
+            <div class="stat-chip"><div class="stat-chip-icon icon-called"><svg viewBox="0 0 24 24"><path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.12-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/></svg></div><div><div class="stat-val" id="totalCalled">0</div><div class="stat-lbl">Called</div></div></div>
+            <div class="stat-chip"><div class="stat-chip-icon icon-serving"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div><div><div class="stat-val" id="totalServing">0</div><div class="stat-lbl">Serving Now</div></div></div>
+        </div>
+    </div>
+
+    <div class="news-ticker-wrap" id="newsTicker"><div class="ticker-top-bar"></div><div class="ticker-body"><div class="ticker-label"><div class="ticker-label-dot"></div><span class="ticker-label-text">NOTICE</span></div><div class="ticker-scroll-track"><div class="ticker-scroll-inner" id="tickerInner"></div></div><div class="ticker-time" id="tickerTime">--:--</div></div></div>
+
+    <div class="footer"><div class="footer-text">Listen for your token announcement</div><div class="footer-dot"></div><div class="footer-text">Watch the screen for your turn</div><div class="footer-dot"></div><div class="footer-text">&copy; 2026 Makerere University — Queue Management System</div></div>
+    <div class="voice-indicator" id="voiceIndicator"><div class="voice-dot"></div><span class="voice-text" id="voiceText">Voice System Ready</span></div>
+
+    <script>
+        (function(){
+            // ENFORCEMENT #6: API key notice and referrer restriction documented
+            // ⚠️ GOOGLE API KEY - Restricted via Google Cloud Console HTTP referrer (only *.railway.app & localhost)
+            const GOOGLE_API_KEY = "AIzaSyDS83DgfiXEvcIbm2klAa2FzkswmQFN4Zs";
+            const API_BASE_URL = "https://web-production-eeaf2.up.railway.app";
+
+            let lastCalledTokens = {};
+            let lastServingTokens = {};
+            let audioQueue = [];
+            let isPlaying = false;
+            let announcedRecalls = new Set();
+            let isIdle = true;
+            let currentMessages = [];
+            let failedFetches = 0;
+            let lastDisplayUpdate = Date.now();
+            let screenFrozen = false;
+
+            // ENFORCEMENT #1: Hard reload with cache clear (replaces location.reload)
+            function hardReloadClearCache() {
+                console.log('🔄 Hard reload with cache clear triggered');
+                if (location.reload && typeof location.reload === 'function' && location.reload(true)) {
+                    location.reload(true);
+                } else {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('_cache_clear', Date.now());
+                    window.location.href = url.toString();
+                }
+            }
+
+            // ENFORCEMENT #5: Cache-busting fetch wrapper (used for all API calls)
+            async function fetchWithCacheBust(url, options = {}) {
+                const separator = url.includes('?') ? '&' : '?';
+                const cacheBustedUrl = `${url}${separator}_cb=${Date.now()}`;
+                const fetchOptions = {
+                    ...options,
+                    cache: 'no-cache',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        ...(options.headers || {})
+                    }
+                };
+                return fetch(cacheBustedUrl, fetchOptions);
+            }
+
+            function updateDateTime() {
+                const now = new Date();
+                document.getElementById('dtTime').textContent = now.toLocaleTimeString('en-UG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                document.getElementById('dtDate').textContent = now.toLocaleDateString('en-UG', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                document.getElementById('tickerTime').textContent = now.toLocaleTimeString('en-UG', { hour: '2-digit', minute: '2-digit' });
+            }
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+
+            async function generateVoice(token, studentName, officeName, actionType) {
+                const vi = document.getElementById('voiceIndicator');
+                const vt = document.getElementById('voiceText');
+                const spelledToken = token.split('').join(' ');
+                let text = '';
+                const hasName = studentName && studentName.trim() !== '';
+                if (actionType === 'called') text = hasName ? `Now calling ${studentName} with token ${spelledToken}. Please proceed to ${officeName}.` : `Now calling token ${spelledToken}. Please proceed to ${officeName}.`;
+                else if (actionType === 'recall') text = hasName ? `Attention please, ${studentName}, token ${spelledToken} please proceed to ${officeName}.` : `Attention please, token ${spelledToken} is now ready at ${officeName}.`;
+                else text = hasName ? `Now serving ${studentName} with token ${spelledToken} at ${officeName}.` : `Now serving token ${spelledToken} at ${officeName}.`;
+                vt.textContent = `Announcing ${token}...`;
+                vi.style.borderColor = 'rgba(255,193,7,0.4)';
+                try {
+                    const response = await fetch("https://texttospeech.googleapis.com/v1/text:synthesize", {
+                        method: 'POST',
+                        headers: { "Content-Type": "application/json", "X-Goog-Api-Key": GOOGLE_API_KEY },
+                        body: JSON.stringify({ input: { text }, voice: { languageCode: "en-US", name: "en-US-Neural2-F" }, audioConfig: { audioEncoding: "MP3", speakingRate: 0.95 } })
+                    });
+                    if (response.ok) {
+                        const json = await response.json();
+                        const blob = (function(b64, mime) { const bytes = atob(b64); const arrays = []; for (let i = 0; i < bytes.length; i += 512) { const slice = bytes.slice(i, i + 512); const nums = new Uint8Array(slice.length); for (let j = 0; j < slice.length; j++) nums[j] = slice.charCodeAt(j); arrays.push(nums); } return new Blob(arrays, { type: mime }); })(json.audioContent, 'audio/mpeg');
+                        const audio = new Audio(URL.createObjectURL(blob));
+                        audioQueue.push(audio);
+                        (function playNext() { if (isPlaying || !audioQueue.length) return; isPlaying = true; const a = audioQueue.shift(); a.onended = () => { isPlaying = false; playNext(); }; a.play().catch(() => {}); })();
+                        vt.textContent = `Done: ${token}`;
+                        vi.style.borderColor = 'rgba(0,230,118,0.3)';
+                        setTimeout(() => { vt.textContent = 'Voice System Ready'; vi.style.borderColor = 'rgba(255,255,255,0.08)'; }, 2000);
+                    }
+                } catch(e) { console.error('Voice error:', e); vt.textContent = 'Voice Error'; setTimeout(() => { vt.textContent = 'Voice System Ready'; }, 2000); }
+            }
+
+            function showRecallBanner(token, officeName, studentName) {
+                document.querySelector('.recall-banner')?.remove();
+                const b = document.createElement('div');
+                b.className = 'recall-banner';
+                b.textContent = (studentName && studentName.trim() !== '') ? `${studentName}  —  ${token}` : `${token}  —  ${officeName}`;
+                document.body.appendChild(b);
+                setTimeout(() => b?.remove(), 3000);
+            }
+
+            function escapeHtml(t) { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+            function truncateName(name, maxLength = 20) { if (!name) return ''; return name.length <= maxLength ? name : name.substring(0, maxLength) + '...'; }
+
+            function buildTickerContent(messages) {
+                const inner = document.getElementById('tickerInner');
+                if (!messages || messages.length === 0) {
+                    const standby = `<div class="ticker-item"><span class="ticker-office-badge">INFO</span><span class="ticker-message-text">No active queue. Please take a token from the kiosk at the entrance and wait for your number to be called.</span></div><span class="ticker-sep">&#9656;</span><div class="ticker-item"><span class="ticker-office-badge">INFO</span><span class="ticker-message-text">Watch this screen and listen for announcements when your token is ready.</span></div><span class="ticker-sep">&#9656;</span>`;
+                    inner.innerHTML = standby + standby;
+                    return;
+                }
+                let html = '';
+                for (const msg of messages) html += `<div class="ticker-item"><span class="ticker-from">From:</span><span class="ticker-office-badge">${escapeHtml(msg.office_name)}</span><span class="ticker-message-text">${escapeHtml(msg.message)}</span></div><span class="ticker-sep">&#9656;</span>`;
+                inner.innerHTML = html + html;
+                const totalLen = messages.reduce((a, m) => a + m.message.length, 0);
+                const speed = Math.max(20, Math.min(60, totalLen * 0.4));
+                inner.style.animationDuration = speed + 's';
+            }
+
+            async function fetchAndDisplayMessages() {
+                if (!isIdle) return;
+                try {
+                    const res = await fetchWithCacheBust(`${API_BASE_URL}/api/office/messages`);
+                    const data = await res.json();
+                    const msgs = (data.success && data.messages?.length) ? data.messages : [];
+                    const sig = JSON.stringify(msgs.map(m => m.id + m.message));
+                    if (sig !== fetchAndDisplayMessages._lastSig) {
+                        fetchAndDisplayMessages._lastSig = sig;
+                        currentMessages = msgs;
+                        buildTickerContent(msgs);
+                    }
+                } catch(e) { console.error('Messages error:', e); }
+            }
+            fetchAndDisplayMessages._lastSig = null;
+
+            async function fetchRecentRecalls() {
+                try {
+                    const res = await fetchWithCacheBust(`${API_BASE_URL}/api/queue/recent-recalls`);
+                    const data = await res.json();
+                    if (data.success && data.recalls?.length) {
+                        for (const recall of data.recalls) {
+                            if (!announcedRecalls.has(recall.id)) {
+                                announcedRecalls.add(recall.id);
+                                showRecallBanner(recall.token_number, recall.office_name, recall.student_name);
+                                await generateVoice(recall.token_number, recall.student_name, recall.office_name, 'recall');
+                            }
+                        }
+                        if (announcedRecalls.size > 50) Array.from(announcedRecalls).slice(0, announcedRecalls.size - 50).forEach(id => announcedRecalls.delete(id));
+                    }
+                } catch(e) { console.error('Recall error:', e); }
+            }
+
+            function updateDisplay(queues) {
+                lastDisplayUpdate = Date.now();
+                const activeGrid = document.getElementById('activeGrid');
+                const noActive = document.getElementById('noActive');
+                const newsTicker = document.getElementById('newsTicker');
+                const activeTokens = [];
+                let totalCalled = 0, totalServing = 0, totalWaiting = 0;
+                for (const office of queues) {
+                    totalWaiting += office.waiting_count || 0;
+                    if (office.current_called) {
+                        activeTokens.push({ type: 'called', token: office.current_called, officeName: office.office_name, studentName: office.called_student || '' });
+                        totalCalled++;
+                        if (lastCalledTokens[office.office_code] !== office.current_called) {
+                            lastCalledTokens[office.office_code] = office.current_called;
+                            generateVoice(office.current_called, office.called_student, office.office_name, 'called');
+                        }
+                    }
+                    if (office.current_serving) {
+                        activeTokens.push({ type: 'serving', token: office.current_serving, officeName: office.office_name, studentName: office.serving_student || '' });
+                        totalServing++;
+                        if (lastServingTokens[office.office_code] !== office.current_serving) {
+                            lastServingTokens[office.office_code] = office.current_serving;
+                            generateVoice(office.current_serving, office.serving_student, office.office_name, 'serving');
+                        }
+                    }
+                }
+                document.getElementById('totalWaiting').textContent = totalWaiting;
+                document.getElementById('totalCalled').textContent = totalCalled;
+                document.getElementById('totalServing').textContent = totalServing;
+                if (activeTokens.length > 0) {
+                    isIdle = false;
+                    newsTicker.classList.remove('visible');
+                    noActive.style.display = 'none';
+                    activeGrid.style.display = 'grid';
+                    activeGrid.innerHTML = activeTokens.map(t => `<div class="${t.type}-card"><div class="status-badge badge-${t.type}"><span class="badge-dot"></span>${t.type === 'called' ? 'CALLED — PLEASE PROCEED' : 'BEING SERVED NOW'}</div><div class="token-number">${t.token}</div>${t.studentName ? `<div class="student-name">${escapeHtml(truncateName(t.studentName))}</div>` : ''}<div class="office-name">${escapeHtml(t.officeName)}</div></div>`).join('');
+                } else {
+                    isIdle = true;
+                    activeGrid.style.display = 'none';
+                    noActive.style.display = 'flex';
+                    newsTicker.classList.add('visible');
+                    fetchAndDisplayMessages();
+                }
+            }
+
+            async function fetchQueueData() {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 10000);
+                    const res = await fetchWithCacheBust(`${API_BASE_URL}/api/public/queues`, { signal: controller.signal });
+                    clearTimeout(timeoutId);
+                    if (res.ok) {
+                        failedFetches = 0;
+                        const data = await res.json();
+                        if (data.success) updateDisplay(data.queues);
+                    } else { failedFetches++; }
+                } catch(e) { failedFetches++; }
+                if (failedFetches >= 10) { console.log('🔄 Too many failures, hard reload with cache clear'); hardReloadClearCache(); }
+            }
+
+            function monitorScreenHealth() {
+                if ((Date.now() - lastDisplayUpdate) > 60000 && !screenFrozen) {
+                    screenFrozen = true;
+                    console.log('🔄 Screen frozen for 60s, hard reload with cache clear');
+                    hardReloadClearCache();
+                } else if ((Date.now() - lastDisplayUpdate) < 30000) screenFrozen = false;
+            }
+
+            // ENFORCEMENT #3: All intervals respect original timing (3s,5s,10s) and clear cache on each fetch
+            function init() {
+                fetchQueueData();
+                fetchRecentRecalls();
+                setInterval(fetchQueueData, 5000);    // same 5 sec interval
+                setInterval(fetchRecentRecalls, 3000); // same 3 sec interval
+                setInterval(fetchAndDisplayMessages, 10000); // same 10 sec interval
+                setInterval(monitorScreenHealth, 15000);
+                console.log('📺 Public Display active — cache clearing enforced on every refresh (2-5 sec intervals)');
+            }
+            init();
+        })();
+    </script>
 </body>
 </html>
