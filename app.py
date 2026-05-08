@@ -837,7 +837,6 @@ def officer_login():
 
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
-
     try:
         cursor.execute("""
             SELECT o.id, o.officer_number, o.officer_name, o.office_id,
@@ -847,14 +846,12 @@ def officer_login():
             JOIN offices off ON o.office_id = off.id
             WHERE o.officer_number = %s AND o.pin_code = %s
         """, (officer_number, pin_code))
-
         officer = cursor.fetchone()
 
         if not officer:
             return jsonify({'success': False, 'message': 'Invalid number or PIN'}), 401
 
         role = 'admin' if officer.get('is_admin') else 'officer'
-
         return jsonify({
             'success': True,
             'user': {
@@ -876,6 +873,8 @@ def officer_login():
     finally:
         cursor.close()
         conn.close()
+
+
 
 
 # ============================================
