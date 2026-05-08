@@ -1194,7 +1194,7 @@ def officer_call_specific():
         conn.close()
 
 
-@app.route('/api/officer/serve', methods=['POST'])
+app.route('/api/officer/serve', methods=['POST'])
 def officer_serve():
     data = request.get_json()
     officer_id = data.get('officer_id')
@@ -1203,15 +1203,8 @@ def officer_serve():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     try:
-        cursor.execute("""
-            UPDATE university_tokens 
-            SET status='serving', serving_started_at=NOW() 
-            WHERE token_number=%s
-        """, (token_number,))
-        cursor.execute("""
-            UPDATE officers SET status='busy', last_activity=NOW() 
-            WHERE id=%s
-        """, (officer_id,))
+        cursor.execute("UPDATE university_tokens SET status='serving', serving_started_at=NOW() WHERE token_number=%s", (token_number,))
+        cursor.execute("UPDATE officers SET status='busy', last_activity=NOW() WHERE id=%s", (officer_id,))
         conn.commit()
         return jsonify({'success': True})
     except Exception as e:
@@ -1220,7 +1213,6 @@ def officer_serve():
     finally:
         cursor.close()
         conn.close()
-
 
 @app.route('/api/officer/complete', methods=['POST'])
 def officer_complete():
