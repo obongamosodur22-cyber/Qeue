@@ -227,13 +227,63 @@
     .notif-status .dot.default { background: #ffd700; animation: none; }
     .notif-status .text { color: rgba(255,255,255,0.7); }
 
-    @media (max-width: 900px) { .grid-two { grid-template-columns: 1fr; } }
-    @media (max-width: 640px) {
-      .stats-row { grid-template-columns: 1fr; }
-      .header-center { display: none; }
-      .content { padding: 16px 14px 32px; }
-      .serving-token-num { font-size: 40px; }
-      .notif-status { bottom: 10px; right: 10px; padding: 4px 12px; font-size: 9px; }
+    @media (max-width: 1024px) {
+      .content { padding: 18px 16px 32px; }
+      .grid-two { grid-template-columns: 1fr; }
+      .stats-row { gap: 12px; }
+      .card-header { padding: 12px 14px; }
+      .card-body { padding: 12px 14px; }
+    }
+    @media (max-width: 768px) {
+      .header {
+        height: auto;
+        min-height: 64px;
+        padding: 10px 12px;
+        flex-wrap: wrap;
+        row-gap: 8px;
+      }
+      .header-center { order: 3; width: 100%; display: flex; justify-content: flex-start; }
+      .office-pill { width: 100%; border-radius: 10px; text-align: left; }
+      .header-right { margin-left: auto; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+      .officer-pill { padding: 6px 10px; gap: 7px; }
+      .officer-name-text { max-width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .logout-btn { padding: 6px 10px; }
+      .stats-row { grid-template-columns: 1fr; margin-bottom: 14px; }
+      .stat-card { padding: 14px; gap: 12px; }
+      .stat-num { font-size: 24px; }
+      .q-token { min-width: 52px; font-size: 16px; }
+      .queue-scroll { max-height: 360px; }
+      .serving-token-num { font-size: 40px; letter-spacing: 2px; }
+      .notif-status { bottom: 10px; right: 10px; padding: 5px 10px; font-size: 9px; max-width: calc(100vw - 20px); }
+    }
+    @media (max-width: 520px) {
+      .brand-name { font-size: 14px; }
+      .brand-icon { width: 30px; height: 30px; }
+      .header-right { width: 100%; justify-content: space-between; }
+      .officer-pill { flex: 1; min-width: 0; }
+      .officer-name-text { max-width: 95px; }
+      .status-text { font-size: 10px; }
+      .icon-btn, .logout-btn { flex-shrink: 0; }
+      .logout-btn { font-size: 11px; padding: 6px 8px; }
+      .content { padding: 12px 10px 24px; }
+      .card-title { font-size: 13px; }
+      .btn-sm { font-size: 10px; padding: 5px 8px; }
+      .queue-item { flex-wrap: wrap; align-items: flex-start; gap: 8px; padding: 10px; }
+      .q-info { width: 100%; order: 3; }
+      .call-btn { width: 100%; justify-content: center; order: 4; }
+      .action-grid { grid-template-columns: 1fr; }
+      .btn-next, .btn-reset { grid-column: span 1; }
+      .action-btn { padding: 10px; font-size: 11px; }
+      .serving-hero { padding: 16px 12px; }
+      .serving-token-num { font-size: 32px; }
+      .serving-service-name { font-size: 12px; }
+      .modal-box { padding: 20px; }
+      .modal-footer { flex-direction: column; }
+      .msg-modal-header { padding: 12px 14px; }
+      .msg-modal-body { padding: 12px 14px; }
+      .msg-input-row { flex-direction: column; }
+      .post-btn { width: 100%; justify-content: center; }
+      .notif-status { left: 10px; right: 10px; bottom: 8px; justify-content: center; }
     }
   </style>
 </head>
@@ -292,7 +342,7 @@
     <div class="msg-modal-body">
       <div class="msg-input-row">
         <input class="msg-input" type="text" id="newMessage" placeholder="Enter message for students…" maxlength="200" />
-        <button class="post-btn" onclick="postMessage()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Post</button>
+        <button class="post-btn" onclick="postOfficeMessage()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Post</button>
       </div>
       <div id="messagesList"><div class="empty"><div class="empty-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="empty-text">Loading messages…</div></div></div>
     </div>
@@ -591,7 +641,7 @@
     container.innerHTML = active.map(msg => `<div class="msg-item"><div style="flex:1;"><div class="msg-text">${escapeHtml(msg.message)}</div><div class="msg-time">${ic.clock} ${new Date(msg.created_at).toLocaleString()}</div><div class="msg-active">${ic.dot_live} Active on public display</div></div><button class="del-btn" onclick="deleteMessage(${msg.id})"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg> Delete</button></div>`).join('');
   }
 
-  async function postMessage() {
+  async function postOfficeMessage() {
     const input = document.getElementById('newMessage');
     const message = input.value.trim();
     if (!message) { showToast('Please enter a message', 'warning'); return; }
@@ -721,48 +771,42 @@
 
   async function serveStudent() {
     if (!currentServing) return;
-    showConfirm('Start Serving', `Start serving ${currentServing}?`, async () => {
-      const result = await apiCall('/api/officer/serve', 'POST', { officer_id: currentOfficer.id, token_number: currentServing });
-      if (result.success) {
-        addLog(`Now serving ${currentServing}`, 'success');
-        showToast(`Now serving ${currentServing}`, 'success');
-        await loadQueue();
-      } else {
-        showToast(result.message || 'Failed to start serving', 'error');
-      }
-    });
+    const result = await apiCall('/api/officer/serve', 'POST', { officer_id: currentOfficer.id, token_number: currentServing });
+    if (result.success) {
+      addLog(`Now serving ${currentServing}`, 'success');
+      showToast(`Now serving ${currentServing}`, 'success');
+      await loadQueue();
+    } else {
+      showToast(result.message || 'Failed to start serving', 'error');
+    }
   }
 
   async function completeService() {
     if (!currentServing) return;
-    showConfirm('Complete Service', `Mark ${currentServing} as completed?`, async () => {
-      const result = await apiCall('/api/officer/complete', 'POST', { officer_id: currentOfficer.id, token_number: currentServing });
-      if (result.success) {
-        addLog(`Completed ${currentServing}`, 'success');
-        showToast(`Service completed for ${currentServing}`, 'success');
-        const completedEl = document.getElementById('completedToday');
-        completedEl.textContent = (parseInt(completedEl.textContent) || 0) + 1;
-        currentServing = null;
-        await loadQueue();
-      } else {
-        showToast(result.message || 'Failed to complete service', 'error');
-      }
-    });
+    const result = await apiCall('/api/officer/complete', 'POST', { officer_id: currentOfficer.id, token_number: currentServing });
+    if (result.success) {
+      addLog(`Completed ${currentServing}`, 'success');
+      showToast(`Service completed for ${currentServing}`, 'success');
+      const completedEl = document.getElementById('completedToday');
+      completedEl.textContent = (parseInt(completedEl.textContent) || 0) + 1;
+      currentServing = null;
+      await loadQueue();
+    } else {
+      showToast(result.message || 'Failed to complete service', 'error');
+    }
   }
 
   async function skipStudent() {
     if (!currentServing) return;
-    showConfirm('Skip Student', `Skip ${currentServing}?`, async () => {
-      const result = await apiCall('/api/officer/skip', 'POST', { officer_id: currentOfficer.id, token_number: currentServing });
-      if (result.success) {
-        addLog(`Skipped ${currentServing}`, 'warning');
-        showToast(`${currentServing} skipped`, 'warning');
-        currentServing = null;
-        await loadQueue();
-      } else {
-        showToast(result.message || 'Failed to skip', 'error');
-      }
-    });
+    const result = await apiCall('/api/officer/skip', 'POST', { officer_id: currentOfficer.id, token_number: currentServing });
+    if (result.success) {
+      addLog(`Skipped ${currentServing}`, 'warning');
+      showToast(`${currentServing} skipped`, 'warning');
+      currentServing = null;
+      await loadQueue();
+    } else {
+      showToast(result.message || 'Failed to skip', 'error');
+    }
   }
 
   async function recallStudent() {
@@ -833,7 +877,7 @@
   window.completeService = completeService; window.skipStudent = skipStudent; window.recallStudent = recallStudent;
   window.resetQueue = resetQueue; window.loadQueue = loadQueue; window.clearLog = clearLog;
   window.closeModal = closeModal; window.confirmAction = confirmAction; window.closeResetModal = closeResetModal;
-  window.confirmReset = confirmReset; window.logout = logout; window.postMessage = postMessage;
+  window.confirmReset = confirmReset; window.logout = logout; window.postOfficeMessage = postOfficeMessage;
   window.deleteMessage = deleteMessage; window.closeMessageModal = closeMessageModal;
   window.toggleSound = toggleSound;
 
