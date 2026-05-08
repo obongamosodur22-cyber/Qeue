@@ -55,6 +55,10 @@ except Error as e:
 # ============================================
 # SERVE HTML PAGES
 # ============================================
+@app.route('/public-view')
+def public_view_alias():
+    return send_from_directory('.', 'public-display.html')
+    
 @app.route('/')
 def index():
     return send_from_directory('.', 'index.html')
