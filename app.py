@@ -1277,6 +1277,35 @@ def officer_skip():
         cursor.close()
         conn.close()
 
+@app.route('/api/queue/recent-recalls', methods=['GET'])
+def get_recent_recalls():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("""
+            SELECT l.id, l.token_number, l.officer_id, l.created_at,
+                   off.office_code, off.office_name, t.student_name
+            FROM queue_logs l
+            JOIN officers o ON l.officer_id = o.id
+            JOIN offices off ON o.office_id = off.id
+            LEFT JOIN university_tokens t ON l.token_number = t.token_number
+            WHERE l.action = 'recall' AND l.created_at >= NOW() - INTERVAL 30 SECOND
+            ORDER BY l.created_at DESC
+        """)
+        recalls = cursor.fetchall()
+
+        for r in recalls:
+            if isinstance(r.get('created_at'), datetime):
+                r['created_at'] = r['created_at'].isoformat()
+
+        cursor.close()
+        conn.close()
+        return jsonify({'success': True, 'recalls': recalls})
+
+    except Exception as e:
+        logger.error(f"Error in get_recent_recalls: {e}")
+        return jsonify({'success': False, 'message': str(e)})
 
 @app.route('/api/officer/recall', methods=['POST'])
 def officer_recall():
